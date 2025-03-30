@@ -30,7 +30,7 @@
                             <div class="flex items-center p-0.5">
                                 <span
                                     class="flex size-8 text-sm font-medium items-center justify-center overflow-hidden rounded-radius border border-outline bg-surface-alt tracking-wider text-on-surface/80 dark:border-outline-dark dark:bg-surface-dark-alt dark:text-on-surface-dark/80">
-                                    {{ auth()->user()->initials() }}
+                                    {{ auth()->user()->full_name[0] }}
                                 </span>
                                 <div class="p-1 text-on-surface-strong dark:text-on-surface-dark-strong">
                                     <x-icons.chevron-down variant="micro" size="sm" />
@@ -44,9 +44,9 @@
                             <li class="border-b border-outline dark:border-outline-dark">
                                 <div class="flex flex-col px-4 py-2">
                                     <span
-                                        class="text-sm font-medium text-on-surface-strong dark:text-on-surface-dark-strong">{{ auth()->user()->name }}</span>
+                                        class="text-sm font-medium text-on-surface-strong dark:text-on-surface-dark-strong">{{ auth()->user()->full_name }}</span>
                                     <p class="text-xs text-on-surface dark:text-on-surface-dark">
-                                        {{ auth()->user()->email }}</p>
+                                        {{ auth()->user()->username }}</p>
                                 </div>
                             </li>
                             <li>

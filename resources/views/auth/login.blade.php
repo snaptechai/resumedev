@@ -10,10 +10,10 @@
 
             <!-- Email Address -->
             <div>
-                <x-input-label for="email" :value="__('Email address')" />
-                <x-input id="email" class="block mt-1 w-full" type="email" name="email"
-                    placeholder="email@example.com" :value="old('email')" required autofocus autocomplete="email" />
-                <x-input-error :messages="$errors->get('email')" class="mt-2" />
+                <x-input-label for="username" :value="__('Username')" />
+                <x-input id="username" class="block mt-1 w-full" type="email" name="username"
+                    placeholder="email@example.com" :value="old('username')" required autofocus autocomplete="email" />
+                <x-input-error :messages="$errors->get('username')" class="mt-2" />
             </div>
 
             <!-- Password -->
@@ -27,8 +27,8 @@
                     @endif
                 </div>
 
-                <x-input variant="password" id="password" class="block mt-1 w-full" type="password"
-                    name="password" placeholder="Password" required autocomplete="current-password" />
+                <x-input variant="password" id="password" class="block mt-1 w-full" type="password" name="password"
+                    placeholder="Password" required autocomplete="current-password" />
 
                 <x-input-error :messages="$errors->get('password')" class="mt-2" />
             </div>
