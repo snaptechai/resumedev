@@ -36,22 +36,6 @@
                 </x-sidebar-link>
             </li>
         </ul>
-
-        <!-- Bottom Navigation -->
-        <ul class="flex flex-col gap-2 mt-auto">
-            <li>
-                <x-sidebar-link href="https://github.com/laravel/livewire-starter-kit" target="_blank">
-                    <x-icons.folder-git-2 />
-                    <span>{{ __('Repository') }}</span>
-                </x-sidebar-link>
-            </li>
-            <li>
-                <x-sidebar-link href="https://github.com/laravel/livewire-starter-kit" target="_blank">
-                    <x-icons.book-open-text />
-                    <span>{{ __('Documentation') }}</span>
-                </x-sidebar-link>
-            </li>
-        </ul>
     </div>
 
     <!-- User Dropdown -->
@@ -80,12 +64,12 @@
                         <p class="text-xs text-on-surface dark:text-on-surface-dark">{{ auth()->user()->email }}</p>
                     </div>
                 </li>
-                <li>
+                {{-- <li>
                     <x-dropdown-link href="{{ route('settings.edit') }}">
                         <x-icons.cog variant="mini" />
                         {{ __('Settings') }}
                     </x-dropdown-link>
-                </li>
+                </li> --}}
                 <li>
                     <form method="POST" action="{{ route('logout') }}">
                         @csrf

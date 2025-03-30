@@ -11,10 +11,10 @@
         <!-- Content Wrapper -->
         <div class="flex w-full max-w-sm flex-col gap-2">
             <!-- Logo Link -->
-            <a href="{{ route('home') }}" class="flex flex-col items-center gap-2 font-medium">
+            {{-- <a href="{{ route('home') }}" class="flex flex-col items-center gap-2 font-medium">
                 <x-app-logo-icon class="size-9 fill-current text-on-surface-strong dark:text-on-surface-dark-strong" />
                 <span class="sr-only">{{ config('app.name', 'Laravel') }}</span>
-            </a>
+            </a> --}}
 
             <!-- Content Area -->
             <div class="flex flex-col gap-6">
