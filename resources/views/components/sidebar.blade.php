@@ -35,82 +35,88 @@
                     <span>{{ __('Dashboard') }}</span>
                 </x-sidebar-link>
             </li>
-            <li>
-                <x-sidebar-link href="" >
-                    <x-icon name="document-chart-bar" outline/>
+            {{-- <li>
+                <x-sidebar-link href="">
+                    <x-icon name="document-chart-bar" outline />
                     <span>{{ __('Affiliate Dashboard') }}</span>
                 </x-sidebar-link>
-            </li>
-            <li>
-                <x-sidebar-link href="" >
-                    <x-icon name="map-pin" outline/>
+            </li> --}}
+            {{-- <li>
+                <x-sidebar-link href="">
+                    <x-icon name="map-pin" outline />
                     <span>{{ __('Leads') }}</span>
                 </x-sidebar-link>
-            </li>
-            <li>
-                <x-sidebar-link href="" >
-                    <x-icon name="user-group" outline/>
+            </li> --}}
+            {{-- <li>
+                <x-sidebar-link href="">
+                    <x-icon name="user-group" outline />
                     <span>{{ __('Affiliate Users') }}</span>
                 </x-sidebar-link>
-            </li>
-            <li>
-                <x-sidebar-link href="" >
-                    <x-icon name="currency-dollar" outline/>
+            </li> --}}
+            {{-- <li>
+                <x-sidebar-link href="">
+                    <x-icon name="currency-dollar" outline />
                     <span>{{ __('Affiliate Withdrawals') }}</span>
                 </x-sidebar-link>
-            </li>
-            <li>
-                <x-sidebar-link href="" >
-                    <x-icon name="newspaper" outline/>
+            </li> --}}
+            {{-- <li>
+                <x-sidebar-link href="">
+                    <x-icon name="newspaper" outline />
                     <span>{{ __('Articles') }}</span>
                 </x-sidebar-link>
-            </li>
-            <li>
-                <x-sidebar-link href="" >
-                    <x-icon name="square-3-stack-3d" outline/>
+            </li> --}}
+            {{-- <li>
+                <x-sidebar-link href="">
+                    <x-icon name="square-3-stack-3d" outline />
                     <span>{{ __('Article Category') }}</span>
                 </x-sidebar-link>
-            </li>
-            <li>
-                <x-sidebar-link href="" >
-                    <x-icon name="tag" outline/>
+            </li> --}}
+            {{-- <li>
+                <x-sidebar-link href="">
+                    <x-icon name="tag" outline />
                     <span>{{ __('Article Tag') }}</span>
                 </x-sidebar-link>
-            </li>
-            <li>
-                <x-sidebar-link href="" >
-                    <x-icon name="link" outline/>
+            </li> --}}
+            {{-- <li>
+                <x-sidebar-link href="">
+                    <x-icon name="link" outline />
                     <span>{{ __('Redirect Link') }}</span>
                 </x-sidebar-link>
-            </li>
-            <li>
-                <x-sidebar-link href="" >
-                    <x-icon name="users" outline/>
+            </li> --}}
+            {{-- <li>
+                <x-sidebar-link href="">
+                    <x-icon name="users" outline />
                     <span>{{ __('Users') }}</span>
                 </x-sidebar-link>
-            </li>
-            <li>
-                <x-sidebar-link href="" >
-                    <x-icon name="rectangle-group" outline/>
+            </li> --}}
+            {{-- <li>
+                <x-sidebar-link href="">
+                    <x-icon name="rectangle-group" outline />
                     <span>{{ __('Packages') }}</span>
                 </x-sidebar-link>
-            </li>
-            <li>
-                <x-sidebar-link href="" >
-                    <x-icon name="clipboard-document-list" outline/>
+            </li> --}}
+            {{-- <li>
+                <x-sidebar-link href="">
+                    <x-icon name="clipboard-document-list" outline />
                     <span>{{ __('Template') }}</span>
                 </x-sidebar-link>
-            </li>
-            <li>
-                <x-sidebar-link href="" >
-                    <x-icon name="tag" outline/>
+            </li> --}}
+            {{-- <li>
+                <x-sidebar-link href="">
+                    <x-icon name="tag" outline />
                     <span>{{ __('Coupon') }}</span>
+                </x-sidebar-link>
+            </li> --}}
+            <li>
+                <x-sidebar-link href="{{ route('banner.index') }}" :active="request()->routeIs('banner.index')">
+                    <x-icon name="flag" outline />
+                    <span>{{ __('Banner') }}</span>
                 </x-sidebar-link>
             </li>
             <li>
-                <x-sidebar-link href="{{ route('banner.index') }}" :active="request()->routeIs('banner.index')">
-                    <x-icon name="flag" outline/>
-                    <span>{{ __('Banner') }}</span>
+                <x-sidebar-link href="{{ route('faqs.index') }}" :active="request()->routeIs('faqs.*')">
+                    <x-icon name="chat-bubble-left-ellipsis" outline />
+                    <span>{{ __('FAQ') }}</span>
                 </x-sidebar-link>
             </li>
         </ul>
