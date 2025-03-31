@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\BannerController;
 use App\Http\Controllers\Admin\FAQController;
+use App\Http\Controllers\Admin\TagController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
@@ -22,6 +23,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/update-banner-status/{id}', [BannerController::class, 'updateBannerStatus']);
 
     Route::resource('faqs', FAQController::class);
+    Route::resource('tags', TagController::class);
 });
 
 require __DIR__.'/auth.php';

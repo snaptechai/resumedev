@@ -71,12 +71,12 @@
                     <span>{{ __('Article Category') }}</span>
                 </x-sidebar-link>
             </li> --}}
-            {{-- <li>
-                <x-sidebar-link href="">
+            <li>
+                <x-sidebar-link href="{{ route('tags.index') }}" :active="request()->routeIs('tags.*')">
                     <x-icon name="tag" outline />
                     <span>{{ __('Article Tag') }}</span>
                 </x-sidebar-link>
-            </li> --}}
+            </li>
             {{-- <li>
                 <x-sidebar-link href="">
                     <x-icon name="link" outline />
