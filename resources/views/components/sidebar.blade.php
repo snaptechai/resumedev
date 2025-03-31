@@ -7,7 +7,7 @@
 
 <!-- Sidebar Navigation -->
 <nav x-cloak x-bind:class="showSidebar ? 'translate-x-0' : '-translate-x-60'"
-    class="fixed left-0 z-20 flex h-svh w-60 shrink-0 flex-col border-r border-outline bg-surface p-4 transition-transform duration-300 lg:w-64 lg:translate-x-0 lg:relative dark:border-outline-dark dark:bg-surface-dark"
+    class="fixed left-0 z-20 flex h-svh w-60 shrink-0 flex-col border-r border-outline bg-green-100 p-4 transition-transform duration-300 lg:w-64 lg:translate-x-0 lg:relative dark:border-outline-dark dark:bg-surface-dark"
     aria-label="sidebar navigation">
     <!-- Mobile close button -->
     <button x-cloak x-on:click="showSidebar = false"
@@ -33,6 +33,84 @@
                 <x-sidebar-link href="{{ route('dashboard') }}" :active="request()->routeIs('dashboard')">
                     <x-icons.home variant="outline" />
                     <span>{{ __('Dashboard') }}</span>
+                </x-sidebar-link>
+            </li>
+            <li>
+                <x-sidebar-link href="" >
+                    <x-icon name="document-chart-bar" outline/>
+                    <span>{{ __('Affiliate Dashboard') }}</span>
+                </x-sidebar-link>
+            </li>
+            <li>
+                <x-sidebar-link href="" >
+                    <x-icon name="map-pin" outline/>
+                    <span>{{ __('Leads') }}</span>
+                </x-sidebar-link>
+            </li>
+            <li>
+                <x-sidebar-link href="" >
+                    <x-icon name="user-group" outline/>
+                    <span>{{ __('Affiliate Users') }}</span>
+                </x-sidebar-link>
+            </li>
+            <li>
+                <x-sidebar-link href="" >
+                    <x-icon name="currency-dollar" outline/>
+                    <span>{{ __('Affiliate Withdrawals') }}</span>
+                </x-sidebar-link>
+            </li>
+            <li>
+                <x-sidebar-link href="" >
+                    <x-icon name="newspaper" outline/>
+                    <span>{{ __('Articles') }}</span>
+                </x-sidebar-link>
+            </li>
+            <li>
+                <x-sidebar-link href="" >
+                    <x-icon name="square-3-stack-3d" outline/>
+                    <span>{{ __('Article Category') }}</span>
+                </x-sidebar-link>
+            </li>
+            <li>
+                <x-sidebar-link href="" >
+                    <x-icon name="tag" outline/>
+                    <span>{{ __('Article Tag') }}</span>
+                </x-sidebar-link>
+            </li>
+            <li>
+                <x-sidebar-link href="" >
+                    <x-icon name="link" outline/>
+                    <span>{{ __('Redirect Link') }}</span>
+                </x-sidebar-link>
+            </li>
+            <li>
+                <x-sidebar-link href="" >
+                    <x-icon name="users" outline/>
+                    <span>{{ __('Users') }}</span>
+                </x-sidebar-link>
+            </li>
+            <li>
+                <x-sidebar-link href="" >
+                    <x-icon name="rectangle-group" outline/>
+                    <span>{{ __('Packages') }}</span>
+                </x-sidebar-link>
+            </li>
+            <li>
+                <x-sidebar-link href="" >
+                    <x-icon name="clipboard-document-list" outline/>
+                    <span>{{ __('Template') }}</span>
+                </x-sidebar-link>
+            </li>
+            <li>
+                <x-sidebar-link href="" >
+                    <x-icon name="tag" outline/>
+                    <span>{{ __('Coupon') }}</span>
+                </x-sidebar-link>
+            </li>
+            <li>
+                <x-sidebar-link href="{{ route('banner.index') }}" :active="request()->routeIs('banner.index')">
+                    <x-icon name="flag" outline/>
+                    <span>{{ __('Banner') }}</span>
                 </x-sidebar-link>
             </li>
         </ul>
