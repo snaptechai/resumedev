@@ -7,6 +7,8 @@
                     <p class="text-sm text-gray-500 mt-1">Showing all {{ count($banners) }} banner campaigns</p>
                 </div>
                 
+                @include('admin.massage-bar')
+                
                 <div class="overflow-x-auto">
                     <table class="w-full divide-y divide-gray-200">
                         <thead>

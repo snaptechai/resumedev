@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\BannerController;
+use App\Http\Controllers\Admin\CouponController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
@@ -19,6 +20,8 @@ Route::middleware('auth')->group(function () {
 
     Route::resource('banner', BannerController::class);
     Route::post('/update-banner-status/{id}', [BannerController::class, 'updateBannerStatus']);
+
+    Route::resource('coupon', CouponController::class);
 });
 
 require __DIR__.'/auth.php';

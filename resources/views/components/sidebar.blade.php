@@ -35,7 +35,7 @@
                     <span>{{ __('Dashboard') }}</span>
                 </x-sidebar-link>
             </li>
-            <li>
+            {{-- <li>
                 <x-sidebar-link href="" >
                     <x-icon name="document-chart-bar" outline/>
                     <span>{{ __('Affiliate Dashboard') }}</span>
@@ -100,9 +100,9 @@
                     <x-icon name="clipboard-document-list" outline/>
                     <span>{{ __('Template') }}</span>
                 </x-sidebar-link>
-            </li>
+            </li> --}}
             <li>
-                <x-sidebar-link href="" >
+                <x-sidebar-link href="{{ route('coupon.index') }}" :active="request()->routeIs('coupon.index')">
                     <x-icon name="tag" outline/>
                     <span>{{ __('Coupon') }}</span>
                 </x-sidebar-link>
