@@ -11,7 +11,15 @@
                     </div> 
                 </div>
                 @include('admin.massage-bar')
-                
+                <div class="px-4 pb-2">
+                    <label for="packageFilter" class="text-sm font-medium text-gray-700 mr-2">Filter by Package:</label>
+                    <select id="packageFilter" class="border border-gray-300 rounded px-2 py-1 text-sm">
+                        <option value="">All</option>
+                        @foreach ($templates->pluck('packagename.title')->unique() as $packageTitle)
+                            <option value="{{ $packageTitle }}">{{ $packageTitle }}</option>
+                        @endforeach
+                    </select>
+                </div>
                 <div class="overflow-x-auto">
                     <table class="w-full divide-y divide-gray-200">
                         <thead>
@@ -24,7 +32,7 @@
                         </thead>
                         <tbody class="bg-white divide-y divide-gray-200">
                             @foreach ($templates as $index => $template)
-                                <tr class="hover:bg-gray-50 transition-colors duration-150">
+                                <tr class="hover:bg-gray-50 transition-colors duration-150" data-package="{{ $template->packagename->title }}">
                                     <td class="px-6 py-5 whitespace-nowrap text-sm text-gray-500">{{ $index + 1 }}</td>
                                     <td class="px-6 py-5 whitespace-nowrap">
                                         <div class="flex items-center"> 
@@ -127,7 +135,21 @@
 
     document.getElementById('close-modal').addEventListener('click', function() {
         document.getElementById('image-modal').classList.add('hidden');
-    });
+    }); 
 
+    // Search function
+    document.getElementById('packageFilter').addEventListener('change', function () {
+        const selectedPackage = this.value.toLowerCase();
+        const rows = document.querySelectorAll('tbody tr');
+
+        rows.forEach(row => {
+            const packageTitle = row.getAttribute('data-package').toLowerCase();
+            if (!selectedPackage || packageTitle === selectedPackage) {
+                row.style.display = '';
+            } else {
+                row.style.display = 'none';
+            }
+        });
+    });
 </script>
 
