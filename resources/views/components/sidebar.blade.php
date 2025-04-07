@@ -65,12 +65,12 @@
                     <span>{{ __('Articles') }}</span>
                 </x-sidebar-link>
             </li> --}}
-            {{-- <li>
-                <x-sidebar-link href="">
+            <li>
+                <x-sidebar-link href="{{ route('article-categories.index') }}" :active="request()->routeIs('article-categories.*')">
                     <x-icon name="square-3-stack-3d" outline />
                     <span>{{ __('Article Category') }}</span>
                 </x-sidebar-link>
-            </li> --}}
+            </li>
             <li>
                 <x-sidebar-link href="{{ route('tags.index') }}" :active="request()->routeIs('tags.*')">
                     <x-icon name="tag" outline />

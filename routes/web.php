@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\ArticleCategoryController;
 use App\Http\Controllers\Admin\BannerController;
 use App\Http\Controllers\Admin\FAQController;
 use App\Http\Controllers\Admin\TagController;
@@ -24,6 +25,7 @@ Route::middleware('auth')->group(function () {
 
     Route::resource('faqs', FAQController::class);
     Route::resource('tags', TagController::class);
+    Route::resource('article-categories', ArticleCategoryController::class);
 });
 
 require __DIR__.'/auth.php';

@@ -11,7 +11,7 @@
             <!-- Email Address -->
             <div>
                 <x-input-label for="username" :value="__('Username')" />
-                <x-input id="username" class="block mt-1 w-full" type="email" name="username"
+                <x-input id="username" class="block mt-1 w-full" type="text" name="username"
                     placeholder="email@example.com" :value="old('username')" required autofocus autocomplete="email" />
                 <x-input-error :messages="$errors->get('username')" class="mt-2" />
             </div>
