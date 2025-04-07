@@ -119,6 +119,12 @@
                     <span>{{ __('FAQ') }}</span>
                 </x-sidebar-link>
             </li>
+            <li>
+                <x-sidebar-link href="{{ route('page-details.index') }}" :active="request()->routeIs('page-details.*')">
+                    <x-icon name="document-text" outline />
+                    <span>{{ __('Page Content') }}</span>
+                </x-sidebar-link>
+            </li>
         </ul>
     </div>
 
