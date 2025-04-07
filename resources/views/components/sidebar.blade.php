@@ -95,13 +95,13 @@
                     <span>{{ __('Packages') }}</span>
                 </x-sidebar-link>
             </li> --}}
-            {{-- <li>
-                <x-sidebar-link href="">
+            <li>
+                <x-sidebar-link href="{{ route('templates.index') }}" :active="request()->routeIs('templates.index')">
                     <x-icon name="clipboard-document-list" outline />
                     <span>{{ __('Template') }}</span>
                 </x-sidebar-link>
             </li>
-            <li>--}}
+            <li>
                 <x-sidebar-link href="{{ route('coupon.index') }}" :active="request()->routeIs('coupon.index')">
                     <x-icon name="tag" outline/>
                     <span>{{ __('Coupon') }}</span>
