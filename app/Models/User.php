@@ -13,10 +13,6 @@ class User extends Authenticatable
 
     protected $table = 'user';
 
-    protected $attributes = [
-        'type' => 'System',
-    ];
-
     public $timestamps = false;
 
     /**
@@ -32,6 +28,8 @@ class User extends Authenticatable
         'password',
         'added_by',
         'added_date',
+        'last_modified_by',
+        'last_modified_date',
     ];
 
     /**
@@ -52,6 +50,9 @@ class User extends Authenticatable
     {
         return [
             'password' => 'hashed',
+            'registered_date' => 'datetime',
+            'added_date' => 'datetime',
+            'last_modified_date' => 'datetime',
         ];
     }
 }

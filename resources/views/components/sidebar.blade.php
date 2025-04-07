@@ -83,12 +83,12 @@
                     <span>{{ __('Redirect Link') }}</span>
                 </x-sidebar-link>
             </li> --}}
-            {{-- <li>
-                <x-sidebar-link href="">
+            <li>
+                <x-sidebar-link href="{{ route('users.index') }}" :active="request()->routeIs('users.*')">
                     <x-icon name="users" outline />
                     <span>{{ __('Users') }}</span>
                 </x-sidebar-link>
-            </li> --}}
+            </li>
             {{-- <li>
                 <x-sidebar-link href="">
                     <x-icon name="rectangle-group" outline />
