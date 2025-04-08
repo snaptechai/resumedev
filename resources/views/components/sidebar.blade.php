@@ -89,12 +89,12 @@
                     <span>{{ __('Users') }}</span>
                 </x-sidebar-link>
             </li> --}}
-            {{-- <li>
-                <x-sidebar-link href="">
+            <li>
+                <x-sidebar-link href="{{ route('package.index') }}" :active="request()->routeIs('package.index')">
                     <x-icon name="rectangle-group" outline />
                     <span>{{ __('Packages') }}</span>
                 </x-sidebar-link>
-            </li> --}}
+            </li>
             <li>
                 <x-sidebar-link href="{{ route('templates.index') }}" :active="request()->routeIs('templates.index')">
                     <x-icon name="clipboard-document-list" outline />

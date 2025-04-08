@@ -4,7 +4,7 @@
             <div class="bg-white rounded-xl shadow-md overflow-hidden border border-gray-100"> 
                 <div class="bg-gradient-to-r from-gray-50 to-white border-b border-gray-100 px-6 py-4">
                     <h2 class="text-xl font-semibold text-gray-800">Active Campaigns</h2>
-                    <p class="text-sm text-gray-500 mt-1">Showing all {{ count($banners) }} banner campaigns</p>
+                    <p class="text-2xl text-gray-500 mt-1">Showing all {{ count($banners) }} banner campaigns</p>
                 </div>
                 
                 @include('admin.massage-bar')

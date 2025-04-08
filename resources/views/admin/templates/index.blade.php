@@ -2,7 +2,7 @@
     <div class="w-full py-2 "> 
             <div class="bg-white rounded-xl shadow-md overflow-hidden border border-gray-100"> 
                 <div class="px-4 py-3 border-b flex justify-between items-center mb-2">
-                    <h2 class="text-sm font-medium text-gray-700">All Template</h2>
+                    <h2 class="text-2xl font-medium text-gray-700">All Template</h2>
                     <div class="flex items-center"> 
                         <div class="relative inline-block text-left">
                             <button type="button" onclick="openModal('create-template')" class="inline-flex items-center px-3 py-1.5 text-sm border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500" id="actions-menu-button" aria-expanded="false" aria-haspopup="true"> Add New Template +
