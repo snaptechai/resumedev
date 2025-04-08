@@ -58,10 +58,13 @@ class BannerController extends Controller
      * Update the specified resource in storage.
      */
     public function update(Request $request, string $id)
-    {
-        dd($request->timmer_status);
+    { 
         $banner = Banner::findOrFail($id); 
         $endDate = Carbon::today()->addDays((int) $request->number_of_dates)->format('Y-m-d'); // Cast to int
+
+        
+        $banner_status = $request->banner_status == "active" ?  "active" : "inactive";
+        $timmer_status = $request->timmer_status == "active" ?  "active" : "inactive";
 
         $banner->description = $request->description;
         $banner->background_color = $request->background_color;
@@ -70,13 +73,13 @@ class BannerController extends Controller
         // $banner->added_date = $request->banner_status;
         // $banner->last_modified_by = $request->banner_status;
         // $banner->last_modified_date = $request->banner_status;
-        $banner->timmer_status = $request->timmer_status;
-        $banner->banner_status = $request->banner_status;
+        $banner->timmer_status = $timmer_status;
+        $banner->banner_status = $banner_status;
         $banner->number_of_dates = $request->number_of_dates;
         $banner->end_date = $endDate;
         $banner->save();
 
-        return redirect()->back();
+        return redirect()->route('banner.index')->with('success','Banner Details Successfully Updated!');
     }
 
     /**

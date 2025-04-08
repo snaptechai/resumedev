@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\ArticleCategoryController;
 use App\Http\Controllers\Admin\BannerController;
+use App\Http\Controllers\Admin\CouponController;
 use App\Http\Controllers\Admin\FAQController;
 use App\Http\Controllers\Admin\PageDetailController;
 use App\Http\Controllers\Admin\TagController;
@@ -24,7 +25,7 @@ Route::middleware('auth')->group(function () {
 
     Route::resource('banner', BannerController::class);
     Route::post('/update-banner-status/{id}', [BannerController::class, 'updateBannerStatus']);
-
+    Route::resource('coupon', CouponController::class);
     Route::resource('faqs', FAQController::class);
     Route::resource('tags', TagController::class);
     Route::resource('article-categories', ArticleCategoryController::class);
