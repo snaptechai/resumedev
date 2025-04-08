@@ -4,7 +4,7 @@ use App\Http\Controllers\Admin\ArticleCategoryController;
 use App\Http\Controllers\Admin\BannerController;
 use App\Http\Controllers\Admin\CouponController;
 use App\Http\Controllers\Admin\FAQController;
-use App\Http\Controllers\admin\PackageController;
+use App\Http\Controllers\Admin\PackageController;
 use App\Http\Controllers\Admin\PageDetailController;
 use App\Http\Controllers\Admin\TagController;
 use App\Http\Controllers\Admin\TemplatesController;
