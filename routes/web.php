@@ -4,8 +4,10 @@ use App\Http\Controllers\Admin\ArticleCategoryController;
 use App\Http\Controllers\Admin\BannerController;
 use App\Http\Controllers\Admin\CouponController;
 use App\Http\Controllers\Admin\FAQController;
+use App\Http\Controllers\admin\PackageController;
 use App\Http\Controllers\Admin\PageDetailController;
 use App\Http\Controllers\Admin\TagController;
+use App\Http\Controllers\Admin\TemplatesController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
@@ -31,6 +33,8 @@ Route::middleware('auth')->group(function () {
     Route::resource('article-categories', ArticleCategoryController::class);
     Route::resource('users', UserController::class);
     Route::resource('page-details', PageDetailController::class);
+    Route::resource('templates', TemplatesController::class);
+    Route::resource('package', PackageController::class);
 });
 
 require __DIR__.'/auth.php';
