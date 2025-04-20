@@ -114,9 +114,9 @@
                     </div>
                     <h3 class="mt-2 text-xl font-bold text-gray-900">No active Coupon</h3>
                     <p class="mt-2 text-gray-500">Create your first article to grab your visitors' attention with timely promotions and special coupon offers. Encourage them to save more while exploring your site!</p>
-                    <div class="mt-8"> 
-                        <button type="button" onclick="openModal('create-coupon')" class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-green-600 to-green-400 text-white rounded-lg font-semibold text-sm shadow-md hover:from-green-700 hover:to-green-500 transform transition duration-200 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500" aria-expanded="false" aria-haspopup="true"> + Create Your First Coupon
-                        </button> 
+                    <div class="mt-8">  
+                        <button type="button" onclick="openModal('create-coupon')" class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-green-600 to-green-400 text-white rounded-lg font-semibold text-sm shadow-md hover:from-green-700 hover:to-green-500 transform transition duration-200 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500" id="actions-menu-button" aria-expanded="false" aria-haspopup="true"> + Create Your First Coupon +
+                        </button>  
                     </div>
                 </div>
             </div>

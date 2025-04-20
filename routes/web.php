@@ -7,7 +7,7 @@ use App\Http\Controllers\Admin\CouponController;
 use App\Http\Controllers\Admin\FAQController;
 use App\Http\Controllers\Admin\PackageController;
 use App\Http\Controllers\Admin\PageDetailController;
-use App\Http\Controllers\admin\RedirectLinkController;
+use App\Http\Controllers\Admin\RedirectLinkController;
 use App\Http\Controllers\Admin\TagController;
 use App\Http\Controllers\Admin\TemplatesController;
 use App\Http\Controllers\Admin\UserController;
