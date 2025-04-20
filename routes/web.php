@@ -4,6 +4,7 @@ use App\Http\Controllers\Admin\BannerController;
 use App\Http\Controllers\Admin\CouponController;
 use App\Http\Controllers\Admin\FAQController;
 use App\Http\Controllers\admin\PackageController;
+use App\Http\Controllers\admin\RedirectLinkController;
 use App\Http\Controllers\Admin\TagController;
 use App\Http\Controllers\Admin\TemplatesController;
 use App\Http\Controllers\ProfileController;
@@ -29,6 +30,7 @@ Route::middleware('auth')->group(function () {
     Route::resource('tags', TagController::class);
     Route::resource('templates', TemplatesController::class);
     Route::resource('package', PackageController::class);
+    Route::resource('redirectlink', RedirectLinkController::class);
 });
 
 require __DIR__.'/auth.php';

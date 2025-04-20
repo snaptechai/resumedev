@@ -77,12 +77,12 @@
                     <span>{{ __('Article Tag') }}</span>
                 </x-sidebar-link>
             </li>
-            {{-- <li>
-                <x-sidebar-link href="">
+            <li>
+                <x-sidebar-link href="{{ route('redirectlink.index') }}" :active="request()->routeIs('redirectlink.*')">
                     <x-icon name="link" outline />
                     <span>{{ __('Redirect Link') }}</span>
                 </x-sidebar-link>
-            </li> --}}
+            </li>
             {{-- <li>
                 <x-sidebar-link href="">
                     <x-icon name="users" outline />
