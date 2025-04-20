@@ -112,15 +112,11 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 4a2 2 0 114 0v1a1 1 0 001 1h3a1 1 0 011 1v3a1 1 0 01-1 1h-1a2 2 0 100 4h1a1 1 0 011 1v3a1 1 0 01-1 1h-3a1 1 0 01-1-1v-1a2 2 0 10-4 0v1a1 1 0 01-1 1H7a1 1 0 01-1-1v-3a1 1 0 00-1-1H4a2 2 0 110-4h1a1 1 0 001-1V7a1 1 0 011-1h3a1 1 0 001-1V4z" />
                         </svg>
                     </div>
-                    <h3 class="mt-2 text-xl font-bold text-gray-900">No active banners</h3>
-                    <p class="mt-2 text-gray-500">Create your first banner campaign to engage visitors with timely promotions and announcements.</p>
-                    <div class="mt-8">
-                        <a href="{{ route('banner.create') }}" class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-green-600 to-green-400 text-white rounded-lg font-semibold text-sm shadow-md hover:from-green-700 hover:to-green-500 transform transition duration-200 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
-                            <svg class="h-5 w-5 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-                            </svg>
-                            Create Your First Banner
-                        </a>
+                    <h3 class="mt-2 text-xl font-bold text-gray-900">No active Coupon</h3>
+                    <p class="mt-2 text-gray-500">Create your first article to grab your visitors' attention with timely promotions and special coupon offers. Encourage them to save more while exploring your site!</p>
+                    <div class="mt-8"> 
+                        <button type="button" onclick="openModal('create-coupon')" class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-green-600 to-green-400 text-white rounded-lg font-semibold text-sm shadow-md hover:from-green-700 hover:to-green-500 transform transition duration-200 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500" aria-expanded="false" aria-haspopup="true"> + Create Your First Coupon
+                        </button> 
                     </div>
                 </div>
             </div>

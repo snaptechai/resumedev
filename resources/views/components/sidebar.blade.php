@@ -60,7 +60,7 @@
                 </x-sidebar-link>
             </li> --}}
             <li>
-                <x-sidebar-link href="{{ route('articles.index') }}" :active="request()->routeIs('articles.*')">
+                <x-sidebar-link href="">
                     <x-icon name="newspaper" outline />
                     <span>{{ __('Articles') }}</span>
                 </x-sidebar-link>
