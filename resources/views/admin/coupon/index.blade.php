@@ -96,7 +96,6 @@
                         </tbody>
                     </table>
                 </div>
-                @include('admin.coupon.create')
                  
                 @if(method_exists($coupons, 'links'))
                     <div class="bg-white px-6 py-4 border-t border-gray-100">
@@ -121,6 +120,8 @@
                 </div>
             </div>
         @endif
+        
+        @include('admin.coupon.create')
     </div>  
 </x-layouts.app>
 
