@@ -13,7 +13,6 @@ return new class extends Migration
     {
         Schema::table('package', function (Blueprint $table) {
             $table->text('addons')->nullable()->after('short_description');
-            $table->decimal('discount',8,2)->nullable()->after('price');
             $table->integer('is_popular')->default(0)->after('discount');
         });
     }

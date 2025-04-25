@@ -3,9 +3,12 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
+use App\Models\Addon;
+use App\Models\Coupon;
 use App\Models\Order;
 use App\Models\OrderPackage;
 use App\Models\Package;
+use App\Models\Payment;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -24,8 +27,17 @@ class CartController extends Controller
             ], 400);
         }
         $date = date('Y-m-d');
-        $check = DB::table('coupon')->where('coupon', $coupon)->where('status', 1)
-        ->where('start_date', '<=', $date)->where('end_date', '>=', $date)->first();
+        $check = DB::table('coupon')->where('coupon', $coupon)
+        ->where('start_date', '<=', $date)
+        ->where('end_date', '>=', $date)
+        ->where(function ($query) {
+            $query->whereNull('one_time')
+              ->orWhere(function ($query) {
+                  $query->whereNotNull('one_time')
+                    ->whereNull('used_by');
+              });
+        })
+        ->first();
 
         if(isset($check))
         {
@@ -49,47 +61,42 @@ class CartController extends Controller
     {
  
         $input = $request->except('_token');
-        $input['order_status'] = 3;
+        $input['order_status'] = 1;
     
         $user = auth()->user()->id;
 
         $input['location_id'] = 1;
-        $transaction = Order::where('order_status', 3)->where('uid', $user)->first();
+        $order = Order::where('order_status', 1)->where('uid', $user)->first();
         $package = Package::where('id', $input['package_id'])->first();
 
-        if(!isset($transaction))
+        if(!isset($order))
         {   
-            $transaction = new Order();
+            $order = new Order();
         } else {
-            OrderPackage::where('oid', $transaction->id)->delete();
-            $transaction->total_price = 0;
-            $transaction->save();
+            OrderPackage::where('oid', $order->id)->delete();
+            $order->total_price = 0;
+            $order->save();
         }
         
-        $transaction->uid = $user;
-        $transaction->package_id = $input['package_id'];
-        $transaction->added_by = $user;
-        $transaction->added_date = date('Y-m-d');
-        $transaction->end_date = date('Y-m-d');
-        $transaction->payment_status = 'due';
-        $transaction->order_status = 3;
-        $transaction->total_price = isset($package) ? $package->price : 0;
-        $transaction->currency_symbol = '$';
-        $transaction->currency = 'usd';
-        $transaction->coupon = null;
-        $transaction->save();
+        $order->uid = $user;
+        $order->package_id = $input['package_id'];
+        $order->added_by = $user;
+        $order->added_date = date('Y-m-d');
+        $order->end_date = date('Y-m-d');
+        $order->payment_status = 'pending';
+        $order->order_status = 1;
+        $order->total_price = isset($package) ? $package->price : 0;
+        $order->currency_symbol = '$';
+        $order->currency = 'usd';
+        $order->coupon = null;
+        $order->save();
         
-        $data = OrderPackage::where('oid', $transaction->id)->get();
-        $data->map(function($item) {
-            $item->price = (string)$item->price;
-        });
-        $date['order'] = $transaction;
-        $date['order_line'] = $data; 
+        $data['order'] = $order;
 
         return response()->json([
                 'http_status' => 200,
                 'http_status_message' => 'Success',
-                'data' => $date
+                'data' => $data
             ], 200);
     }
 
@@ -97,8 +104,11 @@ class CartController extends Controller
     {
         $user = auth()->user()->id;
         $input['location_id'] = 1;
-        $transaction = Order::where('order_status', 3)->where('uid', $user)->first();
+
+        $transaction = Order::where('order_status', 1)->where('uid', $user)->first();
+        
         $lines = [];
+        
         if(isset($transaction))
         {
             $order_lines = OrderPackage::where('oid', $transaction->id)->get();
@@ -108,7 +118,9 @@ class CartController extends Controller
                 'total' => (string)$transaction->total_price,
                 'currency_code' => $transaction->currency_symbol,
                 'package_id' => $transaction->package_id,
-                'package' => isset($package) ? $package->title : '',
+                'package' => $package->title,
+                'package_price' => (string)$package->price,
+                'short_description' => $package->short_description,
                 'lines' => []
             ];
             foreach($order_lines as $line)
@@ -124,11 +136,9 @@ class CartController extends Controller
                 ];
 
                 array_push($lines['lines'], $data);
-               
-
             }
         }
-
+        
         if(!isset($transaction))
         {
             return response()->json([
@@ -163,8 +173,7 @@ class CartController extends Controller
         {
             $package = new OrderPackage();
         }
-        
-            
+           
         $package->oid = $transaction->id;
         $package->pid = $transaction->package_id;
         $package->addon_id = $input['addon_id'];
@@ -219,9 +228,9 @@ class CartController extends Controller
         {
             $order_id = $line->oid;
             $line_price = $line->price * $line->quantity;
-           $order = Order::find($order_id);
-           $order->total_price = $order->total_price - $line_price;
-           $order->save();
+            $order = Order::find($order_id);
+            $order->total_price = $order->total_price - $line_price;
+            $order->save();
             $line->delete();
 
             return response()->json([
@@ -242,10 +251,10 @@ class CartController extends Controller
     public function clear(Request $request)
     {
         $user = auth()->user()->id;
-        $order = Order::where('order_status', 3)->where('uid', $user)->first();
+        $order = Order::where('order_status', 1)->where('uid', $user)->first();
         if(isset($order))
         {
-            $lines = OrderPackage::where('oid', $order->id)->delete();
+            OrderPackage::where('oid', $order->id)->delete();
             $order->delete();
             return response()->json([
                 'http_status' => 200,
@@ -262,91 +271,22 @@ class CartController extends Controller
 
     }
 
-    public function placeOrder(Request $request)
-    {
-        $order_id = $request->order_id;
-        $user = auth()->user()->id;
-        $transaction = Order::find($order_id);
-       
-        if(isset($transaction))
-        {
-            // $transaction->order_status = '1';
-            // $transaction->payment_status = 'paid';
-            $transaction->coupon = $request->coupon_id;
-            $transaction->save();
-            $packages = $request->packages;
-            $total = 0;
-            foreach ($packages ?? [] as $pr => $product) {
-                $addon = Addon::find($product['addon_id']);
-                $package = OrderPackage::where('addon_id', $product['addon_id'])->where('oid', $transaction->id)->first();
-                if(!isset($package))
-                {
-                    $package = new OrderPackage();
-                }
-                $package->oid = $transaction->id;
-                $package->pid = $transaction->package_id;
-                $package->addon_id = $product['addon_id'];
-                $package->quantity = $product['quantity'];
-                $package->price = $addon->price;
-                $package->save();
-
-                $total += $addon->price;
-            }
-
-            $package = DB::table('package')->where('id', $transaction->package_id)->first();
-            $sub_total = $package->price + $total;
-            if(isset($request->coupon_id))
-            {
-                $coupon = DB::table('coupon')->where('id', $request->coupon_id)->first();
-                $sub_total = $sub_total - $coupon->price;
-            }
-            
-            $transaction->total_price = $sub_total;
-            $transaction->save();
-            if($request->stripeToken)
-            {
-                Stripe\Stripe::setApiKey('sk_test_51Qt02JBCCDTvPwlcRtuXqMvXZcazjopgRKlk9DmNg7j7r6M7l6mzKJ9PVDvw2tGqdNaEnB7OvUbovNfMTfdfqSod000eRy8R9E');
-      
-                Stripe\Charge::create ([
-                        "amount" => $transaction->total_price * 100,
-                        "currency" => "usd",
-                        "source" => $request->stripeToken,
-                        "description" => "resume solution" 
-                ]);
-
-                $transaction->order_status = '1';
-                $transaction->payment_status = 'paid';
-                $transaction->save();
-            }
-            
-            return response()->json([
-                'http_status' => 200,
-                'http_status_message' => 'Success',
-                'message' => 'Added Successfully',
-            ], 200);
-        }
-        return response()->json([
-            'http_status' => 404,
-            'http_status_message' => 'Warning',
-            'message' => 'Transaction not Found',
-        ], 404);
-    }
-
     public function post(Request $request)
     {
         $order_id = $request->order_id;
         $user = auth()->user()->id;
         $transaction = Order::find($order_id);
+
         if(isset($transaction) && $transaction->payment_status !== 'paid')
-        {
-            
+        {    
             $transaction->coupon = $request->coupon_id;
             $transaction->save();
            
             $sub_total = $transaction->total_price;
+
             if(isset($request->coupon_id))
             {
-                $coupon = DB::table('coupon')->where('id', $request->coupon_id)->first();
+                $coupon = Coupon::find($request->coupon_id);
                 $sub_total = $sub_total - $coupon->price;
             }
             
@@ -354,17 +294,19 @@ class CartController extends Controller
             $transaction->save();
 
             $paid = Payment::where('order_id', $transaction->id)->sum('amount');
+
             $due = $transaction->total_price - $paid;
+
             if($request->payment_method_id)
             {
-                $stripe = new \Stripe\StripeClient('sk_test_51Qt02JBCCDTvPwlcRtuXqMvXZcazjopgRKlk9DmNg7j7r6M7l6mzKJ9PVDvw2tGqdNaEnB7OvUbovNfMTfdfqSod000eRy8R9E');
+                $stripe = new \Stripe\StripeClient('sk_test_51LzZb5Fp8KE7uxpzr67sAT2BfstMXudx3uRHozPJPKZAhyEQbGEm7bvQAg9oLl6CDsghApc6dCKzpoXJZ8eaHU2Y00EHwAfclJ');
        
                 $stripe->paymentIntents->create([
-                'amount' => $due * 100,
-                'currency' => 'usd',
-                'payment_method_types' => ['card'],
-                'payment_method' => $request->payment_method_id,
-                'confirm' => true,
+                    'amount' => $due * 100,
+                    'currency' => 'usd',
+                    'payment_method_types' => ['card'],
+                    'payment_method' => $request->payment_method_id,
+                    'confirm' => true,
                 ]);
 
                 $transaction->order_status = '1';
@@ -402,8 +344,6 @@ class CartController extends Controller
                     ];
 
                     array_push($lines['lines'], $data);
-                
-
                 }
             }
             return response()->json([
@@ -517,7 +457,7 @@ class CartController extends Controller
         $due = $transaction->total_price - $paid;
         if($request->payment_method_id)
         {
-            $stripe = new \Stripe\StripeClient('sk_test_51Qt02JBCCDTvPwlcRtuXqMvXZcazjopgRKlk9DmNg7j7r6M7l6mzKJ9PVDvw2tGqdNaEnB7OvUbovNfMTfdfqSod000eRy8R9E');
+            $stripe = new \Stripe\StripeClient('sk_test_51LzZb5Fp8KE7uxpzr67sAT2BfstMXudx3uRHozPJPKZAhyEQbGEm7bvQAg9oLl6CDsghApc6dCKzpoXJZ8eaHU2Y00EHwAfclJ');
     
             $stripe->paymentIntents->create([
             'amount' => $due * 100,

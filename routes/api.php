@@ -19,11 +19,11 @@ Route::prefix('v1')->group(function () {
             Route::put('cart/update', 'update');
             Route::delete('cart/delete/{id}', 'delete');
             Route::delete('cart/clear', 'clear');
-            Route::put('placeorder', 'placeOrder');
             Route::post('cart/place-order', 'post');
             Route::get('previous-orders', 'getPrevious');
             Route::get('current-order', 'currentOrder');
             Route::put('current-order-update', 'updateCurrentOrder');
+            Route::get('coupon', 'getCoupon');
         });
     });
 });
