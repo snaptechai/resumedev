@@ -53,12 +53,12 @@
                     <span>{{ __('Affiliate Users') }}</span>
                 </x-sidebar-link>
             </li> --}}
-            {{-- <li>
-                <x-sidebar-link href="">
-                    <x-icon name="currency-dollar" outline />
-                    <span>{{ __('Affiliate Withdrawals') }}</span>
+            <li>
+                <x-sidebar-link href="{{ route('review.index') }}" :active="request()->routeIs('review.*')">
+                    <x-icon name="ticket" outline />
+                    <span>{{ __('Review') }}</span>
                 </x-sidebar-link>
-            </li> --}}
+            </li>
             <li>
                 <x-sidebar-link href="">
                     <x-icon name="newspaper" outline />

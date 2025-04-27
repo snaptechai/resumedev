@@ -8,6 +8,7 @@ use App\Http\Controllers\Admin\FAQController;
 use App\Http\Controllers\Admin\PackageController;
 use App\Http\Controllers\Admin\PageDetailController;
 use App\Http\Controllers\Admin\RedirectLinkController;
+use App\Http\Controllers\Admin\ReviewController;
 use App\Http\Controllers\Admin\TagController;
 use App\Http\Controllers\Admin\TemplatesController;
 use App\Http\Controllers\Admin\UserController;
@@ -38,6 +39,8 @@ Route::middleware('auth')->group(function () {
     Route::resource('templates', TemplatesController::class);
     Route::resource('package', PackageController::class);
     Route::resource('redirectlink', RedirectLinkController::class);
+    Route::resource('review', ReviewController::class); 
+
 });
 
 require __DIR__.'/auth.php';
