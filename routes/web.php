@@ -5,6 +5,7 @@ use App\Http\Controllers\Admin\ArticleController;
 use App\Http\Controllers\Admin\BannerController;
 use App\Http\Controllers\Admin\CouponController;
 use App\Http\Controllers\Admin\FAQController;
+use App\Http\Controllers\Admin\OrderController;
 use App\Http\Controllers\Admin\PackageController;
 use App\Http\Controllers\Admin\PageDetailController;
 use App\Http\Controllers\Admin\RedirectLinkController;
@@ -40,6 +41,7 @@ Route::middleware('auth')->group(function () {
     Route::resource('package', PackageController::class);
     Route::resource('redirectlink', RedirectLinkController::class);
     Route::resource('review', ReviewController::class); 
+    Route::resource('order', OrderController::class); 
 
 });
 

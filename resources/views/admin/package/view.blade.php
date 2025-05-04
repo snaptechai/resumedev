@@ -37,7 +37,6 @@
                 @endforeach
             </div>
 
-            {{-- Uncomment if needed --}}
             <div class="mb-6">
                 <label for="short_description" class="block text-sm font-semibold text-gray-800 dark:text-gray-200 mb-2">
                     Short Description
