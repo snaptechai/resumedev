@@ -53,6 +53,29 @@
                     <span>{{ __('Affiliate Users') }}</span>
                 </x-sidebar-link>
             </li> --}}
+            {{-- <li x-data="{ open: {{ request()->routeIs('package.*') ? 'true' : 'false' }} }">
+                <x-sidebar-link @click.prevent="open = !open">
+                    <x-icon name="archive-box-arrow-down" outline />
+                    <span>{{ __('Orders') }}</span>
+                    <svg class="w-5 h-5 transition-transform" :class="{'rotate-180': open}" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+                    </svg>
+                </x-sidebar-link>
+                <ul x-show="open" class="pl-6 space-y-2">
+                    <li>
+                        <x-sidebar-link href="{{ route('package.index') }}" :active="request()->routeIs('package.index')">
+                            <x-icon name="rectangle-group" outline />
+                            <span>{{ __('Packages') }}</span>
+                        </x-sidebar-link>
+                    </li>
+                </ul>
+            </li> --}}
+            <li>
+                <x-sidebar-link href="{{ route('order.index') }}" :active="request()->routeIs('order.*')">
+                    <x-icon name="archive-box-arrow-down" outline />
+                    <span>{{ __('Orders') }}</span>
+                </x-sidebar-link>
+            </li>
             <li>
                 <x-sidebar-link href="{{ route('review.index') }}" :active="request()->routeIs('review.*')">
                     <x-icon name="ticket" outline />
