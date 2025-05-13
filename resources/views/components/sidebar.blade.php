@@ -172,5 +172,8 @@
                 </li>
             </ul>
         </x-slot:content>
-    </x-dropdown>
+    </x-dropdown>    
+    <div class="mt-auto pt-4 text-xs text-center text-on-surface/70 dark:text-on-surface-dark/70">
+        © {{ date('Y') }} All Rights Reserved by <b> synapses.ai (Pvt) Ltd.</b>
+    </div>
 </nav>
