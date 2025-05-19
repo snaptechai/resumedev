@@ -1,7 +1,6 @@
 <?php
 
 use App\Http\Controllers\Admin\ArticleCategoryController;
-use App\Http\Controllers\Admin\ArticleController;
 use App\Http\Controllers\Admin\BannerController;
 use App\Http\Controllers\Admin\CouponController;
 use App\Http\Controllers\Admin\FAQController;
@@ -38,11 +37,11 @@ Route::middleware('auth')->group(function () {
     Route::resource('users', UserController::class);
     Route::resource('page-details', PageDetailController::class);
     Route::resource('templates', TemplatesController::class);
-    Route::resource('package', PackageController::class);
-    Route::resource('redirectlink', RedirectLinkController::class);
-    Route::resource('review', ReviewController::class); 
-    Route::resource('order', OrderController::class); 
-
+    Route::resource('packages', PackageController::class);
+    Route::resource('redirect-links', RedirectLinkController::class);
+    Route::resource('reviews', ReviewController::class);
+    Route::resource('orders', OrderController::class);
+    Route::post('orders/{id}/message', [OrderController::class, 'storeMessage'])->name('orders.message');
 });
 
 require __DIR__.'/auth.php';

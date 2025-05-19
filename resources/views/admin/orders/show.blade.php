@@ -1,0 +1,540 @@
+<x-layouts.app>
+    <div class="w-full">
+        <div class="bg-white rounded-xl overflow-hidden mb-6 border border-gray-100">
+            <div class="bg-[#f0f9e8] px-6 py-4 border-b border-gray-100 flex items-center">
+                <div class="h-8 w-8 flex items-center justify-center bg-[#BCEC88]/20 rounded-lg mr-3">
+                    <x-icon name="chat-bubble-oval-left" class="h-5 w-5 text-[#6b8f3b]" />
+                </div>
+                <h2 class="text-xl font-semibold text-gray-800">Conversation</h2>
+            </div>
+
+            <div class="h-[550px] overflow-y-auto p-6 bg-white space-y-6" id="messages">
+                @if (count($formattedMessages) > 0)
+                    @foreach ($formattedMessages as $msg)
+                        <div class="{{ $msg['side'] === 'left' ? 'pl-2' : 'pr-2' }}">
+                            <div class="flex {{ $msg['side'] === 'left' ? '' : 'justify-end' }} mb-3">
+                                <div class="max-w-[80%]">
+                                    <div
+                                        class="{{ $msg['side'] === 'left' ? 'bg-[#f5f6f4]' : 'bg-[#bcec88]' }} p-4 rounded-xl">
+                                        <p class="text-base break-words leading-relaxed text-black">
+                                            {{ $msg['message'] }}
+                                        </p>
+                                        @if (count($msg['attachments']) > 0)
+                                            <div class="mt-3 pt-2 border-t border-gray-100">
+                                                @foreach ($msg['attachments'] as $attachment)
+                                                    @php
+                                                        $extension = pathinfo($attachment, PATHINFO_EXTENSION);
+                                                        $isImage = in_array(strtolower($extension), [
+                                                            'jpg',
+                                                            'jpeg',
+                                                            'png',
+                                                            'gif',
+                                                            'webp',
+                                                            'svg',
+                                                        ]);
+                                                    @endphp
+
+                                                    @if ($isImage)
+                                                        <div class="mt-2">
+                                                            <img src="{{ asset('storage/' . $attachment) }}"
+                                                                alt="Attachment"
+                                                                class="max-w-full rounded-lg border border-gray-200 max-h-64 object-contain" />
+                                                            <a href="{{ asset('storage/' . $attachment) }}"
+                                                                target="_blank"
+                                                                class="inline-flex items-center px-2.5 py-1.5 mt-2 text-xs font-medium text-blue-700 bg-blue-50 border border-blue-100 rounded hover:bg-blue-100 transition duration-200">
+                                                                <svg xmlns="http://www.w3.org/2000/svg"
+                                                                    class="h-4 w-4 mr-1.5" fill="none"
+                                                                    viewBox="0 0 24 24" stroke="currentColor">
+                                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                                        stroke-width="2"
+                                                                        d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" />
+                                                                </svg>
+                                                                {{ basename($attachment) }}
+                                                            </a>
+                                                        </div>
+                                                    @else
+                                                        <a href="{{ asset('storage/' . $attachment) }}" target="_blank"
+                                                            class="inline-flex items-center px-2.5 py-1.5 mt-2 text-xs font-medium text-blue-700 bg-blue-50 border border-blue-100 rounded hover:bg-blue-100 transition duration-200">
+                                                            <svg xmlns="http://www.w3.org/2000/svg"
+                                                                class="h-4 w-4 mr-1.5" fill="none"
+                                                                viewBox="0 0 24 24" stroke="currentColor">
+                                                                <path stroke-linecap="round" stroke-linejoin="round"
+                                                                    stroke-width="2"
+                                                                    d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" />
+                                                            </svg>
+                                                            {{ basename($attachment) }}
+                                                        </a>
+                                                    @endif
+                                                @endforeach
+                                            </div>
+                                        @endif
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="flex {{ $msg['side'] === 'left' ? '' : 'justify-end' }}">
+                                <div class="flex items-center mb-6">
+                                    @if ($msg['side'] === 'left')
+                                        <div
+                                            class="w-8 h-8 rounded-full bg-blue-600 text-white flex items-center justify-center text-sm font-semibold mr-2">
+                                            {{ substr($msg['user'], 0, 1) }}
+                                        </div>
+                                    @endif
+                                    <div class="flex flex-col">
+                                        <span
+                                            class="font-medium text-sm {{ $msg['side'] === 'left' ? 'text-blue-800' : 'text-green-800' }}">
+                                            {{ $msg['user'] }}
+                                        </span>
+                                        <span
+                                            class="text-xs text-gray-500 {{ $msg['side'] === 'left' ? 'text-left' : 'text-right' }}">
+                                            {{ $msg['created_at'] }}
+                                        </span>
+                                    </div>
+                                    @if ($msg['side'] === 'right')
+                                        <div
+                                            class="w-8 h-8 rounded-full bg-[#BCEC88] text-black flex items-center justify-center text-sm font-semibold ml-2">
+                                            {{ substr($msg['user'], 0, 1) }}
+                                        </div>
+                                    @endif
+                                </div>
+                            </div>
+                        </div>
+                    @endforeach
+                @else
+                    <div class="flex items-center justify-center h-full">
+                        <div class="text-center px-6 py-10 rounded-xl max-w-md mx-auto">
+                            <x-icon name="chat-bubble-oval-left-ellipsis"
+                                class="mx-auto h-16 w-16 text-gray-300 mb-4" />
+                            <h3 class="text-lg font-semibold text-gray-800 mb-1">No messages yet</h3>
+                            <p class="text-gray-500 text-sm mb-4">Send a message to start the conversation</p>
+                        </div>
+                    </div>
+                @endif
+            </div>
+
+            <div class="p-6 border-t border-gray-100 bg-gray-50">
+                <form action="{{ route('orders.message', $order->id) }}" method="POST" enctype="multipart/form-data"
+                    class="space-y-4">
+                    @csrf
+                    <div class="relative">
+                        <textarea id="message-input" name="message" rows="3"
+                            class="w-full px-4 py-3 text-gray-700 bg-white border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#BCEC88] focus:border-[#BCEC88] focus:outline-none transition"
+                            placeholder="Type your message here..." required></textarea>
+                        <button type="button" id="emoji-button"
+                            class="absolute right-3 bottom-3 text-gray-500 hover:text-gray-700 transition-colors cursor-pointer">
+                            <x-icon name="face-smile" class="h-6 w-6" />
+                        </button>
+                        <div id="emoji-picker-container" class="absolute right-8 bottom-8 z-10"></div>
+                    </div>
+
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center">
+                            <label for="attachment"
+                                class="inline-flex items-center px-3.5 py-2.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 focus:outline-none cursor-pointer transition">
+                                <x-icon name="paper-clip" class="h-5 w-5 text-gray-500 mr-2" />
+                                Attach File
+                                <input id="attachment" name="attachment" type="file" class="hidden">
+                            </label>
+                            <span id="file-name" class="ml-3 text-sm text-gray-600"></span>
+                        </div>
+                        <button type="submit"
+                            class="inline-flex items-center px-5 py-2.5 text-sm font-medium text-[#5D7B2B] bg-[#BCEC88] border border-transparent rounded-lg shadow-sm transition duration-200 hover:bg-[#BCEC88]/90 focus:outline-none">
+                            <span>Send Message</span>
+                            <x-icon name="paper-airplane" class="h-5 w-5 ml-2" />
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-xl overflow-hidden border border-gray-100 mt-6">
+            <div class="bg-[#f0f9e8] px-6 py-4 border-b border-gray-100 flex justify-between items-center">
+                <h2 class="text-xl font-semibold text-gray-800 dark:text-white">Order Details</h2>
+                <x-modal id="edit-order-{{ $order->id }}">
+                    <x-slot name="trigger">
+                        <button x-on:click="modalIsOpen = true" type="button"
+                            class="whitespace-nowrap rounded-lg bg-[#BCEC88] border border-transparent px-4 py-2 text-sm font-medium tracking-wide text-[#5D7B2B] transition hover:bg-[#BCEC88]/90 text-center focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#BCEC88] active:opacity-100 active:outline-offset-0 disabled:opacity-75 disabled:cursor-not-allowed">
+                            <div class="flex items-center">
+                                <x-icon name="pencil-square" class="h-4 w-4 mr-1.5" />
+                                Edit Details
+                            </div>
+                        </button>
+                    </x-slot>
+
+                    <x-slot name="header">
+                        <h3 class="text-lg font-semibold">
+                            Edit Order Details
+                        </h3>
+                    </x-slot>
+
+                    <div class="p-4">
+                        @include('admin.orders.edit', ['order' => $order])
+                    </div>
+                </x-modal>
+            </div>
+
+            <div class="p-6">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                    <div class="space-y-6">
+                        <div class="bg-white border border-gray-200 rounded-lg overflow-hidden shadow-sm">
+                            <div class="p-4 bg-gray-50 border-b border-gray-200">
+                                <h3 class="text-sm font-semibold text-gray-700 uppercase">Order Information</h3>
+                            </div>
+                            <div class="divide-y divide-gray-200">
+                                <div class="flex justify-between py-3 px-4">
+                                    <span class="text-sm text-gray-500">Order Number</span>
+                                    <span
+                                        class="text-sm font-medium text-gray-900">{{ 'RM' . sprintf('%06d', $order->id) }}</span>
+                                </div>
+                                <div class="flex justify-between py-3 px-4">
+                                    <span class="text-sm text-gray-500">Express Service</span>
+                                    <span class="text-sm font-medium">
+                                        @if ($order->express == 1)
+                                            <span
+                                                class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">Yes</span>
+                                        @else
+                                            <span
+                                                class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">No</span>
+                                        @endif
+                                    </span>
+                                </div>
+                                <div class="flex justify-between py-3 px-4">
+                                    <span class="text-sm text-gray-500">Date Ordered</span>
+                                    <span
+                                        class="text-sm font-medium text-gray-900">{{ date('M d, Y', strtotime($order->added_date)) }}</span>
+                                </div>
+                                <div class="flex justify-between py-3 px-4">
+                                    <span class="text-sm text-gray-500">Due Date</span>
+                                    <span
+                                        class="text-sm font-medium text-gray-900">{{ date('M d, Y', strtotime($order->end_date)) }}</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-white border border-gray-200 rounded-lg overflow-hidden shadow-sm">
+                            <div class="p-4 bg-gray-50 border-b border-gray-200">
+                                <h3 class="text-sm font-semibold text-gray-700 uppercase">Order Status</h3>
+                            </div>
+                            <div class="divide-y divide-gray-200">
+                                <div class="flex justify-between py-3 px-4">
+                                    <span class="text-sm text-gray-500">Current Status</span>
+                                    <span class="text-sm font-medium">
+                                        @php
+                                            $statusMap = [
+                                                1 => ['class' => 'bg-yellow-100 text-yellow-800'],
+                                                2 => ['class' => 'bg-green-100 text-green-800'],
+                                                3 => ['class' => 'bg-blue-100 text-blue-800'],
+                                                4 => ['class' => 'bg-red-100 text-red-800'],
+                                                5 => ['class' => 'bg-red-100 text-red-800'],
+                                            ];
+                                            $orderStatus = \App\Models\OrderSetp::find($order->order_status);
+                                            $statusColor =
+                                                $statusMap[$order->order_status]['class'] ??
+                                                'bg-gray-100 text-gray-800';
+                                        @endphp
+                                        <span
+                                            class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {{ $statusColor }}">
+                                            {{ $orderStatus ? $orderStatus->step : 'Unknown' }}
+                                        </span>
+                                    </span>
+                                </div>
+                                <div class="flex justify-between py-3 px-4">
+                                    <span class="text-sm text-gray-500">Assigned Writer</span>
+                                    <span
+                                        class="text-sm font-medium text-gray-900">{{ $order->writer ?: 'Not assigned' }}</span>
+                                </div>
+                                <div class="flex justify-between py-3 px-4">
+                                    <span class="text-sm text-gray-500">Last Modified</span>
+                                    <span class="text-sm font-medium text-gray-900">
+                                        {{ $order->last_modified_date ? date('M d, Y', strtotime($order->last_modified_date)) : 'N/A' }}
+                                    </span>
+                                </div>
+                                <div class="flex justify-between py-3 px-4">
+                                    <span class="text-sm text-gray-500">Modified By</span>
+                                    <span
+                                        class="text-sm font-medium text-gray-900">{{ $order->last_modified_by ?: 'N/A' }}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="space-y-6">
+                        <div class="bg-white border border-gray-200 rounded-lg overflow-hidden shadow-sm">
+                            <div class="p-4 bg-gray-50 border-b border-gray-200">
+                                <h3 class="text-sm font-semibold text-gray-700 uppercase">Payment Information</h3>
+                            </div>
+                            <div class="divide-y divide-gray-200">
+                                <div class="flex justify-between py-3 px-4">
+                                    <span class="text-sm text-gray-500">Payment Status</span>
+                                    <span class="text-sm font-medium">
+                                        @if ($order->payment_status == 'paid')
+                                            <span
+                                                class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">Paid</span>
+                                        @else
+                                            <span
+                                                class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-orange-100 text-orange-800">{{ ucfirst($order->payment_status) }}</span>
+                                        @endif
+                                    </span>
+                                </div>
+                                @if (isset($paymentDetails) && $paymentDetails->transaction_id)
+                                    <div class="flex justify-between py-3 px-4">
+                                        <span class="text-sm text-gray-500">Transaction ID</span>
+                                        <span
+                                            class="text-sm font-medium text-gray-900">{{ $paymentDetails->transaction_id }}</span>
+                                    </div>
+                                @endif
+                                <div class="flex justify-between py-3 px-4">
+                                    <span class="text-sm text-gray-500">Total Amount</span>
+                                    <span class="text-sm font-medium text-green-600">{{ $order->total_price }}</span>
+                                </div>
+                                <div class="flex justify-between py-3 px-4">
+                                    <span class="text-sm text-gray-500">Currency</span>
+                                    <span
+                                        class="text-sm font-medium text-gray-900 uppercase">{{ $order->currency }}</span>
+                                </div>
+                                <div class="flex justify-between py-3 px-4">
+                                    <span class="text-sm text-gray-500">Coupon Applied</span>
+                                    <span class="text-sm font-medium">
+                                        @if ($order->coupon)
+                                            <span
+                                                class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                                                {{ $order->coupon }}
+                                            </span>
+                                        @else
+                                            <span class="text-gray-500">None</span>
+                                        @endif
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-white border border-gray-200 rounded-lg overflow-hidden shadow-sm">
+                            <div class="p-4 bg-gray-50 border-b border-gray-200">
+                                <h3 class="text-sm font-semibold text-gray-700 uppercase">Customer Information</h3>
+                            </div>
+                            <div class="divide-y divide-gray-200">
+                                <div class="flex justify-between py-3 px-4">
+                                    <span class="text-sm text-gray-500">Customer ID</span>
+                                    <span class="text-sm font-medium text-gray-900">{{ $order->uid }}</span>
+                                </div>
+                                @if (isset($customer))
+                                    <div class="flex justify-between py-3 px-4">
+                                        <span class="text-sm text-gray-500">Customer Name</span>
+                                        <span
+                                            class="text-sm font-medium text-gray-900">{{ $customer->full_name }}</span>
+                                    </div>
+                                    <div class="flex justify-between py-3 px-4">
+                                        <span class="text-sm text-gray-500">Customer Email</span>
+                                        <span
+                                            class="text-sm font-medium text-gray-900">{{ $customer->username }}</span>
+                                    </div>
+                                @endif
+                            </div>
+                        </div>
+
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-xl overflow-hidden mt-6 border border-gray-100">
+            <div class="bg-[#f0f9e8] px-6 py-4 border-b border-gray-100">
+                <h2 class="text-xl font-semibold text-gray-800 dark:text-white">Package & Addons</h2>
+            </div>
+
+            <div class="p-6">
+                @php
+                    $package = \App\Models\Package::find($order->package_id);
+                    $orderPackages = \App\Models\OrderPackage::where('oid', $order->id)->get();
+                @endphp
+
+                @if ($package)
+                    <div class="mb-8">
+                        <div class="flex items-center mb-4">
+                            <div class="h-10 w-10 flex items-center justify-center bg-[#BCEC88]/20 rounded-lg mr-3">
+                                <x-icon name="cube" class="h-6 w-6 text-[#6b8f3b]" />
+                            </div>
+                            <h3 class="text-lg font-medium text-gray-800">Main Package</h3>
+                        </div>
+
+                        <div class="bg-white border border-gray-200 rounded-lg overflow-hidden shadow-sm">
+                            <div
+                                class="flex flex-col md:flex-row md:items-center justify-between p-5 border-b border-gray-200">
+                                <div>
+                                    <h4 class="text-lg font-semibold text-gray-800">{{ $package->title }}</h4>
+                                    <div class="flex items-center mt-1">
+                                        <span class="text-sm text-gray-600 mr-4">Duration: <span
+                                                class="font-medium">{{ $package->duration }}</span></span>
+                                        <span class="text-sm text-gray-600">Price: <span
+                                                class="font-medium text-green-600">${{ $package->price }}</span></span>
+                                    </div>
+                                </div>
+                                <div class="mt-3 md:mt-0">
+                                    <span
+                                        class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                        Base Package
+                                    </span>
+                                </div>
+                            </div>
+
+                            @if ($package->short_description)
+                                <div class="px-5 py-4 bg-gray-50 border-b border-gray-200">
+                                    <h5 class="text-sm font-medium text-gray-700 mb-2">Description</h5>
+                                    <div class="text-sm text-gray-600 prose max-w-none">
+                                        {!! $package->short_description !!}
+                                    </div>
+                                </div>
+                            @endif
+                        </div>
+                    </div>
+                @endif
+
+                @if (count($orderPackages) > 0)
+                    <div>
+                        <div class="flex items-center mb-4">
+                            <div class="h-10 w-10 flex items-center justify-center bg-blue-100 rounded-lg mr-3">
+                                <x-icon name="puzzle-piece" class="h-6 w-6 text-blue-600" />
+                            </div>
+                            <h3 class="text-lg font-medium text-gray-800">Addons</h3>
+                        </div>
+
+                        <div
+                            class="overflow-hidden rounded-lg border border-gray-200 divide-y divide-gray-200 shadow-sm">
+                            @foreach ($orderPackages as $orderPackage)
+                                @php
+                                    $addon = \App\Models\Addon::find($orderPackage->addon_id);
+                                @endphp
+
+                                @if ($addon)
+                                    <div class="p-5 bg-white hover:bg-gray-50 transition-colors">
+                                        <div class="flex flex-col md:flex-row md:items-center justify-between">
+                                            <div class="mb-3 md:mb-0">
+                                                <h4 class="text-base font-medium text-gray-800">{{ $addon->title }}
+                                                </h4>
+                                                <p class="text-sm text-gray-600 mt-1">{{ $addon->description }}</p>
+                                            </div>
+                                            <div class="flex flex-col md:flex-row md:items-center">
+                                                <div
+                                                    class="bg-gray-100 px-3 py-1.5 rounded-md text-gray-700 text-sm mr-4 mb-2 md:mb-0">
+                                                    <span class="font-medium">Qty:
+                                                        {{ $orderPackage->quantity }}</span>
+                                                </div>
+                                                <div class="text-right">
+                                                    <span class="text-sm text-gray-500">Price per unit</span>
+                                                    <p class="text-base font-medium text-green-600">
+                                                        ${{ $addon->price }}</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="mt-3 pt-3 border-t border-gray-100 flex justify-between">
+                                            <span class="text-sm text-gray-600">Added on
+                                                {{ date('M d, Y', strtotime($orderPackage->created_at)) }}</span>
+                                            <span class="font-medium text-gray-900">Subtotal:
+                                                ${{ number_format($orderPackage->quantity * $orderPackage->price, 2) }}</span>
+                                        </div>
+                                    </div>
+                                @endif
+                            @endforeach
+                        </div>
+                    </div>
+                @else
+                    <div class="bg-gray-50 rounded-lg p-6 text-center">
+                        <div class="h-12 w-12 mx-auto mb-4 bg-gray-200 rounded-full flex items-center justify-center">
+                            <x-icon name="puzzle-piece" class="h-6 w-6 text-gray-400" />
+                        </div>
+                        <h4 class="text-base font-medium text-gray-700 mb-1">No Addons Selected</h4>
+                        <p class="text-sm text-gray-500">This order doesn't include any additional addons.</p>
+                    </div>
+                @endif
+
+                <div class="mt-8 bg-gray-50 rounded-lg p-6">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-4">Order Summary</h3>
+
+                    <div class="space-y-3">
+                        <div class="flex justify-between">
+                            <span class="text-gray-600">Base Package</span>
+                            <span class="font-medium">${{ $package ? $package->price : '0.00' }}</span>
+                        </div>
+
+                        @if (count($orderPackages) > 0)
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">Addons</span>
+                                <span
+                                    class="font-medium">${{ $orderPackages->sum(function ($item) {return $item->quantity * $item->price;}) }}</span>
+                            </div>
+                        @endif
+
+                        @if ($order->coupon)
+                            @php
+                                $coupon = \App\Models\Coupon::where('coupon', $order->coupon)->first();
+                            @endphp
+                            <div class="flex justify-between text-green-600">
+                                <span>Coupon Discount</span>
+                                <span>-${{ $coupon ? $coupon->price : '0.00' }}</span>
+                            </div>
+                        @endif
+
+                        <div class="border-t border-gray-200 pt-3 mt-3">
+                            <div class="flex justify-between font-semibold text-gray-900">
+                                <span>Total</span>
+                                <span>${{ $order->total_price }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script></script>
+
+    <script>
+        document.getElementById('attachment').addEventListener('change', function(e) {
+            const fileName = e.target.files[0] ? e.target.files[0].name : '';
+            document.getElementById('file-name').textContent = fileName;
+        });
+
+        window.onload = function() {
+            const messagesContainer = document.getElementById('messages');
+            if (messagesContainer) {
+                messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            }
+            const textarea = document.getElementById('message-input');
+            const emojiButton = document.getElementById('emoji-button');
+            const emojiPickerContainer = document.getElementById('emoji-picker-container');
+
+            let pickerVisible = false;
+
+            const pickerOptions = {
+                theme: 'light',
+                parent: emojiPickerContainer,
+                onEmojiSelect: function(emoji) {
+                    const start = textarea.selectionStart;
+                    const end = textarea.selectionEnd;
+                    const text = textarea.value;
+
+                    textarea.value = text.substring(0, start) + emoji.native + text.substring(end);
+                    textarea.selectionStart = textarea.selectionEnd = start + emoji.native.length;
+                    textarea.focus();
+                }
+
+            };
+
+            emojiPickerContainer.style.display = 'none';
+
+            new EmojiMart.Picker(pickerOptions);
+
+            emojiButton.addEventListener('click', function() {
+                pickerVisible = !pickerVisible;
+                emojiPickerContainer.style.display = pickerVisible ? 'block' : 'none';
+            });
+            document.addEventListener('click', function(event) {
+                if (!emojiButton.contains(event.target) && !emojiPickerContainer.contains(event.target)) {
+                    pickerVisible = false;
+                    emojiPickerContainer.style.display = 'none';
+                }
+            });
+        };
+    </script>
+</x-layouts.app>

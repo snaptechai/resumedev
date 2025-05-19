@@ -11,7 +11,7 @@ class Order extends Model
     public $timestamps = false;
 
     protected $gurded = [
-        'id'
+        'id',
     ];
 
     protected $fillable = [
@@ -41,4 +41,14 @@ class Order extends Model
         'admin_note',
         'coupon',
     ];
+
+    public function orderStatus()
+    {
+        return $this->hasOne(OrderSetp::class, 'id', 'order_status');
+    }
+
+    public function assignedWriter()
+    {
+        return $this->belongsTo(User::class, 'writer', 'id');
+    }
 }

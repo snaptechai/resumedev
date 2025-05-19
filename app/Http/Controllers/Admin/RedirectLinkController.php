@@ -15,7 +15,8 @@ class RedirectLinkController extends Controller
     public function index()
     {
         $redirect_links = RedirectLink::paginate(10);
-        return view('admin.redirect-link.index', compact('redirect_links'));
+
+        return view('admin.redirect-links.index', compact('redirect_links'));
     }
 
     /**
@@ -30,17 +31,17 @@ class RedirectLinkController extends Controller
      * Store a newly created resource in storage.
      */
     public function store(Request $request)
-    { 
+    {
         RedirectLink::create([
             'original_url' => $request->original_url,
             'new_url' => $request->new_url,
-            'note' => $request->note, 
+            'note' => $request->note,
             'added_by' => Auth::id(),
             'added_date' => now(),
         ]);
 
         return redirect()->back()->with('success', 'Redirect Link created successfully!');
-        
+
     }
 
     /**
@@ -69,7 +70,7 @@ class RedirectLinkController extends Controller
         $link->update([
             'original_url' => $request->original_url,
             'new_url' => $request->new_url,
-            'note' => $request->note,  
+            'note' => $request->note,
             'last_modified_by' => Auth::id(),
             'last_modified_date' => now(),
         ]);
@@ -82,7 +83,7 @@ class RedirectLinkController extends Controller
      */
     public function destroy(string $id)
     {
-        
+
         $link = RedirectLink::findOrFail($id);
 
         $link->delete();

@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\API\AuthController;
 use App\Http\Controllers\API\CartController;
+use App\Http\Controllers\API\MessageController;
 use App\Http\Controllers\API\PackageController;
 use Illuminate\Support\Facades\Route;
 
@@ -12,7 +13,7 @@ Route::prefix('v1')->group(function () {
     Route::get('packages', [PackageController::class, 'index']);
     Route::get('packages/{package}', [PackageController::class, 'show']);
 
-    Route::middleware(['auth:sanctum'])->group(function(){
+    Route::middleware(['auth:sanctum'])->group(function () {
         Route::controller(CartController::class)->group(function () {
             Route::post('add-to-cart', 'addCart');
             Route::get('get-cart', 'getCart');
@@ -25,5 +26,9 @@ Route::prefix('v1')->group(function () {
             Route::put('current-order-update', 'updateCurrentOrder');
             Route::get('coupon', 'getCoupon');
         });
+
+        Route::get('messages/{order_id}', [MessageController::class, 'getMessages']);
+        Route::post('message', [MessageController::class, 'postMessage']);
     });
+
 });

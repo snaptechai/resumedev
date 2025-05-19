@@ -53,7 +53,7 @@
                     <span>{{ __('Affiliate Users') }}</span>
                 </x-sidebar-link>
             </li> --}}
-            {{-- <li x-data="{ open: {{ request()->routeIs('package.*') ? 'true' : 'false' }} }">
+            {{-- <li x-data="{ open: {{ request()->routeIs('packages.*') ? 'true' : 'false' }} }">
                 <x-sidebar-link @click.prevent="open = !open">
                     <x-icon name="archive-box-arrow-down" outline />
                     <span>{{ __('Orders') }}</span>
@@ -63,7 +63,7 @@
                 </x-sidebar-link>
                 <ul x-show="open" class="pl-6 space-y-2">
                     <li>
-                        <x-sidebar-link href="{{ route('package.index') }}" :active="request()->routeIs('package.index')">
+                        <x-sidebar-link href="{{ route('packages.index') }}" :active="request()->routeIs('packages.index')">
                             <x-icon name="rectangle-group" outline />
                             <span>{{ __('Packages') }}</span>
                         </x-sidebar-link>
@@ -71,13 +71,13 @@
                 </ul>
             </li> --}}
             <li>
-                <x-sidebar-link href="{{ route('order.index') }}" :active="request()->routeIs('order.*')">
+                <x-sidebar-link href="{{ route('orders.index') }}" :active="request()->routeIs('orders.*')">
                     <x-icon name="archive-box-arrow-down" outline />
                     <span>{{ __('Orders') }}</span>
                 </x-sidebar-link>
             </li>
             <li>
-                <x-sidebar-link href="{{ route('review.index') }}" :active="request()->routeIs('review.*')">
+                <x-sidebar-link href="{{ route('reviews.index') }}" :active="request()->routeIs('reviews.*')">
                     <x-icon name="ticket" outline />
                     <span>{{ __('Review') }}</span>
                 </x-sidebar-link>
@@ -101,7 +101,7 @@
                 </x-sidebar-link>
             </li>
             <li>
-                <x-sidebar-link href="{{ route('redirectlink.index') }}" :active="request()->routeIs('redirectlink.*')">
+                <x-sidebar-link href="{{ route('redirect-links.index') }}" :active="request()->routeIs('redirect-links.*')">
                     <x-icon name="link" outline />
                     <span>{{ __('Redirect Link') }}</span>
                 </x-sidebar-link>
@@ -113,7 +113,7 @@
                 </x-sidebar-link>
             </li>
             <li>
-                <x-sidebar-link href="{{ route('package.index') }}" :active="request()->routeIs('package.index')">
+                <x-sidebar-link href="{{ route('packages.index') }}" :active="request()->routeIs('packages.index')">
                     <x-icon name="rectangle-group" outline />
                     <span>{{ __('Packages') }}</span>
                 </x-sidebar-link>
