@@ -197,6 +197,6 @@
         </x-slot:content>
     </x-dropdown>
     <div class="mt-auto pt-4 text-xs text-center text-on-surface/70 dark:text-on-surface-dark/70">
-        © {{ date('Y') }} All Rights Reserved by <b> synapses.ai (Pvt) Ltd.</b>
+        © {{ date('Y') }} All Rights Reserved by <b><a href="https://snaptechai.com/">synapses.ai</a> </b>
     </div>
 </nav>
