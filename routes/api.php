@@ -2,13 +2,23 @@
 
 use App\Http\Controllers\API\AuthController;
 use App\Http\Controllers\API\CartController;
+use App\Http\Controllers\API\FAQController;
 use App\Http\Controllers\API\MessageController;
 use App\Http\Controllers\API\PackageController;
+use App\Http\Controllers\API\TemplateController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('v1')->group(function () {
     Route::post('login', [AuthController::class, 'login']);
     Route::post('register', [AuthController::class, 'register']);
+
+    Route::controller(TemplateController::class)->group(function () {
+        Route::get('sliders', 'index');
+    });
+
+    Route::controller(FAQController::class)->group(function () {
+        Route::get('faqs', 'index');
+    });
 
     Route::get('packages', [PackageController::class, 'index']);
     Route::get('packages/{package}', [PackageController::class, 'show']);

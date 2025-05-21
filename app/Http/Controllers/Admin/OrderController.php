@@ -61,15 +61,21 @@ class OrderController extends Controller
             ->get();
 
         $customer = User::find($order->uid);
-
         $paymentDetails = Payment::where('order_id', $id)->first();
+
+        $templates = \App\Models\Template::where('is_active', 1)->get();
+        $templateCount = $templates->count();
 
         $formattedMessages = [];
         foreach ($messages as $message) {
             $sender = User::find($message->fid);
             $senderName = $sender ? $sender->full_name : 'Unknown';
+            $side = ($message->fid == $order->uid) ? 'left' : 'right';
 
-            $side = $message->type === 'user' ? 'left' : 'right';
+            $showTemplates = false;
+            if (stripos($message->message, 'please tell us your preferred template from the options below') !== false) {
+                $showTemplates = true;
+            }
 
             $formattedMessages[] = [
                 'id' => $message->id,
@@ -79,12 +85,13 @@ class OrderController extends Controller
                 'created_at' => Carbon::parse($message->adate)->diffForHumans(),
                 'attachments' => $message->attachment ? [$message->attachment] : [],
                 'type' => $message->type,
+                'show_templates' => $showTemplates,
             ];
         }
 
         $formattedMessages = collect($formattedMessages);
 
-        return view('admin.orders.show', compact('order', 'formattedMessages', 'customer', 'paymentDetails'));
+        return view('admin.orders.show', compact('order', 'formattedMessages', 'customer', 'paymentDetails', 'templates', 'templateCount'));
     }
 
     /**
@@ -108,6 +115,38 @@ class OrderController extends Controller
             'last_modified_by' => Auth::id(),
             'last_modified_date' => Carbon::now()->format('Y-m-d'),
         ]);
+
+        if ($request->order_status == 2) {
+            Message::create([
+                'oid' => $order->id,
+                'fid' => Auth::id(),
+                'tid' => $order->uid,
+                'message' => 'you submitted the requirements',
+                'status' => 0,
+                'type' => 'admin',
+                'adate' => now(),
+            ]);
+        } elseif ($request->order_status == 3) {
+            Message::create([
+                'oid' => $order->id,
+                'fid' => Auth::id(),
+                'tid' => $order->uid,
+                'message' => 'your order started',
+                'status' => 0,
+                'type' => 'admin',
+                'adate' => now(),
+            ]);
+        } elseif ($request->order_status == 4) {
+            Message::create([
+                'oid' => $order->id,
+                'fid' => Auth::id(),
+                'tid' => $order->uid,
+                'message' => 'your order delivered',
+                'status' => 0,
+                'type' => 'admin',
+                'adate' => now(),
+            ]);
+        }
 
         return redirect()->back()->with('success', 'Order updated successfully.');
     }

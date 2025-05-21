@@ -365,7 +365,7 @@ class CartController extends Controller
     public function getPrevious()
     {
         $user = auth()->user()->id;
-        $transactions = Order::whereNotIn('order_status', [3, 1])->where('uid', $user)->get();
+        $transactions = Order::where('uid', $user)->get();
         $orders = [];
         foreach ($transactions as $transaction) {
             $order_lines = OrderPackage::where('oid', $transaction->id)->distinct()->pluck('pid')->toArray();
@@ -405,6 +405,7 @@ class CartController extends Controller
                 'package' => isset($package) ? $package->title : '',
                 'lines' => [],
                 'status' => $transaction->order_status,
+                'created_at' => $transaction->added_date,
             ];
             foreach ($order_lines as $line) {
                 $addon = DB::table('addons')->where('id', $line->addon_id)->first();

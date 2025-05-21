@@ -1,155 +1,170 @@
 <x-layouts.app>
-    <div class="w-full py-2 "> 
-            <div class="bg-white rounded-xl shadow-md overflow-hidden border border-gray-100"> 
-                <div class="px-4 py-3 border-b flex justify-between items-center mb-2">
-                    <h2 class="text-2xl font-medium text-gray-700">All Template</h2>
-                    <div class="flex items-center"> 
-                        <div class="relative inline-block text-left">
-                            <button type="button" onclick="openModal('create-template')" class="inline-flex items-center px-3 py-1.5 text-sm border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500" id="actions-menu-button" aria-expanded="false" aria-haspopup="true"> Add New Template +
-                            </button> 
-                        </div>
-                    </div> 
-                </div>
-                @include('admin.massage-bar')
-                <div class="px-4 pb-2">
-                    <label for="packageFilter" class="text-sm font-medium text-gray-700 mr-2">Filter by Package:</label>
-                    <select id="packageFilter" class="border border-gray-300 rounded px-2 py-1 text-sm">
-                        <option value="">All</option>
-                        @foreach ($templates->pluck('packagename.title')->unique() as $packageTitle)
-                            <option value="{{ $packageTitle }}">{{ $packageTitle }}</option>
-                        @endforeach
-                    </select>
-                </div>
-                <div class="overflow-x-auto">
-                    <table class="w-full divide-y divide-gray-200">
-                        <thead>
-                            <tr class="bg-gray-50">
-                                <th scope="col" class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">#</th>
-                                <th scope="col" class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
-                                <th scope="col" class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Image</th>
-                                <th scope="col" class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody class="bg-white divide-y divide-gray-200">
-                            @foreach ($templates as $index => $template)
-                                <tr class="hover:bg-gray-50 transition-colors duration-150" data-package="{{ $template->packagename->title }}">
-                                    <td class="px-6 py-5 whitespace-nowrap text-sm text-gray-500">{{ $index + 1 }}</td>
-                                    <td class="px-6 py-5 whitespace-nowrap">
-                                        <div class="flex items-center"> 
-                                            <div class="ml-4">
-                                                <div class="text-sm font-medium text-gray-900">{{ $template->packagename->title }}</div> 
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td class="px-6 py-5 whitespace-nowrap">
-                                        <div class="flex items-center">
-                                            <div class="ml-4">
-                                                <img src="{{ 'storage/'.$template->image }}" alt="Template Image" class="w-24 h-24 object-cover rounded cursor-pointer" data-src="{{ 'storage/'.$template->image }}" id="image-thumbnail-{{ $template->id }}">
+    <div class="w-full py-2">
+        <div class="bg-white rounded-lg overflow-hidden border border-gray-200">
+            <div class="px-6 py-5 border-b border-gray-200 flex justify-between items-center">
+                <h2 class="text-xl font-semibold text-gray-800">Templates</h2>
+                <x-modal id="create-template">
+                    <x-slot name="trigger">
+                        <button x-on:click="modalIsOpen = true" type="button"
+                            class="inline-flex items-center px-4 py-2 bg-[#BCEC88] hover:bg-[#BCEC88]/90 focus:ring-4 focus:ring-[#BCEC88]/30 focus:outline-none text-[#5D7B2B] font-medium rounded-lg transition-colors">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                                stroke="currentColor" class="w-4 h-4 mr-1.5">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                            </svg>
+                            Add Template
+                        </button>
+                    </x-slot>
 
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td class="flex px-6 py-5 whitespace-nowrap text-sm font-medium text-center my-3">
-                                        <div class="flex space-x-3">
-                                            <button type="button" onclick="openModal('edit-{{ $template->id }}')" class="group flex items-center justify-center h-8 w-8 rounded-full bg-green-50 text-green-600 hover:bg-green-100 transition-colors duration-150" title="Edit">
-                                                <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                                                </svg>
-                                            </button>
-                                        </div>
-                                        <div class="flex space-x-3">  
-                                            <form action="{{ route('templates.destroy', $template->id) }}" method="POST" onsubmit="return confirm('Are you sure you need to Delete this template?');">
-                                                @csrf @method('DELETE')
-                                                <button type="submit" class="group flex items-center justify-center h-8 w-8 rounded-full bg-red-50 text-red-600 hover:bg-red-100 transition-colors duration-150"><svg class="h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                                                </svg></button>
-                                            </form> 
-                                        </div> 
-                                    </td>
-                                </tr>
-                                @include('admin.templates.edit', ['templates' => $templates])
-                            @endforeach
-                        </tbody>
-                    </table>
-                </div>
-                @include('admin.templates.create')
-                 
-                @if(method_exists($templates, 'links'))
-                    <div class="bg-white px-6 py-4 border-t border-gray-100">
-                        {{ $templates->links() }}
+                    <x-slot name="header">
+                        <h3 class="text-lg font-semibold">Create New Template</h3>
+                    </x-slot>
+
+                    <div class="p-4">
+                        @include('admin.templates.create')
                     </div>
-                @endif
-            </div>  
-    </div>  
-    @include('admin.templates.show-image')
- 
+                </x-modal>
+            </div>
+
+            <div class="flex border-b border-gray-200 overflow-x-auto">
+                <a href="{{ route('templates.index') }}"
+                    class="px-5 py-3 text-sm font-medium whitespace-nowrap border-b-2 {{ !isset($status) ? 'border-[#6b8f3b] text-[#6b8f3b] bg-[#f9faf7]' : 'border-transparent text-gray-600 hover:text-gray-800 hover:border-gray-300' }}">
+                    All Templates
+                </a>
+
+                <a href="{{ route('templates.index', ['status' => 'active']) }}"
+                    class="px-5 py-3 text-sm font-medium whitespace-nowrap border-b-2 {{ isset($status) && $status == 'active' ? 'border-[#6b8f3b] text-[#6b8f3b] bg-[#f9faf7]' : 'border-transparent text-gray-600 hover:text-gray-800 hover:border-gray-300' }}">
+                    Active
+                </a>
+
+                <a href="{{ route('templates.index', ['status' => 'inactive']) }}"
+                    class="px-5 py-3 text-sm font-medium whitespace-nowrap border-b-2 {{ isset($status) && $status == 'inactive' ? 'border-[#6b8f3b] text-[#6b8f3b] bg-[#f9faf7]' : 'border-transparent text-gray-600 hover:text-gray-800 hover:border-gray-300' }}">
+                    Inactive
+                </a>
+            </div>
+
+            <div class="overflow-x-auto">
+                <table class="w-full">
+                    <thead>
+                        <tr>
+                            <th
+                                class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-b border-gray-200">
+                                Template #</th>
+                            <th
+                                class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-b border-gray-200">
+                                Identifier</th>
+                            <th
+                                class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-b border-gray-200">
+                                Image</th>
+                            <th
+                                class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-b border-gray-200">
+                                Status</th>
+                            <th
+                                class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-b border-gray-200">
+                                Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @forelse ($templates as $index => $template)
+                            <tr class="hover:bg-[#fcfcfa] transition-colors border-b border-gray-100 last:border-0"
+                                data-status="{{ $template->is_active ? 'active' : 'inactive' }}">
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <span
+                                        class="text-sm font-medium text-gray-900">{{ 'TMP' . sprintf('%04d', $template->id) }}</span>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <span
+                                        class="text-sm text-gray-600">{{ $template->identifier ?? 'No Identifier' }}</span>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="flex items-center">
+                                        <img src="{{ asset('storage/' . $template->image) }}" alt="Template Image"
+                                            class="h-12 w-auto object-contain rounded cursor-pointer"
+                                            data-src="{{ asset('storage/' . $template->image) }}"
+                                            id="image-thumbnail-{{ $template->id }}">
+                                    </div>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    @if ($template->is_active)
+                                        <span
+                                            class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                            Active
+                                        </span>
+                                    @else
+                                        <span
+                                            class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                                            Inactive
+                                        </span>
+                                    @endif
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="flex items-center space-x-3">
+                                        <x-modal id="edit-template-{{ $template->id }}">
+                                            <x-slot name="trigger">
+                                                <button x-on:click="modalIsOpen = true" type="button"
+                                                    class="inline-flex items-center text-sm font-medium text-gray-700 hover:text-[#6b8f3b] hover:underline">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none"
+                                                        viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+                                                        class="w-4 h-4 mr-1">
+                                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                                            d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" />
+                                                    </svg>
+                                                    Edit
+                                                </button>
+                                            </x-slot>
+
+                                            <x-slot name="header">
+                                                <h3 class="text-lg font-semibold">Edit Template</h3>
+                                            </x-slot>
+
+                                            <div class="p-4">
+                                                @include('admin.templates.edit', [
+                                                    'template' => $template,
+                                                ])
+                                            </div>
+                                        </x-modal>
+                                        <form action="{{ route('templates.destroy', $template->id) }}" method="POST"
+                                            onsubmit="return confirm('Are you sure you want to delete this template?');"
+                                            class="inline">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit"
+                                                class="inline-flex items-center text-sm font-medium text-red-600 hover:text-red-800 hover:underline">
+                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none"
+                                                    viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+                                                    class="w-4 h-4 mr-1">
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                        d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
+                                                </svg>
+                                                Delete
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="5" class="px-6 py-12 text-center border-b border-gray-100">
+                                    <div class="flex flex-col items-center">
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                            stroke-width="1.5" stroke="currentColor"
+                                            class="w-10 h-10 text-gray-400 mb-2">
+                                            <path stroke-linecap="round" stroke-linejoin="round"
+                                                d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5zm10.5-11.25h.008v.008h-.008V8.25zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
+                                        </svg>
+                                        <h3 class="text-lg font-medium text-gray-700 mb-1">No templates found</h3>
+                                        <p class="text-sm text-gray-500">There are no templates matching your criteria.
+                                        </p>
+                                    </div>
+                                </td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="px-6 py-4 border-t border-gray-200">
+                {{ $templates->appends(['status' => $status ?? null])->links() }}
+            </div>
+        </div>
+    </div>
 </x-layouts.app>
-
-<script>
-    function openModal(modalId) {
-        const modal = document.getElementById(modalId);
-        if (modal) {
-            modal.classList.remove('hidden');
-            document.body.style.overflow = 'hidden';
-        }
-    }
-    
-    function closeModal(modalId) {
-        const modal = document.getElementById(modalId);
-        if (modal) {
-            modal.classList.add('hidden');
-            document.body.style.overflow = 'auto';
-        }
-    }
-     
-    document.addEventListener('click', function(event) {
-        const modals = document.querySelectorAll('[id^="edit-"]');
-        modals.forEach(function(modal) {
-            if (event.target === modal) {
-                modal.classList.add('hidden');
-                document.body.style.overflow = 'auto';
-            }
-        });
-    });
-    
-    function previewImage(event) {
-        const file = event.target.files[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                document.getElementById('image-preview').src = e.target.result;
-                document.getElementById('image-preview-container').classList.remove('hidden');
-            };
-            reader.readAsDataURL(file);
-        }
-    }
-
-    // Display the image in full size when clicked in the index table
-    document.querySelectorAll('[id^="image-thumbnail"]').forEach(function(img) {
-    img.addEventListener('click', function() {
-        var imageSrc = img.getAttribute('data-src');
-        document.getElementById('modal-image').src = imageSrc;
-        document.getElementById('image-modal').classList.remove('hidden');
-    });
-    });
-
-    document.getElementById('close-modal').addEventListener('click', function() {
-        document.getElementById('image-modal').classList.add('hidden');
-    }); 
-
-    // Search function
-    document.getElementById('packageFilter').addEventListener('change', function () {
-        const selectedPackage = this.value.toLowerCase();
-        const rows = document.querySelectorAll('tbody tr');
-
-        rows.forEach(row => {
-            const packageTitle = row.getAttribute('data-package').toLowerCase();
-            if (!selectedPackage || packageTitle === selectedPackage) {
-                row.style.display = '';
-            } else {
-                row.style.display = 'none';
-            }
-        });
-    });
-</script>
-

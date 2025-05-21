@@ -13,14 +13,16 @@ class Template extends Model
     protected $fillable = [
         'package',
         'image',
+        'identifier',
+        'is_active',
         'added_by',
         'added_date',
         'last_modified_by',
-        'last_modified_date'
+        'last_modified_date',
     ];
 
     public function packagename()
     {
-        return $this->belongsTo(Package::class,'package','id');
+        return $this->belongsTo(Package::class, 'package', 'id');
     }
 }

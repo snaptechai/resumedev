@@ -1,76 +1,69 @@
-<div id="create-template" class="fixed inset-0 z-50 overflow-auto bg-black/60 backdrop-blur-sm hidden">
-    <div class="relative bg-white dark:bg-gray-800 rounded-xl shadow-2xl mx-auto my-12 max-w-2xl w-full transform transition-all">
-        <div class="flex items-center justify-between p-5 border-b dark:border-gray-700">
-            <h3 class="text-xl font-semibold text-gray-900 dark:text-white">
-                Create New Template
-            </h3>
-            <button type="button" onclick="closeModal('create-template')" class="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-white bg-transparent hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg p-2 transition-colors">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                </svg>
-                <span class="sr-only">Close modal</span>
-            </button>
+<form action="{{ route('templates.store') }}" method="POST" enctype="multipart/form-data">
+    @csrf
+    <div class="p-6 space-y-4">
+        <div>
+            <label for="identifier-new" class="block text-sm font-medium text-gray-700 mb-2">
+                Identifier
+            </label>
+            <input type="text" name="identifier" id="identifier-new"
+                class="w-full rounded-lg border-gray-300 py-3 px-4 text-gray-700 focus:ring-2 focus:ring-[#BCEC88] focus:border-[#BCEC88] appearance-none border"
+                placeholder="Enter unique identifier" required>
         </div>
-        
-        <form action="{{ route('templates.store') }}" method="POST" enctype="multipart/form-data">
-            @csrf
-            <div class="p-6 space-y-6">  
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6"> 
-                    <div class="col-span-2">
-                        <label for="package-new" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                            Package
-                        </label>
-                        <select 
-                            name="package" 
-                            id="package-new" 
-                            class="w-full rounded-lg border-gray-300 dark:border-gray-600 shadow-sm focus:border-green-500 focus:ring-green-500 dark:bg-gray-700 dark:text-white p-3"
-                            required
-                        >
-                            <option value="">Select a package...</option>
-                            @foreach($packages as $package)
-                                <option value="{{ $package->id }}">{{ $package->title }}</option>
-                            @endforeach
-                        </select>
-                    </div>
 
-                    <div>
-                        <label for="image-new" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                            Upload Image
-                        </label>
-                        <input 
-                            type="file" 
-                            name="image" 
-                            id="image-new" 
-                            class="w-full border-gray-300 dark:border-gray-600 shadow-sm dark:bg-gray-700 dark:text-white p-3"
-                            accept="image/*"
-                            required
-                            onchange="previewImage(event)"
-                        >
-                    </div>  
-                </div>
+        <div>
+            <div class="flex items-center space-x-2 mb-2">
+                <input type="checkbox" name="is_active" id="is_active-new"
+                    class="rounded border-gray-300 text-[#BCEC88] focus:ring-[#BCEC88]" checked>
+                <label for="is_active-new" class="text-sm font-medium text-gray-700">
+                    Active
+                </label>
+            </div>
+            <p class="text-sm text-gray-500">
+                Active templates will be available for selection.
+            </p>
+        </div>
 
-                <div class="flex justify-center">
-                    <div id="image-preview-container" class="mt-3 hidden">
-                        <img id="image-preview" class="w-42 h-42 object-cover rounded-lg shadow-md" />
-                    </div>
-                </div>
+        <div>
+            <label for="image-new" class="block text-sm font-medium text-gray-700 mb-2">
+                Template Image
+            </label>
+            <input type="file" name="image" id="image-new"
+                class="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-medium file:bg-[#f0f9e8] file:text-[#6b8f3b] hover:file:bg-[#e8f5dd]"
+                onchange="previewNewImage()" required>
+
+            <div class="mt-3 hidden" id="new-image-preview-container">
+                <img id="new-image-preview" src="" alt="Template Image"
+                    class="max-h-40 object-contain rounded-lg shadow-md">
             </div>
-            
-            <div class="flex items-center justify-end p-5 border-t dark:border-gray-700 gap-3">
-                <button 
-                    type="button" 
-                    onclick="closeModal('create-template')" 
-                    class="px-4 py-2.5 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 rounded-lg border border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-300 transition-colors"
-                >
-                    Cancel
-                </button>
-                <button 
-                    type="submit" 
-                    class="px-4 py-2.5 bg-green-600 hover:bg-green-700 focus:ring-4 focus:ring-green-300 focus:outline-none text-white font-medium rounded-lg transition-colors"
-                >
-                    Create Template
-                </button>
-            </div>
-        </form>
+        </div>
     </div>
-</div>
+
+    <div class="flex items-center justify-end p-6 gap-3 border-t border-gray-200">
+        <button type="button" x-on:click="modalIsOpen = false"
+            class="px-4 py-2.5 bg-white text-gray-700 rounded-lg border border-gray-300 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-300 transition-colors font-medium">
+            Cancel
+        </button>
+        <button type="submit"
+            class="px-5 py-2.5 bg-[#BCEC88] hover:bg-[#BCEC88]/90 focus:ring-4 focus:ring-[#BCEC88]/30 focus:outline-none text-[#5D7B2B] font-medium rounded-lg transition-colors flex items-center">
+            Create Template
+        </button>
+    </div>
+</form>
+
+<script>
+    function previewNewImage() {
+        const input = document.getElementById('image-new');
+        const preview = document.getElementById('new-image-preview');
+        const container = document.getElementById('new-image-preview-container');
+
+        const file = input.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                preview.src = e.target.result;
+                container.classList.remove('hidden');
+            };
+            reader.readAsDataURL(file);
+        }
+    }
+</script>

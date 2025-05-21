@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\Package;
 use App\Models\Template;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -15,64 +14,79 @@ class TemplatesController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $templates = Template::paginate(10);
-        $packages = Package::all();
-        return view('admin.templates.index', compact('templates','packages'));
-    } 
+        $status = $request->input('status');
+
+        $templatesQuery = Template::query();
+
+        if ($status === 'active') {
+            $templatesQuery->where('is_active', 1);
+        } elseif ($status === 'inactive') {
+            $templatesQuery->where('is_active', 0);
+        }
+
+        $templates = $templatesQuery->paginate(10);
+
+        return view('admin.templates.index', compact('templates', 'status'));
+    }
 
     public function store(Request $request)
     {
         try {
-            $request->validate([ 
+            $request->validate([
                 'image' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+                'identifier' => 'required|unique:template,identifier',
             ]);
 
             $imagePath = $request->file('image')->store('templates', 'public');
 
             Template::create([
-                'package' => $request->package,
+                'identifier' => $request->identifier,
+                'is_active' => $request->has('is_active') ? 1 : 0,
                 'image' => $imagePath,
-                'added_by' =>  Auth::id(),
+                'added_by' => Auth::id(),
                 'added_date' => Carbon::now()->format('yy-mm-dd'),
             ]);
 
             return redirect()->back()->with('success', 'Template created successfully!');
         } catch (\Exception $e) {
             return redirect()->back()->with('error', $e->getMessage());
-        } 
+        }
     }
- 
+
     public function update(Request $request, string $id)
-    { 
-        try { 
-            $request->validate([ 
+    {
+        try {
+            $request->validate([
                 'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+                'identifier' => 'required|unique:template,identifier,'.$id,
             ]);
-        
-            $template = Template::findOrFail($id); 
-    
-            if ($request->hasFile('image')) { 
+
+            $template = Template::findOrFail($id);
+
+            $imagePath = $template->image;
+            if ($request->hasFile('image')) {
                 if ($template->image && Storage::disk('public')->exists($template->image)) {
                     Storage::disk('public')->delete($template->image);
-                } 
+                }
+                $imagePath = $request->file('image')->store('templates', 'public');
             }
-            $imagePath = $request->file('image')->store('templates', 'public');
-     
+
             $template->update([
-                'package' => $request->package,
+                'identifier' => $request->identifier,
+                'is_active' => $request->has('is_active') ? 1 : 0,
                 'image' => $imagePath,
-                'last_modified_by' =>  Auth::id(),
+                'last_modified_by' => Auth::id(),
                 'last_modified_date' => Carbon::now()->format('yy-mm-dd'),
             ]);
-        
+
             return redirect()->back()->with('success', 'Template updated successfully!');
         } catch (\Exception $e) {
             return redirect()->back()->with('error', $e->getMessage());
-        } 
+        }
     }
- 
+
     public function destroy(Template $template)
     {
         if ($template->image) {
