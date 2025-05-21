@@ -14,6 +14,7 @@ class AuthController extends Controller
 {
     public function register(Request $request)
     {
+
         $validator = Validator::make($request->all(), [
             'full_name' => 'required|string|max:255',
             'username' => 'required|string|max:255|unique:user,username',
@@ -41,11 +42,24 @@ class AuthController extends Controller
             'type' => 'Client',
         ]);
 
+        if (! $user) {
+            return response()->json([
+                'http_status' => 500,
+                'http_status_message' => 'Internal Server Error',
+                'message' => 'Registration failed',
+            ], 500);
+        }
+
+        $token = $user->createToken('web')->plainTextToken;
+
         return response()->json([
             'http_status' => 200,
             'http_status_message' => 'Success',
             'message' => 'Registration successful',
-            'data' => $user,
+            'data' => [
+                'token' => $token,
+                'info' => $user,
+            ],
         ], 200);
     }
 
@@ -53,15 +67,15 @@ class AuthController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'username' => 'required|email|exists:user,username',
-            'password' => 'required'
+            'password' => 'required',
         ]);
 
-        if($validator->fails()) {
+        if ($validator->fails()) {
             return response()->json([
                 'http_status' => 400,
                 'http_status_message' => 'Bad Request',
                 'message' => 'Validation failed',
-                'errors' => $validator->errors()
+                'errors' => $validator->errors(),
             ], 400);
         }
 
@@ -70,12 +84,12 @@ class AuthController extends Controller
                 'http_status' => 401,
                 'http_status_message' => 'Unauthorized',
                 'message' => 'Login failed',
-                'error' => ['info' => 'Invalid password']
+                'error' => ['info' => 'Invalid password'],
             ], 401);
         }
 
         $user = Auth::user();
-    
+
         $token = $user->createToken('web')->plainTextToken;
 
         return response()->json([
@@ -84,8 +98,8 @@ class AuthController extends Controller
             'message' => 'Login successful',
             'data' => [
                 'token' => $token,
-                'info' => $user
-                ]
+                'info' => $user,
+            ],
         ], 200);
     }
 }

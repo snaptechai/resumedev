@@ -35,6 +35,7 @@ Route::prefix('v1')->group(function () {
             Route::get('current-order', 'currentOrder');
             Route::put('current-order-update', 'updateCurrentOrder');
             Route::get('coupon', 'getCoupon');
+            Route::get('/get-details/{order_id}', 'getDetails');
         });
 
         Route::get('messages/{order_id}', [MessageController::class, 'getMessages']);

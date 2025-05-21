@@ -512,4 +512,42 @@ class CartController extends Controller
             'message' => 'Success Updated',
         ], 200);
     }
+
+    public function getDetails($order_id)
+    {
+        $transaction = Order::find($order_id);
+        $lines = [];
+        if (isset($transaction)) {
+            $order_lines = OrderPackage::where('oid', $transaction->id)->get();
+            $package = DB::table('package')->where('id', $transaction->package_id)->first();
+            $lines = [
+                'order_id' => $transaction->id,
+                'total' => (string) $transaction->total_price,
+                'currency_code' => $transaction->currency_symbol,
+                'package_id' => $transaction->package_id,
+                'package' => isset($package) ? $package->title : '',
+                'lines' => [],
+            ];
+            foreach ($order_lines as $line) {
+                $addon = DB::table('addons')->where('id', $line->addon_id)->first();
+                $data = [
+                    'line_id' => $line->id,
+                    'addon_id' => $line->addon_id,
+                    'addon' => isset($addon) ? $addon->title : '',
+                    'description' => isset($addon) ? $addon->description : '',
+                    'quantity' => $line->quantity,
+                    'price' => (string) $line->price ?? '0,00',
+                ];
+
+                array_push($lines['lines'], $data);
+
+            }
+        }
+
+        return response()->json([
+            'http_status' => 200,
+            'http_status_message' => 'Success',
+            'data' => $lines,
+        ], 200);
+    }
 }
