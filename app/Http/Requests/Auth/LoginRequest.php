@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Auth;
 
+use App\Models\User;
 use Illuminate\Auth\Events\Lockout;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
@@ -16,7 +17,13 @@ class LoginRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return true;
+        $user = User::where('username', $this->input('username'))->first();
+
+        if ($user->hasPermission('Login to admin panel') && $user->type == 'System') {
+            return true;
+        }
+
+        return false;
     }
 
     /**

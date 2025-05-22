@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Access;
+use App\Models\AccessUser;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -14,12 +16,16 @@ class UserController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $users = User::all();
+        $query = User::with(['accessUsers', 'accessUsers.access'])->orderByDesc('id');
+
+        $users = $query->paginate(10);
+        $permissions = Access::all();
 
         return view('admin.users.index', [
             'users' => $users,
+            'permissions' => $permissions,
         ]);
     }
 
@@ -28,7 +34,11 @@ class UserController extends Controller
      */
     public function create()
     {
-        //
+        $permissions = Access::all();
+
+        return view('admin.users.create', [
+            'permissions' => $permissions,
+        ]);
     }
 
     /**
@@ -41,9 +51,11 @@ class UserController extends Controller
             'username' => 'required|string|max:255|unique:user,username',
             'type' => 'required|string|in:System,Writer,Client',
             'password' => ['required', 'confirmed', Password::defaults()],
+            'permissions' => 'nullable|array',
+            'permissions.*' => 'exists:access,id',
         ]);
 
-        User::create([
+        $user = User::create([
             'full_name' => $request->full_name,
             'username' => $request->username,
             'type' => $request->type,
@@ -53,7 +65,18 @@ class UserController extends Controller
             'added_date' => now(),
         ]);
 
-        return redirect()->route('users.index');
+        if ($request->has('permissions') && is_array($request->permissions && auth()->user()->hasPermission('Manage user access'))) {
+            foreach ($request->permissions as $permissionId) {
+                AccessUser::create([
+                    'user' => $user->id,
+                    'access' => $permissionId,
+                    'added_by' => Auth::id(),
+                    'added_date' => now(),
+                ]);
+            }
+        }
+
+        return redirect()->route('users.index')->with('success', 'User created successfully.');
     }
 
     /**
@@ -61,7 +84,11 @@ class UserController extends Controller
      */
     public function show(string $id)
     {
-        //
+        $user = User::with(['accessUsers', 'accessUsers.access'])->findOrFail($id);
+
+        return view('admin.users.show', [
+            'user' => $user,
+        ]);
     }
 
     /**
@@ -69,7 +96,13 @@ class UserController extends Controller
      */
     public function edit(string $id)
     {
-        //
+        $user = User::findOrFail($id);
+        $permissions = Access::all();
+
+        return view('admin.users.edit', [
+            'user' => $user,
+            'permissions' => $permissions,
+        ]);
     }
 
     /**
@@ -82,6 +115,8 @@ class UserController extends Controller
         $rules = [
             'full_name' => 'required|string|max:255',
             'type' => 'required|string|in:System,Writer,Client',
+            'permissions' => 'nullable|array',
+            'permissions.*' => 'exists:access,id',
         ];
 
         if ($request->filled('password')) {
@@ -103,7 +138,23 @@ class UserController extends Controller
 
         $user->update($userData);
 
-        return redirect()->route('users.index');
+        if (auth()->user()->hasPermission('Manage user access')) {
+
+            AccessUser::where('user', $user->id)->delete();
+
+            if ($request->has('permissions') && is_array($request->permissions)) {
+                foreach ($request->permissions as $permissionId) {
+                    AccessUser::create([
+                        'user' => $user->id,
+                        'access' => $permissionId,
+                        'added_by' => Auth::id(),
+                        'added_date' => now(),
+                    ]);
+                }
+            }
+        }
+
+        return redirect()->route('users.index')->with('success', 'User updated successfully.');
     }
 
     /**
@@ -119,6 +170,6 @@ class UserController extends Controller
 
         $user->delete();
 
-        return redirect()->route('users.index');
+        return redirect()->route('users.index')->with('success', 'User deleted successfully.');
     }
 }

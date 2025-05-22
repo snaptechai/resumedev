@@ -475,55 +475,57 @@
                     </div>
 
                     <div class="space-y-6">
-                        <div class="bg-white border border-gray-200 rounded-lg overflow-hidden shadow-sm">
-                            <div class="p-4 bg-gray-50 border-b border-gray-200">
-                                <h3 class="text-sm font-semibold text-gray-700 uppercase">Payment Information</h3>
-                            </div>
-                            <div class="divide-y divide-gray-200">
-                                <div class="flex justify-between py-3 px-4">
-                                    <span class="text-sm text-gray-500">Payment Status</span>
-                                    <span class="text-sm font-medium">
-                                        @if ($order->payment_status == 'paid')
-                                            <span
-                                                class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">Paid</span>
-                                        @else
-                                            <span
-                                                class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-orange-100 text-orange-800">{{ ucfirst($order->payment_status) }}</span>
-                                        @endif
-                                    </span>
+                        @if (auth()->user()->hasPermission('View order price & details'))
+                            <div class="bg-white border border-gray-200 rounded-lg overflow-hidden shadow-sm">
+                                <div class="p-4 bg-gray-50 border-b border-gray-200">
+                                    <h3 class="text-sm font-semibold text-gray-700 uppercase">Payment Information</h3>
                                 </div>
-                                @if (isset($paymentDetails) && $paymentDetails->transaction_id)
+                                <div class="divide-y divide-gray-200">
                                     <div class="flex justify-between py-3 px-4">
-                                        <span class="text-sm text-gray-500">Transaction ID</span>
-                                        <span
-                                            class="text-sm font-medium text-gray-900">{{ $paymentDetails->transaction_id }}</span>
+                                        <span class="text-sm text-gray-500">Payment Status</span>
+                                        <span class="text-sm font-medium">
+                                            @if ($order->payment_status == 'paid')
+                                                <span
+                                                    class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">Paid</span>
+                                            @else
+                                                <span
+                                                    class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-orange-100 text-orange-800">{{ ucfirst($order->payment_status) }}</span>
+                                            @endif
+                                        </span>
                                     </div>
-                                @endif
-                                <div class="flex justify-between py-3 px-4">
-                                    <span class="text-sm text-gray-500">Total Amount</span>
-                                    <span class="text-sm font-medium text-green-600">{{ $order->total_price }}</span>
-                                </div>
-                                <div class="flex justify-between py-3 px-4">
-                                    <span class="text-sm text-gray-500">Currency</span>
-                                    <span
-                                        class="text-sm font-medium text-gray-900 uppercase">{{ $order->currency }}</span>
-                                </div>
-                                <div class="flex justify-between py-3 px-4">
-                                    <span class="text-sm text-gray-500">Coupon Applied</span>
-                                    <span class="text-sm font-medium">
-                                        @if ($order->coupon)
+                                    @if (isset($paymentDetails) && $paymentDetails->transaction_id)
+                                        <div class="flex justify-between py-3 px-4">
+                                            <span class="text-sm text-gray-500">Transaction ID</span>
                                             <span
-                                                class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                                                {{ $order->coupon }}
-                                            </span>
-                                        @else
-                                            <span class="text-gray-500">None</span>
-                                        @endif
-                                    </span>
+                                                class="text-sm font-medium text-gray-900">{{ $paymentDetails->transaction_id }}</span>
+                                        </div>
+                                    @endif
+                                    <div class="flex justify-between py-3 px-4">
+                                        <span class="text-sm text-gray-500">Total Amount</span>
+                                        <span
+                                            class="text-sm font-medium text-green-600">{{ $order->total_price }}</span>
+                                    </div>
+                                    <div class="flex justify-between py-3 px-4">
+                                        <span class="text-sm text-gray-500">Currency</span>
+                                        <span
+                                            class="text-sm font-medium text-gray-900 uppercase">{{ $order->currency }}</span>
+                                    </div>
+                                    <div class="flex justify-between py-3 px-4">
+                                        <span class="text-sm text-gray-500">Coupon Applied</span>
+                                        <span class="text-sm font-medium">
+                                            @if ($order->coupon)
+                                                <span
+                                                    class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                                                    {{ $order->coupon }}
+                                                </span>
+                                            @else
+                                                <span class="text-gray-500">None</span>
+                                            @endif
+                                        </span>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-
+                        @endif
                         <div class="bg-white border border-gray-200 rounded-lg overflow-hidden shadow-sm">
                             <div class="p-4 bg-gray-50 border-b border-gray-200">
                                 <h3 class="text-sm font-semibold text-gray-700 uppercase">Customer Information</h3>
@@ -539,16 +541,17 @@
                                         <span
                                             class="text-sm font-medium text-gray-900">{{ $customer->full_name }}</span>
                                     </div>
-                                    <div class="flex justify-between py-3 px-4">
-                                        <span class="text-sm text-gray-500">Customer Email</span>
-                                        <span
-                                            class="text-sm font-medium text-gray-900">{{ $customer->username }}</span>
-                                    </div>
+
+                                    @if (auth()->user()->hasPermission('View order price & details'))
+                                        <div class="flex justify-between py-3 px-4">
+                                            <span class="text-sm text-gray-500">Customer Email</span>
+                                            <span
+                                                class="text-sm font-medium text-gray-900">{{ $customer->username }}</span>
+                                        </div>
+                                    @endif
                                 @endif
                             </div>
                         </div>
-
-
                     </div>
                 </div>
             </div>
@@ -582,8 +585,10 @@
                                     <div class="flex items-center mt-1">
                                         <span class="text-sm text-gray-600 mr-4">Duration: <span
                                                 class="font-medium">{{ $package->duration }}</span></span>
-                                        <span class="text-sm text-gray-600">Price: <span
-                                                class="font-medium text-green-600">${{ $package->price }}</span></span>
+                                        @if (auth()->user()->hasPermission('View order price & details'))
+                                            <span class="text-sm text-gray-600">Price: <span
+                                                    class="font-medium text-green-600">${{ $package->price }}</span></span>
+                                        @endif
                                     </div>
                                 </div>
                                 <div class="mt-3 md:mt-0">
@@ -636,18 +641,22 @@
                                                     <span class="font-medium">Qty:
                                                         {{ $orderPackage->quantity }}</span>
                                                 </div>
-                                                <div class="text-right">
-                                                    <span class="text-sm text-gray-500">Price per unit</span>
-                                                    <p class="text-base font-medium text-green-600">
-                                                        ${{ $addon->price }}</p>
-                                                </div>
+                                                @if (auth()->user()->hasPermission('View order price & details'))
+                                                    <div class="text-right">
+                                                        <span class="text-sm text-gray-500">Price per unit</span>
+                                                        <p class="text-base font-medium text-green-600">
+                                                            ${{ $addon->price }}</p>
+                                                    </div>
+                                                @endif
                                             </div>
                                         </div>
                                         <div class="mt-3 pt-3 border-t border-gray-100 flex justify-between">
                                             <span class="text-sm text-gray-600">Added on
                                                 {{ date('M d, Y', strtotime($orderPackage->created_at)) }}</span>
-                                            <span class="font-medium text-gray-900">Subtotal:
-                                                ${{ number_format($orderPackage->quantity * $orderPackage->price, 2) }}</span>
+                                            @if (auth()->user()->hasPermission('View order price & details'))
+                                                <span class="font-medium text-gray-900">Subtotal:
+                                                    ${{ number_format($orderPackage->quantity * $orderPackage->price, 2) }}</span>
+                                            @endif
                                         </div>
                                     </div>
                                 @endif
@@ -664,46 +673,46 @@
                     </div>
                 @endif
 
-                <div class="mt-8 bg-gray-50 rounded-lg p-6">
-                    <h3 class="text-lg font-semibold text-gray-800 mb-4">Order Summary</h3>
+                @if (auth()->user()->hasPermission('View order price & details'))
+                    <div class="mt-8 bg-gray-50 rounded-lg p-6">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-4">Order Summary</h3>
 
-                    <div class="space-y-3">
-                        <div class="flex justify-between">
-                            <span class="text-gray-600">Base Package</span>
-                            <span class="font-medium">${{ $package ? $package->price : '0.00' }}</span>
-                        </div>
-
-                        @if (count($orderPackages) > 0)
+                        <div class="space-y-3">
                             <div class="flex justify-between">
-                                <span class="text-gray-600">Addons</span>
-                                <span
-                                    class="font-medium">${{ $orderPackages->sum(function ($item) {return $item->quantity * $item->price;}) }}</span>
+                                <span class="text-gray-600">Base Package</span>
+                                <span class="font-medium">${{ $package ? $package->price : '0.00' }}</span>
                             </div>
-                        @endif
 
-                        @if ($order->coupon)
-                            @php
-                                $coupon = \App\Models\Coupon::where('coupon', $order->coupon)->first();
-                            @endphp
-                            <div class="flex justify-between text-green-600">
-                                <span>Coupon Discount</span>
-                                <span>-${{ $coupon ? $coupon->price : '0.00' }}</span>
-                            </div>
-                        @endif
+                            @if (count($orderPackages) > 0)
+                                <div class="flex justify-between">
+                                    <span class="text-gray-600">Addons</span>
+                                    <span
+                                        class="font-medium">${{ $orderPackages->sum(function ($item) {return $item->quantity * $item->price;}) }}</span>
+                                </div>
+                            @endif
 
-                        <div class="border-t border-gray-200 pt-3 mt-3">
-                            <div class="flex justify-between font-semibold text-gray-900">
-                                <span>Total</span>
-                                <span>${{ $order->total_price }}</span>
+                            @if ($order->coupon)
+                                @php
+                                    $coupon = \App\Models\Coupon::where('coupon', $order->coupon)->first();
+                                @endphp
+                                <div class="flex justify-between text-green-600">
+                                    <span>Coupon Discount</span>
+                                    <span>-${{ $coupon ? $coupon->price : '0.00' }}</span>
+                                </div>
+                            @endif
+
+                            <div class="border-t border-gray-200 pt-3 mt-3">
+                                <div class="flex justify-between font-semibold text-gray-900">
+                                    <span>Total</span>
+                                    <span>${{ $order->total_price }}</span>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
+                @endif
             </div>
         </div>
     </div>
-
-    <script></script>
 
     <script>
         document.getElementById('attachment').addEventListener('change', function(e) {

@@ -57,9 +57,31 @@ class User extends Authenticatable
         ];
     }
 
+    public function accessUsers()
+    {
+        return $this->hasMany(AccessUser::class, 'user', 'id');
+    }
+
+    public function permissions()
+    {
+        return $this->hasManyThrough(
+            Access::class,
+            AccessUser::class,
+            'user',
+            'id',
+            'id',
+            'access'
+        );
+    }
+
+    public function hasPermission($permission)
+    {
+        return $this->permissions()->where('access.access', $permission)->exists();
+    }
+
     public function order()
     {
-        return $this->hasMany(Order::class, 'writer' , 'id');
+        return $this->hasMany(Order::class, 'writer', 'id');
     }
 
     public function getMessageNotifications()
@@ -98,5 +120,4 @@ class User extends Authenticatable
 
         return collect();
     }
-
 }

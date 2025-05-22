@@ -60,9 +60,11 @@
                             <th
                                 class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-b border-gray-200">
                                 Customer</th>
-                            <th
-                                class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-b border-gray-200">
-                                Amount</th>
+                            @if (auth()->user()->hasPermission('View order price & details'))
+                                <th
+                                    class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-b border-gray-200">
+                                    Amount</th>
+                            @endif
                             <th
                                 class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-b border-gray-200">
                                 Status</th>
@@ -115,10 +117,12 @@
                                     <span
                                         class="text-sm text-gray-600">{{ $customer ? $customer->full_name : 'User #' . $order->uid }}</span>
                                 </td>
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    <span
-                                        class="text-sm font-medium text-gray-900">${{ number_format($order->total_price, 2) }}</span>
-                                </td>
+                                @if (auth()->user()->hasPermission('View order price & details'))
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span
+                                            class="text-sm font-medium text-gray-900">${{ number_format($order->total_price, 2) }}</span>
+                                    </td>
+                                @endif
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <span
                                         class="inline-flex items-center px-2.5 py-1 text-xs font-medium rounded-md {{ $statusColor }}">
