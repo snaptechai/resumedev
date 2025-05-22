@@ -1,154 +1,184 @@
 <x-layouts.app>
-    <div class="w-full py-2 "> 
-        @if(count($coupons) > 0)
-            <div class="bg-white rounded-xl shadow-md overflow-hidden border border-gray-100"> 
-                <div class="px-4 py-3 border-b flex justify-between items-center mb-2">
-                    <h2 class="text-2xl font-medium text-gray-700">All Coupons</h2>
-                    <div class="flex items-center"> 
-                        <div class="relative inline-block text-left">
-                            <button type="button" onclick="openModal('create-coupon')" class="inline-flex items-center px-3 py-1.5 text-sm border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500" id="actions-menu-button" aria-expanded="false" aria-haspopup="true"> Add New Coupon +
-                            </button> 
-                        </div>
-                    </div> 
-                </div>
-                @include('admin.massage-bar')
-                
-                <div class="overflow-x-auto">
-                    <table class="w-full divide-y divide-gray-200">
-                        <thead>
-                            <tr class="bg-gray-50">
-                                <th scope="col" class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">#</th>
-                                <th scope="col" class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Coupon</th>
-                                <th scope="col" class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Discount %</th>
-                                <th scope="col" class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Start Date</th>
-                                <th scope="col" class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">End Date</th>
-                                <th scope="col" class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">One Time</th>
-                                <th scope="col" class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Added Date</th>
-                                <th scope="col" class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody class="bg-white divide-y divide-gray-200">
-                            @foreach ($coupons as $index => $coupon)
-                                <tr class="hover:bg-gray-50 transition-colors duration-150">
-                                    <td class="px-6 py-5 whitespace-nowrap text-sm text-gray-500">{{ $index + 1 }}</td>
-                                    <td class="px-6 py-5 whitespace-nowrap">
-                                        <div class="flex items-center"> 
-                                            <div class="ml-4">
-                                                <div class="text-sm font-medium text-gray-900">{{ $coupon->coupon }}</div> 
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td class="px-6 py-5 whitespace-nowrap">
-                                        <div class="flex items-center"> 
-                                            <div class="ml-4">
-                                                <div class="text-sm font-medium text-gray-900">{{ $coupon->price }}</div> 
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td class="px-6 py-5 whitespace-nowrap">
-                                        <div class="flex items-center"> 
-                                            <div class="ml-4">
-                                                <div class="text-sm font-medium text-gray-900">{{ $coupon->start_date }}</div> 
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td class="px-6 py-5 whitespace-nowrap">
-                                        <div class="flex items-center"> 
-                                            <div class="ml-4">
-                                                <div class="text-sm font-medium text-gray-900">{{ $coupon->end_date }}</div> 
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td class="px-6 py-5 whitespace-nowrap">
-                                        <div class="flex items-center"> 
-                                            <div class="ml-4">
-                                                <div class="text-sm font-medium text-gray-900">{{ $coupon->one_time }}</div> 
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td class="px-6 py-5 whitespace-nowrap">
-                                        <div class="flex items-center"> 
-                                            <div class="ml-4">
-                                                <div class="text-sm font-medium text-gray-900">{{ $coupon->added_date }}</div> 
-                                            </div>
-                                        </div>
-                                    </td> 
-                                    <td class="flex px-6 py-5 whitespace-nowrap text-sm font-medium text-center my-3">
-                                        <div class="flex space-x-3">
-                                            <button type="button" onclick="openModal('edit-{{ $coupon->id }}')" class="group flex items-center justify-center h-8 w-8 rounded-full bg-green-50 text-green-600 hover:bg-green-100 transition-colors duration-150" title="Edit">
-                                                <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                                                </svg>
-                                            </button>
-                                        </div>
-                                        <div class="flex space-x-3">  
-                                            <form action="{{ route('coupon.destroy', $coupon->id) }}" method="POST" onsubmit="return confirm('Are you sure you need to Delete this Coupon?');">
-                                                @csrf @method('DELETE')
-                                                <button type="submit" class="group flex items-center justify-center h-8 w-8 rounded-full bg-red-50 text-red-600 hover:bg-red-100 transition-colors duration-150"><svg class="h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                                                </svg></button>
-                                            </form> 
-                                        </div> 
-                                    </td>
-                                </tr>
-                                @include('admin.coupon.edit', ['coupon' => $coupon])
-                            @endforeach
-                        </tbody>
-                    </table>
-                </div>
-                 
-                @if(method_exists($coupons, 'links'))
-                    <div class="bg-white px-6 py-4 border-t border-gray-100">
-                        {{ $coupons->links() }}
-                    </div>
-                @endif
-            </div> 
-            @else 
-            <div class="bg-white rounded-xl shadow-md border border-gray-100 p-12 text-center">
-                <div class="max-w-md mx-auto">
-                    <div class="relative w-24 h-24 mx-auto mb-6 bg-green-100 rounded-full flex items-center justify-center">
-                        <svg class="h-12 w-12 text-green-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 4a2 2 0 114 0v1a1 1 0 001 1h3a1 1 0 011 1v3a1 1 0 01-1 1h-1a2 2 0 100 4h1a1 1 0 011 1v3a1 1 0 01-1 1h-3a1 1 0 01-1-1v-1a2 2 0 10-4 0v1a1 1 0 01-1 1H7a1 1 0 01-1-1v-3a1 1 0 00-1-1H4a2 2 0 110-4h1a1 1 0 001-1V7a1 1 0 011-1h3a1 1 0 001-1V4z" />
-                        </svg>
-                    </div>
-                    <h3 class="mt-2 text-xl font-bold text-gray-900">No active Coupon</h3>
-                    <p class="mt-2 text-gray-500">Create your first article to grab your visitors' attention with timely promotions and special coupon offers. Encourage them to save more while exploring your site!</p>
-                    <div class="mt-8">  
-                        <button type="button" onclick="openModal('create-coupon')" class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-green-600 to-green-400 text-white rounded-lg font-semibold text-sm shadow-md hover:from-green-700 hover:to-green-500 transform transition duration-200 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500" id="actions-menu-button" aria-expanded="false" aria-haspopup="true"> + Create Your First Coupon +
-                        </button>  
-                    </div>
-                </div>
-            </div>
-        @endif
-        
-        @include('admin.coupon.create')
-    </div>  
-</x-layouts.app>
+    <div class="w-full py-2">
+        <div class="bg-white rounded-lg overflow-hidden border border-gray-200">
+            <div class="px-6 py-5 border-b border-gray-200 flex justify-between items-center">
+                <h2 class="text-xl font-semibold text-gray-800">Coupons</h2>
+                <x-modal id="create-coupon">
+                    <x-slot name="trigger">
+                        <button x-on:click="modalIsOpen = true" type="button"
+                            class="inline-flex items-center px-4 py-2 bg-[#BCEC88] hover:bg-[#BCEC88]/90 focus:ring-4 focus:ring-[#BCEC88]/30 focus:outline-none text-[#5D7B2B] font-medium rounded-lg transition-colors">
+                            <x-icon name="plus" class="w-4 h-4 mr-1.5" />
+                            Add Coupon
+                        </button>
+                    </x-slot>
 
-<script>
-    function openModal(modalId) {
-        const modal = document.getElementById(modalId);
-        if (modal) {
-            modal.classList.remove('hidden');
-            document.body.style.overflow = 'hidden';
-        }
-    }
-    
-    function closeModal(modalId) {
-        const modal = document.getElementById(modalId);
-        if (modal) {
-            modal.classList.add('hidden');
-            document.body.style.overflow = 'auto';
-        }
-    }
-     
-    document.addEventListener('click', function(event) {
-        const modals = document.querySelectorAll('[id^="edit-"]');
-        modals.forEach(function(modal) {
-            if (event.target === modal) {
-                modal.classList.add('hidden');
-                document.body.style.overflow = 'auto';
-            }
-        });
-    });
-</script>
+                    <x-slot name="header">
+                        <h3 class="text-lg font-semibold">Create New Coupon</h3>
+                    </x-slot>
+
+                    <div>
+                        @include('admin.coupon.create')
+                    </div>
+                </x-modal>
+            </div>
+
+            <div class="overflow-x-auto">
+                <table class="w-full">
+                    <thead>
+                        <tr>
+                            <th
+                                class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-b border-gray-200">
+                                Coupon #</th>
+                            <th
+                                class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-b border-gray-200">
+                                Coupon Code</th>
+                            <th
+                                class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-b border-gray-200">
+                                Discount %</th>
+                            <th
+                                class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-b border-gray-200">
+                                Start Date</th>
+                            <th
+                                class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-b border-gray-200">
+                                End Date</th>
+                            <th
+                                class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-b border-gray-200">
+                                One Time</th>
+                            <th
+                                class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-b border-gray-200">
+                                Added Date</th>
+                            <th
+                                class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-b border-gray-200">
+                                Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @forelse ($coupons as $index => $coupon)
+                            <tr class="hover:bg-[#fcfcfa] transition-colors border-b border-gray-100 last:border-0">
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <span class="text-sm font-medium text-gray-900">{{ $coupon->id }}</span>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <span class="text-sm font-medium text-gray-900">{{ $coupon->coupon }}</span>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <span class="text-sm text-gray-600">{{ $coupon->price }}</span>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <span class="text-sm text-gray-600">{{ $coupon->start_date }}</span>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <span class="text-sm text-gray-600">{{ $coupon->end_date }}</span>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <span
+                                        class="text-sm text-gray-600">{{ $coupon->one_time == 1 ? 'Yes' : 'No' }}</span>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <span class="text-sm text-gray-600">{{ $coupon->added_date }}</span>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="flex gap-2">
+                                        <x-modal id="edit-coupon-{{ $coupon->id }}">
+                                            <x-slot name="trigger">
+                                                <button x-on:click="modalIsOpen = true"
+                                                    class="inline-flex items-center px-2.5 py-1.5 text-sm font-medium text-gray-700 hover:text-[#6b8f3b] hover:underline">
+                                                    <x-icon name="pencil-square" class="w-4 h-4 mr-1" />
+                                                    Edit
+                                                </button>
+                                            </x-slot>
+
+                                            <x-slot name="header">
+                                                <h3 class="text-lg font-semibold">Edit Coupon</h3>
+                                            </x-slot>
+
+                                            <div>
+                                                @include('admin.coupon.edit', ['coupon' => $coupon])
+                                            </div>
+                                        </x-modal>
+
+                                        <x-modal id="delete-coupon-{{ $coupon->id }}">
+                                            <x-slot name="trigger">
+                                                <button x-on:click="modalIsOpen = true"
+                                                    class="inline-flex items-center px-2.5 py-1.5 text-sm font-medium text-red-600 hover:text-red-800 hover:underline">
+                                                    <x-icon name="trash" class="w-4 h-4 mr-1" />
+                                                    Delete
+                                                </button>
+                                            </x-slot>
+
+                                            <x-slot name="header">
+                                                <h3 class="text-lg font-semibold">Delete Coupon</h3>
+                                            </x-slot>
+
+                                            <div>
+                                                <form action="{{ route('coupon.destroy', $coupon->id) }}"
+                                                    method="POST">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <div class="p-6">
+                                                        <div class="mb-6">
+                                                            <div class="flex justify-center mb-4">
+                                                                <div
+                                                                    class="h-12 w-12 flex items-center justify-center bg-red-100 rounded-full">
+                                                                    <x-icon name="exclamation-triangle"
+                                                                        class="h-6 w-6 text-red-600" />
+                                                                </div>
+                                                            </div>
+                                                            <h3
+                                                                class="text-lg font-medium text-gray-900 text-center mb-2">
+                                                                Confirm Coupon Deletion</h3>
+                                                            <p class="text-center text-gray-600">
+                                                                Are you sure you want to delete the coupon:
+                                                                <strong>{{ $coupon->coupon }}</strong>?
+                                                            </p>
+                                                            <p class="text-center text-red-600 text-sm mt-4">
+                                                                This action cannot be undone.
+                                                            </p>
+                                                        </div>
+                                                    </div>
+
+                                                    <div
+                                                        class="flex items-center justify-end p-6 gap-3 border-t border-gray-200">
+                                                        <button type="button" x-on:click="modalIsOpen = false"
+                                                            class="px-4 py-2.5 bg-white text-gray-700 rounded-lg border border-gray-300 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-300 transition-colors font-medium">
+                                                            Cancel
+                                                        </button>
+                                                        <button type="submit"
+                                                            class="px-5 py-2.5 bg-red-600 hover:bg-red-700 focus:ring-4 focus:ring-red-300 focus:outline-none text-white font-medium rounded-lg transition-colors flex items-center">
+                                                            Delete Coupon
+                                                        </button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </x-modal>
+                                    </div>
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="8" class="px-6 py-12 text-center border-b border-gray-100">
+                                    <div class="flex flex-col items-center">
+                                        <svg class="w-10 h-10 text-gray-400 mb-2" fill="none" stroke="currentColor"
+                                            viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                        </svg>
+                                        <h3 class="text-lg font-medium text-gray-700 mb-1">No Coupons Found</h3>
+                                        <p class="text-sm text-gray-500">Create your first coupon to start offering
+                                            discounts.</p>
+                                    </div>
+                                </td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
+
+            @if (method_exists($coupons, 'links'))
+                <div class="px-6 py-4 border-t border-gray-200">
+                    {{ $coupons->links() }}
+                </div>
+            @endif
+        </div>
+    </div>
+</x-layouts.app>

@@ -1,173 +1,186 @@
 <x-layouts.app>
-    <div class="w-full py-2 ">
-        @if (count($redirect_links) > 0)
-            <div class="bg-white rounded-xl shadow-md overflow-hidden border border-gray-100">
-                <div class="px-4 py-3 border-b flex justify-between items-center mb-2">
-                    <h2 class="text-2xl font-medium text-gray-700">All Redirect Links</h2>
-                    <div class="flex items-center">
-                        <div class="relative inline-block text-left">
-                            <button type="button" onclick="openModal('create-link')"
-                                class="inline-flex items-center px-3 py-1.5 text-sm border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
-                                id="actions-menu-button" aria-expanded="false" aria-haspopup="true"> Add New Link +
-                            </button>
-                        </div>
-                    </div>
-                </div>
-                @include('admin.massage-bar')
-
-                <div class="overflow-x-auto">
-                    <table class="w-full divide-y divide-gray-200">
-                        <thead>
-                            <tr class="bg-gray-50">
-                                <th scope="col"
-                                    class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    #</th>
-                                <th scope="col"
-                                    class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    Original Url</th>
-                                <th scope="col"
-                                    class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    New Url</th>
-                                <th scope="col"
-                                    class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    Note</th>
-                                <th scope="col"
-                                    class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    Added Date</th>
-                                <th scope="col"
-                                    class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody class="bg-white divide-y divide-gray-200">
-                            @foreach ($redirect_links as $index => $val)
-                                <tr class="hover:bg-gray-50 transition-colors duration-150">
-                                    <td class="px-6 py-5 whitespace-nowrap text-sm text-gray-500">{{ $index + 1 }}
-                                    </td>
-                                    <td class="px-6 py-5 whitespace-nowrap">
-                                        <div class="flex items-center">
-                                            <div class="ml-4">
-                                                <div class="text-sm font-medium text-gray-900">{{ $val->original_url }}
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td class="px-6 py-5 whitespace-nowrap">
-                                        <div class="flex items-center">
-                                            <div class="ml-4">
-                                                <div class="text-sm font-medium text-gray-900">{{ $val->new_url }}</div>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td class="px-6 py-5 whitespace-nowrap">
-                                        <div class="flex items-center">
-                                            <div class="ml-4">
-                                                <div class="text-sm font-medium text-gray-900">{{ $val->note }}</div>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td class="px-6 py-5 whitespace-nowrap">
-                                        <div class="flex items-center">
-                                            <div class="ml-4">
-                                                <div class="text-sm font-medium text-gray-900">{{ $val->added_date }}
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td class="flex px-6 py-5 whitespace-nowrap text-sm font-medium text-center my-3">
-                                        <div class="flex space-x-3">
-                                            <button type="button" onclick="openModal('edit-{{ $val->id }}')"
-                                                class="group flex items-center justify-center h-8 w-8 rounded-full bg-green-50 text-green-600 hover:bg-green-100 transition-colors duration-150"
-                                                title="Edit">
-                                                <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none"
-                                                    viewBox="0 0 24 24" stroke="currentColor">
-                                                    <path stroke-linecap="round" stroke-linejoin="round"
-                                                        stroke-width="2"
-                                                        d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                                                </svg>
-                                            </button>
-                                        </div>
-                                        <div class="flex space-x-3">
-                                            <form action="{{ route('redirect-links.destroy', $val->id) }}"
-                                                method="POST"
-                                                onsubmit="return confirm('Are you sure you need to Delete this Coupon?');">
-                                                @csrf @method('DELETE')
-                                                <button type="submit"
-                                                    class="group flex items-center justify-center h-8 w-8 rounded-full bg-red-50 text-red-600 hover:bg-red-100 transition-colors duration-150"><svg
-                                                        class="h-4 w-4" xmlns="http://www.w3.org/2000/svg"
-                                                        fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                        <path stroke-linecap="round" stroke-linejoin="round"
-                                                            stroke-width="2"
-                                                            d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                                                    </svg></button>
-                                            </form>
-                                        </div>
-                                    </td>
-                                </tr>
-                                @include('admin.redirect-links.edit', ['val' => $val])
-                            @endforeach
-                        </tbody>
-                    </table>
-                </div>
-
-                @if (method_exists($redirect_links, 'links'))
-                    <div class="bg-white px-6 py-4 border-t border-gray-100">
-                        {{ $redirect_links->links() }}
-                    </div>
-                @endif
-            </div>
-        @else
-            <div class="bg-white rounded-xl shadow-md border border-gray-100 p-12 text-center">
-                <div class="max-w-md mx-auto">
-                    <div
-                        class="relative w-24 h-24 mx-auto mb-6 bg-green-100 rounded-full flex items-center justify-center">
-                        <svg class="h-12 w-12 text-green-500" xmlns="http://www.w3.org/2000/svg" fill="none"
-                            viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M11 4a2 2 0 114 0v1a1 1 0 001 1h3a1 1 0 011 1v3a1 1 0 01-1 1h-1a2 2 0 100 4h1a1 1 0 011 1v3a1 1 0 01-1 1h-3a1 1 0 01-1-1v-1a2 2 0 10-4 0v1a1 1 0 01-1 1H7a1 1 0 01-1-1v-3a1 1 0 00-1-1H4a2 2 0 110-4h1a1 1 0 001-1V7a1 1 0 011-1h3a1 1 0 001-1V4z" />
-                        </svg>
-                    </div>
-                    <h3 class="mt-2 text-xl font-bold text-gray-900">No active Redirect Links</h3>
-                    <p class="mt-2 text-gray-500">Create your first article to engage users with timely announcements
-                        and smart redirect links. Lead them to the right pages at the right time!</p>
-                    <div class="mt-8">
-                        <button type="button" onclick="openModal('create-link')"
-                            class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-green-600 to-green-400 text-white rounded-lg font-semibold text-sm shadow-md hover:from-green-700 hover:to-green-500 transform transition duration-200 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
-                            aria-expanded="false" aria-haspopup="true"> + Create Your First Redirect Links
+    <div class="w-full py-2">
+        <div class="bg-white rounded-lg overflow-hidden border border-gray-200">
+            <div class="px-6 py-5 border-b border-gray-200 flex justify-between items-center">
+                <h2 class="text-xl font-semibold text-gray-800">Redirect Links</h2>
+                <x-modal id="create-link">
+                    <x-slot name="trigger">
+                        <button x-on:click="modalIsOpen = true" type="button"
+                            class="inline-flex items-center px-4 py-2 bg-[#BCEC88] hover:bg-[#BCEC88]/90 focus:ring-4 focus:ring-[#BCEC88]/30 focus:outline-none text-[#5D7B2B] font-medium rounded-lg transition-colors">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                                stroke="currentColor" class="w-4 h-4 mr-1.5">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                            </svg>
+                            Add Redirect Link
                         </button>
+                    </x-slot>
+
+                    <x-slot name="header">
+                        <h3 class="text-lg font-semibold">Create New Redirect Link</h3>
+                    </x-slot>
+
+                    <div>
+                        @include('admin.redirect-links.create')
                     </div>
-                </div>
+                </x-modal>
             </div>
-        @endif
+
+            <div class="overflow-x-auto">
+                <table class="w-full">
+                    <thead>
+                        <tr>
+                            <th
+                                class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-b border-gray-200">
+                                Link #</th>
+                            <th
+                                class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-b border-gray-200">
+                                Original URL</th>
+                            <th
+                                class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-b border-gray-200">
+                                New URL</th>
+                            <th
+                                class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-b border-gray-200">
+                                Note</th>
+                            <th
+                                class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-b border-gray-200">
+                                Added Date</th>
+                            <th
+                                class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-b border-gray-200">
+                                Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @forelse ($redirect_links as $index => $link)
+                            <tr class="hover:bg-[#fcfcfa] transition-colors border-b border-gray-100 last:border-0">
+                                <td class="px-6 py-5 whitespace-nowrap text-sm text-gray-500">
+                                    {{ $link->id }}
+                                </td>
+                                <td
+                                    class="px-6 py-5 whitespace-nowrap text-sm text-gray-700 border-b border-gray-100 max-w-64 truncate">
+                                    {{ $link->original_url }}
+                                </td>
+                                <td
+                                    class="px-6 py-5 whitespace-nowrap text-sm text-gray-700 border-b border-gray-100 max-w-64 truncate">
+                                    {{ $link->new_url }}
+                                </td>
+                                <td
+                                    class="px-6 py-5 whitespace-nowrap text-sm text-gray-700 border-b border-gray-100 max-w-64 truncate">
+                                    {{ $link->note }}
+                                </td>
+                                <td class="px-6 py-5 whitespace-nowrap text-sm text-gray-700 border-b border-gray-100">
+                                    {{ $link->added_date }}
+                                </td>
+                                <td class="px-6 py-5 whitespace-nowrap text-sm font-medium border-b border-gray-100">
+                                    <div class="flex gap-2">
+                                        <x-modal id="edit-link-{{ $link->id }}">
+                                            <x-slot name="trigger">
+                                                <button x-on:click="modalIsOpen = true"
+                                                    class="inline-flex items-center px-2.5 py-1.5 text-sm font-medium text-gray-700 hover:text-[#6b8f3b] hover:underline">
+                                                    <x-icon name="pencil-square" class="w-4 h-4 mr-1" />
+                                                    Edit
+                                                </button>
+                                            </x-slot>
+
+                                            <x-slot name="header">
+                                                <h3 class="text-lg font-semibold">Edit Redirect Link</h3>
+                                            </x-slot>
+
+                                            <div>
+                                                @include('admin.redirect-links.edit', ['val' => $link])
+                                            </div>
+                                        </x-modal>
+
+                                        <x-modal id="delete-link-{{ $link->id }}">
+                                            <x-slot name="trigger">
+                                                <button x-on:click="modalIsOpen = true"
+                                                    class="inline-flex items-center px-2.5 py-1.5 text-sm font-medium text-red-600 hover:text-red-800 hover:underline">
+                                                    <x-icon name="trash" class="w-4 h-4 mr-1" />
+                                                    Delete
+                                                </button>
+                                            </x-slot>
+
+                                            <x-slot name="header">
+                                                <h3 class="text-lg font-semibold">Delete Redirect Link</h3>
+                                            </x-slot>
+
+                                            <div>
+                                                <form action="{{ route('redirect-links.destroy', $link->id) }}"
+                                                    method="POST">
+                                                    @csrf @method('DELETE')
+                                                    <div class="p-6">
+                                                        <div class="mb-6">
+                                                            <div class="flex justify-center mb-4">
+                                                                <div
+                                                                    class="h-12 w-12 flex items-center justify-center bg-red-100 rounded-full">
+                                                                    <svg xmlns="http://www.w3.org/2000/svg"
+                                                                        fill="none" viewBox="0 0 24 24"
+                                                                        stroke-width="1.5" stroke="currentColor"
+                                                                        class="w-6 h-6 text-red-600">
+                                                                        <path stroke-linecap="round"
+                                                                            stroke-linejoin="round"
+                                                                            d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
+                                                                    </svg>
+                                                                </div>
+                                                            </div>
+                                                            <h3
+                                                                class="text-lg font-medium text-gray-900 text-center mb-2">
+                                                                Confirm Link Deletion</h3>
+                                                            <p class="text-center text-gray-600">
+                                                                Are you sure you want to delete this redirect link from
+                                                                <strong>{{ $link->original_url }}</strong> to
+                                                                <strong>{{ $link->new_url }}</strong>?
+                                                            </p>
+                                                            <p class="text-center text-red-600 text-sm mt-4">
+                                                                This action cannot be undone.
+                                                            </p>
+                                                        </div>
+                                                    </div>
+
+                                                    <div
+                                                        class="flex items-center justify-end p-6 gap-3 border-t border-gray-200">
+                                                        <button type="button" x-on:click="modalIsOpen = false"
+                                                            class="px-4 py-2.5 bg-white text-gray-700 rounded-lg border border-gray-300 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-300 transition-colors font-medium">
+                                                            Cancel
+                                                        </button>
+                                                        <button type="submit"
+                                                            class="px-5 py-2.5 bg-red-600 hover:bg-red-700 focus:ring-4 focus:ring-red-300 focus:outline-none text-white font-medium rounded-lg transition-colors flex items-center">
+                                                            Delete Link
+                                                        </button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </x-modal>
+                                    </div>
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="6" class="px-6 py-12 text-center border-b border-gray-100">
+                                    <div class="flex flex-col items-center">
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                            stroke-width="1.5" stroke="currentColor"
+                                            class="w-10 h-10 text-gray-400 mb-2">
+                                            <path stroke-linecap="round" stroke-linejoin="round"
+                                                d="M13.19 8.688a4.5 4.5 0 011.242 7.244l-4.5 4.5a4.5 4.5 0 01-6.364-6.364l1.757-1.757m13.35-.622l1.757-1.757a4.5 4.5 0 00-6.364-6.364l-4.5 4.5a4.5 4.5 0 001.242 7.244" />
+                                        </svg>
+                                        <h3 class="mt-2 text-base font-medium text-gray-900">No redirect links found
+                                        </h3>
+                                        <p class="mt-1 text-sm text-gray-500">Add your first redirect link to manage URL
+                                            redirections</p>
+                                    </div>
+                                </td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
+
+            @if (method_exists($redirect_links, 'links'))
+                <div class="bg-white px-6 py-4 border-t border-gray-200">
+                    {{ $redirect_links->links() }}
+                </div>
+            @endif
+        </div>
     </div>
-
-    @include('admin.redirect-links.create')
+    </div>
 </x-layouts.app>
-
-<script>
-    function openModal(modalId) {
-        const modal = document.getElementById(modalId);
-        if (modal) {
-            modal.classList.remove('hidden');
-            document.body.style.overflow = 'hidden';
-        }
-    }
-
-    function closeModal(modalId) {
-        const modal = document.getElementById(modalId);
-        if (modal) {
-            modal.classList.add('hidden');
-            document.body.style.overflow = 'auto';
-        }
-    }
-
-    document.addEventListener('click', function(event) {
-        const modals = document.querySelectorAll('[id^="edit-"]');
-        modals.forEach(function(modal) {
-            if (event.target === modal) {
-                modal.classList.add('hidden');
-                document.body.style.overflow = 'auto';
-            }
-        });
-    });
-</script>

@@ -8,13 +8,24 @@ use Illuminate\Http\Request;
 
 class ReviewController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $pendingReviews = Review::where('status', '0')->orderByDesc('added_date')->get();
-        $approvedReviews = Review::where('status', '1')->orderByDesc('added_date')->get();
-        $rejectedReviews = Review::where('status', '2')->orderByDesc('added_date')->get();
+        $filter = $request->query('filter', 'all');
 
-        return view('admin.reviews.index', compact('pendingReviews', 'approvedReviews', 'rejectedReviews'));
+        $query = Review::query()->orderByDesc('added_date');
+
+        if ($filter === 'pending') {
+            $query->where('status', '0');
+        } elseif ($filter === 'approved') {
+            $query->where('status', '1');
+        } elseif ($filter === 'rejected') {
+            $query->where('status', '2');
+        }
+
+        $reviews = $query->paginate(10);
+        $reviews->appends(['filter' => $filter]);
+
+        return view('admin.reviews.index', compact('reviews', 'filter'));
     }
 
     public function create()

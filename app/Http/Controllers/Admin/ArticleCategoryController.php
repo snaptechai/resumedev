@@ -16,7 +16,7 @@ class ArticleCategoryController extends Controller
      */
     public function index()
     {
-        $categories = ArticleCategory::with('subcategories')->get();
+        $categories = ArticleCategory::with('subcategories')->orderBy('id', 'desc')->paginate(10);
 
         return view('admin.article-categories.index', [
             'categories' => $categories,
@@ -66,7 +66,7 @@ class ArticleCategoryController extends Controller
 
             DB::commit();
 
-            return redirect()->route('article-categories.index');
+            return redirect()->route('article-categories.index')->with('success', 'Category created successfully.');
         } catch (\Exception $e) {
             DB::rollBack();
 
@@ -147,7 +147,7 @@ class ArticleCategoryController extends Controller
 
             DB::commit();
 
-            return redirect()->route('article-categories.index');
+            return redirect()->route('article-categories.index')->with('success', 'Category updated successfully.');
         } catch (\Exception $e) {
             DB::rollBack();
 
@@ -166,6 +166,6 @@ class ArticleCategoryController extends Controller
 
         $category->delete();
 
-        return redirect()->route('article-categories.index');
+        return redirect()->route('article-categories.index')->with('success', 'Category deleted successfully.');
     }
 }

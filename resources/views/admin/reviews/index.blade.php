@@ -1,74 +1,248 @@
 <x-layouts.app>
     <div class="w-full py-2">
-        <div class="bg-white rounded-xl shadow-md overflow-hidden border border-gray-100">
-            <div class="px-4 py-3 border-b flex justify-between items-center mb-2">
-                <h2 class="text-2xl font-medium text-gray-700">Reviews</h2>
+        <div class="bg-white rounded-lg overflow-hidden border border-gray-200">
+            <div class="px-6 py-5 border-b border-gray-200 flex justify-between items-center">
+                <h2 class="text-xl font-semibold text-gray-800">Reviews</h2>
             </div>
 
-            @include('admin.massage-bar')
 
-            <div class="flex border-b" id="tabs">
-                <button
-                    class="tab-button px-4 py-2 text-sm font-semibold text-gray-700 border-b-2 border-transparent hover:border-green-500"
-                    data-tab="pending">Pending Reviews</button>
-                <button
-                    class="tab-button px-4 py-2 text-sm font-semibold text-gray-700 border-b-2 border-transparent hover:border-green-500"
-                    data-tab="approved">Approved Reviews</button>
-                <button
-                    class="tab-button px-4 py-2 text-sm font-semibold text-gray-700 border-b-2 border-transparent hover:border-green-500"
-                    data-tab="rejected">Rejected Reviews</button>
-
+            <div class="flex border-b border-gray-200 overflow-x-auto">
+                <a href="{{ route('reviews.index', ['filter' => 'all']) }}"
+                    class="px-5 py-3 text-sm font-medium whitespace-nowrap border-b-2 {{ !request('filter') || request('filter') == 'all' ? 'border-[#6b8f3b] text-[#6b8f3b] bg-[#f9faf7]' : 'border-transparent text-gray-600 hover:text-gray-800 hover:border-gray-300' }}">
+                    All Reviews
+                </a>
+                <a href="{{ route('reviews.index', ['filter' => 'pending']) }}"
+                    class="px-5 py-3 text-sm font-medium whitespace-nowrap border-b-2 {{ request('filter') == 'pending' ? 'border-[#6b8f3b] text-[#6b8f3b] bg-[#f9faf7]' : 'border-transparent text-gray-600 hover:text-gray-800 hover:border-gray-300' }}">
+                    Pending Reviews
+                </a>
+                <a href="{{ route('reviews.index', ['filter' => 'approved']) }}"
+                    class="px-5 py-3 text-sm font-medium whitespace-nowrap border-b-2 {{ request('filter') == 'approved' ? 'border-[#6b8f3b] text-[#6b8f3b] bg-[#f9faf7]' : 'border-transparent text-gray-600 hover:text-gray-800 hover:border-gray-300' }}">
+                    Approved Reviews
+                </a>
+                <a href="{{ route('reviews.index', ['filter' => 'rejected']) }}"
+                    class="px-5 py-3 text-sm font-medium whitespace-nowrap border-b-2 {{ request('filter') == 'rejected' ? 'border-[#6b8f3b] text-[#6b8f3b] bg-[#f9faf7]' : 'border-transparent text-gray-600 hover:text-gray-800 hover:border-gray-300' }}">
+                    Rejected Reviews
+                </a>
             </div>
 
-            <div id="pending" class="tab-content">
-                @include('admin.reviews.review-table', ['reviews' => $pendingReviews, 'status' => 0])
+            <div class="overflow-x-auto">
+                <table class="w-full">
+                    <thead>
+                        <tr>
+                            <th
+                                class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-b border-gray-200">
+                                Review #</th>
+                            <th
+                                class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-b border-gray-200">
+                                Name</th>
+                            <th
+                                class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-b border-gray-200">
+                                Review</th>
+                            <th
+                                class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-b border-gray-200">
+                                Stars</th>
+                            <th
+                                class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-b border-gray-200">
+                                Service Start</th>
+                            <th
+                                class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-b border-gray-200">
+                                Recommended</th>
+                            <th
+                                class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-b border-gray-200">
+                                Date</th>
+                            <th
+                                class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-b border-gray-200">
+                                Status</th>
+                            <th
+                                class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-b border-gray-200">
+                                Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @forelse ($reviews as $review)
+                            <tr class="hover:bg-[#fcfcfa] transition-colors border-b border-gray-100 last:border-0">
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <span class="text-sm font-medium text-gray-900">{{ $review->id }}</span>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <span class="text-sm text-gray-600">{{ $review->name }}</span>
+                                </td>
+                                <td class="px-6 py-4">
+                                    <span class="text-sm text-gray-600">{{ Str::limit($review->review, 50) }}</span>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <span class="text-sm text-yellow-500">{{ $review->star }}★</span>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <span class="text-sm text-gray-600">{{ $review->service_start }}</span>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <span class="text-sm text-gray-600">{{ $review->recommend_star }}</span>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <span
+                                        class="text-sm text-gray-600">{{ date('M d, Y', strtotime($review->added_date)) }}</span>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    @php
+                                        $statusColors = [
+                                            '0' => 'bg-yellow-50 text-yellow-800 border-yellow-100',
+                                            '1' => 'bg-green-50 text-green-800 border-green-100',
+                                            '2' => 'bg-red-50 text-red-800 border-red-100',
+                                        ];
+                                        $statusLabels = [
+                                            '0' => 'Pending',
+                                            '1' => 'Approved',
+                                            '2' => 'Rejected',
+                                        ];
+                                        $statusColor =
+                                            $statusColors[$review->status] ??
+                                            'bg-gray-50 text-gray-800 border-gray-100';
+                                        $statusLabel = $statusLabels[$review->status] ?? 'Unknown';
+                                    @endphp
+                                    <span
+                                        class="inline-flex items-center px-2.5 py-1 text-xs font-medium rounded-md {{ $statusColor }}">
+                                        {{ $statusLabel }}
+                                    </span>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="flex gap-2">
+                                        <x-modal id="edit-review-{{ $review->id }}">
+                                            <x-slot name="trigger">
+                                                <button x-on:click="modalIsOpen = true"
+                                                    class="inline-flex items-center px-2.5 py-1.5 text-sm font-medium text-gray-700 hover:text-[#6b8f3b] hover:underline">
+                                                    <x-icon name="pencil-square" class="w-4 h-4 mr-1" />
+                                                    Edit
+                                                </button>
+                                            </x-slot>
+
+                                            <x-slot name="header">
+                                                <h3 class="text-lg font-semibold">Update Review Status</h3>
+                                            </x-slot>
+
+                                            <div class="p-6">
+                                                <form id="edit-form-{{ $review->id }}"
+                                                    data-id="{{ $review->id }}">
+                                                    <div class="mb-4">
+                                                        <label
+                                                            class="block text-sm font-medium text-gray-700 mb-2">Review
+                                                            Status</label>
+                                                        <select name="status"
+                                                            class="w-full rounded-lg border-gray-300 py-2 px-3 focus:ring-2 focus:ring-[#BCEC88] focus:border-[#BCEC88]">
+                                                            <option value="0"
+                                                                {{ $review->status == '0' ? 'selected' : '' }}>Pending
+                                                            </option>
+                                                            <option value="1"
+                                                                {{ $review->status == '1' ? 'selected' : '' }}>Approved
+                                                            </option>
+                                                            <option value="2"
+                                                                {{ $review->status == '2' ? 'selected' : '' }}>Rejected
+                                                            </option>
+                                                        </select>
+                                                    </div>
+                                                    <div class="flex items-center justify-end space-x-3">
+                                                        <button type="button" x-on:click="modalIsOpen = false"
+                                                            class="px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded-lg text-gray-700">
+                                                            Cancel
+                                                        </button>
+                                                        <button type="submit"
+                                                            class="px-4 py-2 bg-[#BCEC88] hover:bg-[#BCEC88]/90 rounded-lg text-[#5D7B2B]">
+                                                            Update Status
+                                                        </button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </x-modal>
+
+                                        <x-modal id="delete-review-{{ $review->id }}">
+                                            <x-slot name="trigger">
+                                                <button x-on:click="modalIsOpen = true"
+                                                    class="inline-flex items-center px-2.5 py-1.5 text-sm font-medium text-red-600 hover:text-red-800 hover:underline">
+                                                    <x-icon name="trash" class="w-4 h-4 mr-1" />
+                                                    Delete
+                                                </button>
+                                            </x-slot>
+
+                                            <x-slot name="header">
+                                                <h3 class="text-lg font-semibold">Delete Review</h3>
+                                            </x-slot>
+
+                                            <div>
+                                                <form action="{{ route('reviews.destroy', $review->id) }}"
+                                                    method="POST">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <div class="p-6">
+                                                        <div class="mb-6">
+                                                            <div class="flex justify-center mb-4">
+                                                                <div
+                                                                    class="h-12 w-12 flex items-center justify-center bg-red-100 rounded-full">
+                                                                    <x-icon name="exclamation-triangle"
+                                                                        class="h-6 w-6 text-red-600" />
+                                                                </div>
+                                                            </div>
+                                                            <h3
+                                                                class="text-lg font-medium text-gray-900 text-center mb-2">
+                                                                Confirm Review Deletion</h3>
+                                                            <p class="text-center text-gray-600">
+                                                                Are you sure you want to delete this review from
+                                                                <strong>{{ $review->name }}</strong>?
+                                                            </p>
+                                                            <p class="text-center text-red-600 text-sm mt-4">
+                                                                This action cannot be undone.
+                                                            </p>
+                                                        </div>
+                                                    </div>
+
+                                                    <div
+                                                        class="flex items-center justify-end p-6 gap-3 border-t border-gray-200">
+                                                        <button type="button" x-on:click="modalIsOpen = false"
+                                                            class="px-4 py-2.5 bg-white text-gray-700 rounded-lg border border-gray-300 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-300 transition-colors font-medium">
+                                                            Cancel
+                                                        </button>
+                                                        <button type="submit"
+                                                            class="px-5 py-2.5 bg-red-600 hover:bg-red-700 focus:ring-4 focus:ring-red-300 focus:outline-none text-white font-medium rounded-lg transition-colors flex items-center">
+                                                            Delete Review
+                                                        </button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </x-modal>
+                                    </div>
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="9" class="px-6 py-12 text-center border-b border-gray-100">
+                                    <div class="flex flex-col items-center">
+                                        <x-icon name="chat-bubble-oval-left" class="w-10 h-10 text-gray-400 mb-2" />
+                                        <h3 class="text-lg font-medium text-gray-700 mb-1">No reviews found</h3>
+                                        <p class="text-sm text-gray-500">There are no reviews matching your criteria.
+                                        </p>
+                                    </div>
+                                </td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
             </div>
 
-            <div id="approved" class="tab-content hidden">
-                @include('admin.reviews.review-table', ['reviews' => $approvedReviews, 'status' => 1])
-            </div>
-
-            <div id="rejected" class="tab-content hidden">
-                @include('admin.reviews.review-table', ['reviews' => $rejectedReviews, 'status' => 2])
-            </div>
+            @if ($reviews->isNotEmpty() && method_exists($reviews, 'links'))
+                <div class="px-6 py-4 border-t border-gray-200">
+                    {{ $reviews->links() }}
+                </div>
+            @endif
         </div>
     </div>
 </x-layouts.app>
 
 <script>
-    document.querySelectorAll('.tab-button').forEach(button => {
-        button.addEventListener('click', () => {
-
-            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.add('hidden'));
-
-
-            const tabId = button.getAttribute('data-tab');
-            document.getElementById(tabId).classList.remove('hidden');
-
-
-            document.querySelectorAll('.tab-button').forEach(btn => {
-                btn.classList.remove('border-green-500');
-                btn.classList.remove('bg-green-100');
-            });
-            button.classList.add('border-green-500');
-            button.classList.add('bg-green-100');
-        });
-    });
-
-
-    document.querySelector('.tab-button').click();
-
     document.addEventListener("DOMContentLoaded", function() {
-        document.querySelectorAll(".status-dropdown").forEach(function(dropdown) {
-            dropdown.addEventListener("change", function() {
+        document.querySelectorAll('[id^="edit-form-"]').forEach(form => {
+            form.addEventListener("submit", function(e) {
+                e.preventDefault();
                 const reviewId = this.getAttribute("data-id");
-                const newStatus = this.value;
-
-                const confirmChange = confirm("Are you sure you want to change the status?");
-                if (!confirmChange) {
-                    location.reload();
-                    return;
-                }
+                const status = this.querySelector('select[name="status"]').value;
 
                 fetch(`/review/${reviewId}`, {
                         method: "PUT",
@@ -78,14 +252,13 @@
                                 'meta[name="csrf-token"]').getAttribute("content")
                         },
                         body: JSON.stringify({
-                            status: newStatus
+                            status: status
                         })
                     })
                     .then(response => response.json())
                     .then(data => {
                         if (data.success) {
-                            alert("Status updated successfully.");
-                            location.reload();
+                            window.location.reload();
                         } else {
                             alert("Failed to update status.");
                         }

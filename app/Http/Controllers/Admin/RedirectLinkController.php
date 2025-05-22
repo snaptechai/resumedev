@@ -14,7 +14,7 @@ class RedirectLinkController extends Controller
      */
     public function index()
     {
-        $redirect_links = RedirectLink::paginate(10);
+        $redirect_links = RedirectLink::latest('id')->paginate(15);
 
         return view('admin.redirect-links.index', compact('redirect_links'));
     }
@@ -32,6 +32,12 @@ class RedirectLinkController extends Controller
      */
     public function store(Request $request)
     {
+        $request->validate([
+            'original_url' => 'required|url',
+            'new_url' => 'required|url',
+            'note' => 'nullable|string|max:255',
+        ]);
+
         RedirectLink::create([
             'original_url' => $request->original_url,
             'new_url' => $request->new_url,
@@ -40,8 +46,7 @@ class RedirectLinkController extends Controller
             'added_date' => now(),
         ]);
 
-        return redirect()->back()->with('success', 'Redirect Link created successfully!');
-
+        return redirect()->route('redirect-links.index')->with('success', 'Redirect link created successfully!');
     }
 
     /**
@@ -65,6 +70,12 @@ class RedirectLinkController extends Controller
      */
     public function update(Request $request, string $id)
     {
+        $request->validate([
+            'original_url' => 'required|url',
+            'new_url' => 'required|url',
+            'note' => 'nullable|string|max:255',
+        ]);
+
         $link = RedirectLink::findOrFail($id);
 
         $link->update([
@@ -75,7 +86,7 @@ class RedirectLinkController extends Controller
             'last_modified_date' => now(),
         ]);
 
-        return redirect()->back()->with('success', 'Redirect Link Updated successfully!');
+        return redirect()->route('redirect-links.index')->with('success', 'Redirect link updated successfully!');
     }
 
     /**
@@ -83,11 +94,9 @@ class RedirectLinkController extends Controller
      */
     public function destroy(string $id)
     {
-
         $link = RedirectLink::findOrFail($id);
-
         $link->delete();
 
-        return redirect()->back()->with('success', 'Redirect Link Deleted successfully!');
+        return redirect()->route('redirect-links.index')->with('success', 'Redirect link deleted successfully!');
     }
 }

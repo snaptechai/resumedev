@@ -1,121 +1,104 @@
-<div id="edit-{{ $package->id }}" class="fixed inset-0 z-50 overflow-auto bg-black/60 backdrop-blur-sm hidden">
-    <div
-        class="relative bg-white dark:bg-gray-800 rounded-xl shadow-2xl mx-auto my-12 max-w-2xl w-full transform transition-all">
-        <div class="flex items-center justify-between p-5 border-b dark:border-gray-700">
-            <h3 class="text-xl font-semibold text-gray-900 dark:text-white">
-                Edit package
-            </h3>
-            <button type="button" onclick="closeModal('edit-{{ $package->id }}')"
-                class="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-white bg-transparent hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg p-2 transition-colors">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"
-                    xmlns="http://www.w3.org/2000/svg">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12">
-                    </path>
-                </svg>
-                <span class="sr-only">Close modal</span>
-            </button>
+<x-layouts.app>
+    <div class="w-full py-2">
+        <div class="bg-white rounded-lg overflow-hidden border border-gray-200">
+            <div class="px-6 py-5 border-b border-gray-200 flex justify-between items-center">
+                <h2 class="text-xl font-semibold text-gray-800">Edit Package</h2>
+            </div>
+            @include('admin.massage-bar')
+
+            <form action="{{ route('packages.update', $package->id) }}" method="POST" enctype="multipart/form-data">
+                @csrf
+                @method('PUT')
+
+                <div class="p-6 space-y-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label for="title" class="block text-sm font-medium text-gray-700 mb-2">
+                                Title
+                            </label>
+                            <input type="text" name="title" id="title"
+                                class="w-full rounded-lg border-gray-300 py-3 px-3 text-gray-700 focus:ring-2 focus:ring-[#BCEC88] focus:border-[#BCEC88] appearance-none border"
+                                placeholder="Enter title..." value="{{ $package->title }}">
+                        </div>
+
+                        <div>
+                            <label for="duration" class="block text-sm font-medium text-gray-700 mb-2">
+                                Duration (Hours)
+                            </label>
+                            <input type="text" name="duration" id="duration"
+                                class="w-full rounded-lg border-gray-300 py-3 px-3 text-gray-700 focus:ring-2 focus:ring-[#BCEC88] focus:border-[#BCEC88] appearance-none border"
+                                value="{{ $package->duration }}">
+                        </div>
+
+                        <div>
+                            <label for="price" class="block text-sm font-medium text-gray-700 mb-2">
+                                Price ($)
+                            </label>
+                            <input type="number" name="price" id="price" step="0.01"
+                                class="w-full rounded-lg border-gray-300 py-3 px-3 text-gray-700 focus:ring-2 focus:ring-[#BCEC88] focus:border-[#BCEC88] appearance-none border"
+                                value="{{ $package->price }}">
+                        </div>
+
+                        <div>
+                            <label for="old_price" class="block text-sm font-medium text-gray-700 mb-2">
+                                Old Price ($)
+                            </label>
+                            <input type="number" name="old_price" id="old_price" step="0.01"
+                                class="w-full rounded-lg border-gray-300 py-3 px-3 text-gray-700 focus:ring-2 focus:ring-[#BCEC88] focus:border-[#BCEC88] appearance-none border"
+                                value="{{ $package->old_price }}">
+                        </div>
+
+                        <div>
+                            <label for="europe_price" class="block text-sm font-medium text-gray-700 mb-2">
+                                Europe Price (€)
+                            </label>
+                            <input type="number" name="europe_price" id="europe_price" step="0.01"
+                                class="w-full rounded-lg border-gray-300 py-3 px-3 text-gray-700 focus:ring-2 focus:ring-[#BCEC88] focus:border-[#BCEC88] appearance-none border"
+                                value="{{ $package->europe_price }}">
+                        </div>
+
+                        <div>
+                            <label for="europe_old_price" class="block text-sm font-medium text-gray-700 mb-2">
+                                Europe Old Price (€)
+                            </label>
+                            <input type="number" name="europe_old_price" id="europe_old_price" step="0.01"
+                                class="w-full rounded-lg border-gray-300 py-3 px-3 text-gray-700 focus:ring-2 focus:ring-[#BCEC88] focus:border-[#BCEC88] appearance-none border"
+                                value="{{ $package->europe_old_price }}">
+                        </div>
+                    </div>
+
+                    <div class="mb-6">
+                        <label for="short_description" class="block text-sm font-medium text-gray-700 mb-2">
+                            Short Description
+                        </label>
+                        <input id="short_description" type="hidden" name="short_description"
+                            value="{{ $package->short_description }}">
+                        <trix-editor input="short_description"
+                            class="trix-content border border-gray-300 rounded-md p-3"></trix-editor>
+                    </div>
+
+                    <div class="mb-6">
+                        <label for="full_description" class="block text-sm font-medium text-gray-700 mb-2">
+                            Full Description
+                        </label>
+                        <input id="full_description" type="hidden" name="full_description"
+                            value="{{ $package->full_description }}">
+                        <trix-editor input="full_description"
+                            class="trix-content border border-gray-300 rounded-md p-3"></trix-editor>
+                    </div>
+                </div>
+
+                <div class="flex items-center justify-end p-6 gap-3 border-t border-gray-200">
+                    <a href="{{ route('packages.index') }}"
+                        class="px-4 py-2.5 bg-white text-gray-700 rounded-lg border border-gray-300 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-300 transition-colors font-medium">
+                        Cancel
+                    </a>
+                    <button type="submit"
+                        class="px-5 py-2.5 bg-[#BCEC88] hover:bg-[#BCEC88]/90 focus:ring-4 focus:ring-[#BCEC88]/30 focus:outline-none text-[#5D7B2B] font-medium rounded-lg transition-colors">
+                        Update Package
+                    </button>
+                </div>
+            </form>
         </div>
-
-        <form action="{{ route('packages.update', $package->id) }}" method="POST" enctype="multipart/form-data">
-            @csrf
-            @method('PUT')
-            <div class="p-6 space-y-6">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div>
-                        <label for="title-{{ $package->id }}"
-                            class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                            Title
-                        </label>
-                        <input type="text" name="title" id="title-{{ $package->id }}"
-                            class="w-full rounded-lg border-gray-300 dark:border-gray-600 shadow-sm focus:border-green-500 focus:ring-green-500 dark:bg-gray-700 dark:text-white p-3"
-                            placeholder="Enter title..." value="{{ $package->title }}">
-                    </div>
-
-                    <div>
-                        <label for="price-{{ $package->id }}"
-                            class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                            Price (LKR)
-                        </label>
-                        <input type="number" name="price" id="price-{{ $package->id }}" step="0.01"
-                            class="w-full rounded-lg border-gray-300 dark:border-gray-600 shadow-sm focus:border-green-500 focus:ring-green-500 dark:bg-gray-700 dark:text-white p-3"
-                            value="{{ $package->price }}">
-                    </div>
-
-                    <div>
-                        <label for="duration-{{ $package->id }}"
-                            class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                            Duration
-                        </label>
-                        <input type="text" name="duration" id="duration-{{ $package->id }}"
-                            class="w-full rounded-lg border-gray-300 dark:border-gray-600 shadow-sm focus:border-green-500 focus:ring-green-500 dark:bg-gray-700 dark:text-white p-3"
-                            value="{{ $package->duration }}">
-                    </div>
-
-                    <div>
-                        <label for="europe_price-{{ $package->id }}"
-                            class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                            Europe Price (€)
-                        </label>
-                        <input type="number" name="europe_price" id="europe_price-{{ $package->id }}" step="0.01"
-                            class="w-full rounded-lg border-gray-300 dark:border-gray-600 shadow-sm focus:border-green-500 focus:ring-green-500 dark:bg-gray-700 dark:text-white p-3"
-                            value="{{ $package->europe_price }}">
-                    </div>
-
-                    <div>
-                        <label for="old_price-{{ $package->id }}"
-                            class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                            Old Price (LKR)
-                        </label>
-                        <input type="number" name="old_price" id="old_price-{{ $package->id }}" step="0.01"
-                            class="w-full rounded-lg border-gray-300 dark:border-gray-600 shadow-sm focus:border-green-500 focus:ring-green-500 dark:bg-gray-700 dark:text-white p-3"
-                            value="{{ $package->old_price }}">
-                    </div>
-
-                    <div>
-                        <label for="europe_old_price-{{ $package->id }}"
-                            class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                            Europe Old Price (€)
-                        </label>
-                        <input type="number" name="europe_old_price" id="europe_old_price-{{ $package->id }}"
-                            step="0.01"
-                            class="w-full rounded-lg border-gray-300 dark:border-gray-600 shadow-sm focus:border-green-500 focus:ring-green-500 dark:bg-gray-700 dark:text-white p-3"
-                            value="{{ $package->europe_old_price }}">
-                    </div>
-                </div>
-
-                <div class="mb-6">
-                    <label for="short_description"
-                        class="block text-sm font-semibold text-gray-800 dark:text-gray-200 mb-2">
-                        Short Description
-                    </label>
-                    <input id="short_description_{{ $package->id }}" type="hidden" name="short_description"
-                        value="{{ $package->short_description }}">
-                    <trix-editor input="short_description_{{ $package->id }}"
-                        class="trix-content border border-gray-300 dark:border-gray-600 rounded-md p-3 dark:bg-gray-800 dark:text-gray-100"></trix-editor>
-                </div>
-
-                <div class="mb-6">
-                    <label for="full_description"
-                        class="block text-sm font-semibold text-gray-800 dark:text-gray-200 mb-2">
-                        Full Description
-                    </label>
-                    <input id="full_description_{{ $package->id }}" type="hidden" name="full_description"
-                        value="{{ $package->full_description }}">
-                    <trix-editor input="full_description_{{ $package->id }}"
-                        class="trix-content border border-gray-300 dark:border-gray-600 rounded-md p-3 dark:bg-gray-800 dark:text-gray-100"></trix-editor>
-                </div>
-            </div>
-
-            <div class="flex items-center justify-end p-5 border-t dark:border-gray-700 gap-3">
-                <button type="button" onclick="closeModal('edit-{{ $package->id }}')"
-                    class="px-4 py-2.5 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 rounded-lg border border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-300 transition-colors">
-                    Cancel
-                </button>
-                <button type="submit"
-                    class="px-4 py-2.5 bg-green-600 hover:bg-green-700 focus:ring-4 focus:ring-green-300 focus:outline-none text-white font-medium rounded-lg transition-colors">
-                    Update Package
-                </button>
-            </div>
-        </form>
     </div>
-</div>
+</x-layouts.app>

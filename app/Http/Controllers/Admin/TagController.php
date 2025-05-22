@@ -14,7 +14,7 @@ class TagController extends Controller
      */
     public function index()
     {
-        $tags = Tag::all();
+        $tags = Tag::orderBy('id', 'desc')->paginate(10);
 
         return view('admin.tags.index', [
             'tags' => $tags,
@@ -46,7 +46,7 @@ class TagController extends Controller
             'last_modified_date' => now(),
         ]);
 
-        return redirect()->route('tags.index');
+        return redirect()->route('tags.index')->with('success', 'Tag created successfully.');
     }
 
     /**
@@ -82,7 +82,7 @@ class TagController extends Controller
             'last_modified_date' => now(),
         ]);
 
-        return redirect()->route('tags.index');
+        return redirect()->route('tags.index')->with('success', 'Tag updated successfully.');
     }
 
     /**
@@ -94,6 +94,6 @@ class TagController extends Controller
 
         $tag->delete();
 
-        return redirect()->route('tags.index');
+        return redirect()->route('tags.index')->with('success', 'Tag deleted successfully.');
     }
 }
