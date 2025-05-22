@@ -5,7 +5,7 @@
     @include('partials.head')
 </head>
 
-<body class="min-h-screen antialiased bg-surface dark:bg-linear-to-b dark:from-surface-dark dark:to-surface-dark-alt">
+<body class="min-h-screen antialiased bg-green-100 dark:bg-linear-to-b dark:from-surface-dark dark:to-surface-dark-alt">
     <!-- Main Container -->
     <div class="flex min-h-svh flex-col items-center justify-center gap-6 p-6 md:p-10">
         <!-- Content Wrapper -->
@@ -21,6 +21,8 @@
                 {{ $slot }}
             </div>
         </div>
+        <footer class="w-full text-center py-4 text-sm text-gray-400 dark:text-gray-500">
+           Develop By <a href="https://snaptechai.com/"><b><u>SnapTech AI</u></b></a> Copyright  © {{ date('Y') }} Resume Mansion. All rights reserved.
     </div>
 
     @include('partials.scripts')

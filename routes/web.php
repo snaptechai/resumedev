@@ -5,6 +5,7 @@ use App\Http\Controllers\Admin\ArticleController;
 use App\Http\Controllers\Admin\BannerController;
 use App\Http\Controllers\Admin\CouponController;
 use App\Http\Controllers\Admin\FAQController;
+use App\Http\Controllers\Admin\NotificationController;
 use App\Http\Controllers\Admin\OrderController;
 use App\Http\Controllers\Admin\PackageController;
 use App\Http\Controllers\Admin\PageDetailController;
@@ -44,6 +45,7 @@ Route::middleware('auth')->group(function () {
     Route::resource('orders', OrderController::class);
     Route::post('orders/{id}/message', [OrderController::class, 'storeMessage'])->name('orders.message');
     Route::resource('articles', ArticleController::class);
+    Route::resource('notification', NotificationController::class);
 });
 
 require __DIR__.'/auth.php';

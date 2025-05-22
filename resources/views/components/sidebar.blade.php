@@ -21,9 +21,9 @@
     </a>
 
     <!-- Platform Label -->
-    <div class="px-1 py-2">
+    {{-- <div class="px-1 py-2">
         <div class="text-xs leading-none text-on-surface dark:text-on-surface-dark">{{ __('Platform') }}</div>
-    </div>
+    </div> --}}
 
     <!-- Navigation Links -->
     <div class="flex flex-col gap-2 overflow-y-auto pb-6 h-full">
@@ -150,12 +150,23 @@
             </li>
         </ul>
     </div>
-
-    <!-- User Dropdown -->
+ 
     <x-dropdown align="bottom-14 left-0 lg:left-full lg:ml-2 lg:bottom-0">
         <x-slot:trigger>
             <button type="button" x-bind:class="dropDownIsOpen ? 'bg-primary/10 dark:bg-primary-dark/10' : ''"
                 class="flex w-full items-center gap-2 rounded-radius p-2 text-left text-on-surface hover:bg-primary/5 hover:text-on-surface-strong focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary dark:text-on-surface-dark dark:hover:bg-primary-dark/5 dark:hover:text-on-surface-dark-strong dark:focus-visible:outline-primary-dark">
+ 
+                <div class="relative"> 
+                    <x-icon name="bell-alert" outline />
+                    @php $unreadCount = Auth::user()->getMessageNotifications()->count(); @endphp
+                    @if ($unreadCount > 0)
+                        <span
+                            class="absolute -top-1 -right-1 inline-flex items-center justify-center rounded-full bg-red-600 px-1.5 py-0.5 text-[10px] font-semibold text-white dark:bg-red-500">
+                            {{ $unreadCount }}
+                        </span>
+                    @endif
+                </div>
+ 
                 <div class="flex items-center gap-3">
                     <span
                         class="flex size-8 text-sm font-medium items-center justify-center overflow-hidden rounded-radius border border-outline bg-surface-alt tracking-wider text-on-surface/80 dark:border-outline-dark dark:bg-surface-dark-alt dark:text-on-surface-dark/80">
@@ -164,6 +175,7 @@
                     <span
                         class="text-sm text-on-surface-strong dark:text-on-surface-dark-strong">{{ auth()->user()->full_name }}</span>
                 </div>
+
                 <x-icons.chevron-right strokeWidth="2" size="sm" class="ml-auto shrink-0 -rotate-90 lg:rotate-0" />
             </button>
         </x-slot:trigger>
@@ -177,12 +189,18 @@
                         <p class="text-xs text-on-surface dark:text-on-surface-dark">{{ auth()->user()->username }}</p>
                     </div>
                 </li>
-                {{-- <li>
-                    <x-dropdown-link href="{{ route('settings.edit') }}">
-                        <x-icons.cog variant="mini" />
-                        {{ __('Settings') }}
+                <li>
+                    <x-dropdown-link href="{{ route('notification.index') }}">
+                        <x-icon name="bell-alert" outline />
+                        {{ __('Notifications') }}
+                            @php $unreadCount = Auth::user()->getMessageNotifications()->count(); @endphp
+                            @if ($unreadCount > 0)
+                                <span class="ml-auto inline-flex items-center justify-center rounded-full bg-red-600 px-2 py-0.5 text-xs font-bold text-white dark:bg-red-500">
+                                    {{ $unreadCount }}
+                                </span>
+                            @endif
                     </x-dropdown-link>
-                </li> --}}
+                </li>
                 <li>
                     <form method="POST" action="{{ route('logout') }}">
                         @csrf
@@ -197,6 +215,6 @@
         </x-slot:content>
     </x-dropdown>
     <div class="mt-auto pt-4 text-xs text-center text-on-surface/70 dark:text-on-surface-dark/70">
-        © {{ date('Y') }} All Rights Reserved by <b><a href="https://snaptechai.com/">synapses.ai</a> </b>
+        © {{ date('Y') }} All Rights Reserved by <br> <b><a href="https://snaptechai.com/" target="Blank">Snaptech ai</a> </b>
     </div>
 </nav>

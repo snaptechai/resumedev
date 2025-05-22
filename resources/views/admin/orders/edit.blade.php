@@ -24,6 +24,29 @@
                 Changing the status will notify the customer about the update.
             </p>
         </div>
+        
+        <div>
+            <label for="writer-{{ $order->id }}" class="block text-sm font-medium text-gray-700 mb-2">
+                Writer
+            </label>
+            <div class="relative">
+                <select name="writer" id="writer-{{ $order->id }}"
+                    class="w-full rounded-lg border-gray-300 py-3 pl-3 pr-10 text-gray-700 focus:ring-2 focus:ring-[#BCEC88] focus:border-[#BCEC88] appearance-none border">
+
+                    @php
+                        $writers = \App\Models\user::where('type', 'Writer')->get(); 
+                    @endphp
+
+                    <option value=""> Select a Writer </option>
+
+                    @foreach ($writers as $writer)
+                        <option value="{{ $writer->id }}" {{ $order->writer == $writer->id ? 'selected' : '' }}>
+                            {{ $writer->full_name }}
+                        </option>
+                    @endforeach
+                </select>
+            </div> 
+        </div>
     </div>
 
     <div class="flex items-center justify-end p-6 gap-3">

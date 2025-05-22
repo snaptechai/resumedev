@@ -1,3 +1,13 @@
+<style>
+    @keyframes blink {
+    0%, 100% { background-color: #faeded; } /* light yellow */
+    50% { background-color: #f34848; }
+    }
+
+    .animate-blink {
+    animation: blink 1.5s infinite;
+    }
+</style>
 <x-layouts.app>
     <div class="w-full py-2">
         <div class="bg-white rounded-lg overflow-hidden border border-gray-200">
@@ -6,6 +16,18 @@
             </div>
 
             @include('admin.massage-bar')
+            <form method="GET" action="{{ route('orders.index') }}" class="px-6 py-4 flex items-center gap-2">
+                <input type="text" name="search" value="{{ request('search') }}"
+                    class="border border-gray-300 rounded-md px-3 py-2 text-sm w-64 focus:outline-none focus:ring-2 focus:ring-[#6b8f3b]"
+                    placeholder="Search by Order ID, Customer, or Writer">
+                
+                <input type="hidden" name="order_status" value="{{ request('order_status') }}">
+
+                <button type="submit"
+                    class="bg-[#6b8f3b] hover:bg-[#5a7931] text-white text-sm font-medium py-2 px-4 rounded-md">
+                    Search
+                </button>
+            </form>
 
             <div class="flex border-b border-gray-200 overflow-x-auto">
                 @php
@@ -47,6 +69,10 @@
                             <th
                                 class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-b border-gray-200">
                                 Payment</th>
+
+                            <th
+                                class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-b border-gray-200">
+                                Writer</th>
                             <th
                                 class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-b border-gray-200">
                                 Actions</th>
@@ -68,8 +94,15 @@
                                     $statusColors[$order->order_status] ?? 'bg-gray-50 text-gray-800 border-gray-100';
 
                                 $customer = \App\Models\User::find($order->uid);
+                                
                             @endphp
-                            <tr class="hover:bg-[#fcfcfa] transition-colors border-b border-gray-100 last:border-0">
+                            {{-- @if () --}}
+                                    <tr class="hover:bg-[#fcfcfa] transition-colors border-b border-gray-100 last:border-0 {{ $order->needsAdminReply() ? 'animate-blink' : '' }}">
+                            {{-- @else
+                                    <tr class="hover:bg-[#fcfcfa] transition-colors border-b border-gray-100 last:border-0">
+                            @endif  --}}
+
+                            {{-- <tr class="hover:bg-[#fcfcfa] transition-colors border-b border-gray-100 last:border-0"> --}}
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <span
                                         class="text-sm font-medium text-gray-900">{{ 'RM' . sprintf('%06d', $order->id) }}</span>
@@ -100,6 +133,10 @@
                                         <span
                                             class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-orange-100 text-orange-800">{{ ucfirst($order->payment_status) }}</span>
                                     @endif
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <span
+                                        class="text-sm font-medium text-gray-900">{{ $order->assignedWriter?->full_name ?? 'Not assigned' }}</span>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <a href="{{ route('orders.show', $order->id) }}"

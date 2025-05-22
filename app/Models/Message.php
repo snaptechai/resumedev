@@ -20,4 +20,9 @@ class Message extends Model
         'adate',
         'attachment',
     ];
+
+    public function order()
+    {
+        return $this->belongsTo(order::class, 'oid', 'id');
+    }
 }

@@ -56,4 +56,47 @@ class User extends Authenticatable
             'last_modified_date' => 'datetime',
         ];
     }
+
+    public function order()
+    {
+        return $this->hasMany(Order::class, 'writer' , 'id');
+    }
+
+    public function getMessageNotifications()
+    {
+        if ($this->id == 1) {
+            return Message::select('message.*')
+                ->where('status', '0')
+                ->where('type', 'user')
+                ->whereIn('id', function ($query) {
+                    $query->selectRaw('MAX(id)')
+                        ->from('message')
+                        ->where('status', '0')
+                        ->where('type', 'user')
+                        ->groupBy('oid');
+                })
+                ->get();
+        }
+
+        $orderIds = Order::where('writer', $this->id)->pluck('id');
+
+        if ($orderIds->isNotEmpty()) {
+            return Message::select('message.*')
+                ->where('status', '0')
+                ->where('type', 'user')
+                ->whereIn('oid', $orderIds)
+                ->whereIn('id', function ($query) use ($orderIds) {
+                    $query->selectRaw('MAX(id)')
+                        ->from('message')
+                        ->where('status', '0')
+                        ->where('type', 'user')
+                        ->whereIn('oid', $orderIds)
+                        ->groupBy('oid');
+                })
+                ->get();
+        }
+
+        return collect();
+    }
+
 }

@@ -107,11 +107,11 @@
                                             <h3 class="text-lg font-semibold">Delete User</h3>
                                         </x-slot>
 
-                                        <div class="p-4">
+                                        {{-- <div class="p-4">
                                             @include('admin.users.delete', [
                                                 'user' => $user,
                                             ])
-                                        </div>
+                                        </div> --}}
                                     </x-modal>
                                 @endif
                             </div>

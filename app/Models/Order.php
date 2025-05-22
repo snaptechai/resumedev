@@ -2,7 +2,9 @@
 
 namespace App\Models;
 
+use Carbon\Carbon; 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Auth;
 
 class Order extends Model
 {
@@ -51,4 +53,34 @@ class Order extends Model
     {
         return $this->belongsTo(User::class, 'writer', 'id');
     }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'uid', 'id');
+    }
+
+    public function message()
+    {
+        return $this->hasMany(message::class, 'id' , 'oid');
+    }
+
+    public function needsAdminReply(): bool
+    {
+        $latestMessage = \App\Models\Message::where('oid', $this->id) 
+            ->orderByDesc('adate')
+            ->first();
+
+        if ($latestMessage && $latestMessage->type === 'user') {
+            $adminReplied = \App\Models\Message::where('oid', $this->id)
+                ->where('type', 'admin')
+                ->where('adate', '>', $latestMessage->adate)
+                ->exists();
+
+            $hoursPassed = Carbon::parse($latestMessage->adate)->diffInHours(now());
+
+            return !$adminReplied && $hoursPassed > 1;
+        }
+
+        return false;
+    } 
 }

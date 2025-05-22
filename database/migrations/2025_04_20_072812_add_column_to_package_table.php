@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::table('package', function (Blueprint $table) {
             $table->text('addons')->nullable()->after('short_description');
-            $table->integer('is_popular')->default(0)->after('discount');
+            $table->integer('is_popular')->default(0)->after('addons');
         });
     }
 
@@ -23,8 +23,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('package', function (Blueprint $table) {
-            $table->dropColumn('addons');
-            $table->dropColumn('discount');
+            $table->dropColumn('addons'); 
             $table->dropColumn('is_popular');
         });
     }

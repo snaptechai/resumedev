@@ -383,7 +383,7 @@
                         </h3>
                     </x-slot>
 
-                    <div class="p-4">
+                    <div class="p-4"> 
                         @include('admin.orders.edit', ['order' => $order])
                     </div>
                 </x-modal>
@@ -457,7 +457,7 @@
                                 <div class="flex justify-between py-3 px-4">
                                     <span class="text-sm text-gray-500">Assigned Writer</span>
                                     <span
-                                        class="text-sm font-medium text-gray-900">{{ $order->writer ?: 'Not assigned' }}</span>
+                                        class="text-sm font-medium text-gray-900">{{ $order->assignedWriter?->full_name ?? 'Not assigned' }}</span>
                                 </div>
                                 <div class="flex justify-between py-3 px-4">
                                     <span class="text-sm text-gray-500">Last Modified</span>

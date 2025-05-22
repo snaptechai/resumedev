@@ -16,23 +16,61 @@ class OrderController extends Controller
     /**
      * Display a listing of the resource.
      */
+    // public function index(Request $request)
+    // {
+    //     $orderStatus = $request->get('order_status');
+
+    //     $query = Order::query()->orderByDesc('id');
+
+    //     $writers = User::where('type', 'Writer')->get(); 
+
+    //     if ($request->has('order_status')) {
+    //         $query->where('order_status', $orderStatus);
+    //     }
+
+    //     $orders = $query->paginate(10);
+
+    //     return view('admin.orders.index', [
+    //         'orders' => $orders,
+    //         'order_status' => $orderStatus 
+    //     ]);
+    // }
+
     public function index(Request $request)
     {
         $orderStatus = $request->get('order_status');
+        $search = $request->get('search');
 
         $query = Order::query()->orderByDesc('id');
-
-        if ($request->has('order_status')) {
+ 
+        if ($orderStatus) {
             $query->where('order_status', $orderStatus);
         }
+ 
+        if ($search) {
+            $query->where(function ($q) use ($search) {
+                $q->where('id', 'like', '%' . $search . '%')
+                ->orWhereHas('user', function ($q2) use ($search) {
+                    $q2->where('full_name', 'like', '%' . $search . '%');
+                })
+                ->orWhereHas('assignedWriter', function ($q3) use ($search) {
+                    $q3->where('full_name', 'like', '%' . $search . '%');
+                });
+            });
+        }
 
-        $orders = $query->paginate(10);
+        $orders = $query->paginate(10)->appends([
+            'order_status' => $orderStatus,
+            'search' => $search,
+        ]);
 
         return view('admin.orders.index', [
             'orders' => $orders,
             'order_status' => $orderStatus,
+            'search' => $search,
         ]);
     }
+
 
     /**
      * Show the form for creating a new resource.
@@ -109,7 +147,7 @@ class OrderController extends Controller
     {
         $order = Order::findOrFail($id);
         $order->update([
-            // 'writer' => $request->writer_id,
+            'writer' => $request->writer,
             'order_status' => $request->order_status,
             // 'payment_status' => $request->payment_status,
             'last_modified_by' => Auth::id(),
@@ -187,7 +225,11 @@ class OrderController extends Controller
             $message->attachment = $filePath;
         }
 
-        $message->save();
+            if ($message->save()) { 
+                Message::where('oid', $order->id) 
+                    ->where('type', 'user')
+                    ->update(['status' => 1]);
+            }
 
         return redirect()->back()->with('success', 'Message sent successfully.');
     }
