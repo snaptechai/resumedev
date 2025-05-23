@@ -14,7 +14,7 @@ class FAQController extends Controller
      */
     public function index()
     {
-        $faqs = FAQ::all();
+        $faqs = FAQ::orderBy('id', 'desc')->paginate(10);
 
         return view('admin.faqs.index', [
             'faqs' => $faqs,
@@ -48,7 +48,7 @@ class FAQController extends Controller
             'last_modified_date' => now(),
         ]);
 
-        return redirect()->route('faqs.index');
+        return redirect()->route('faqs.index')->with('success', 'FAQ created successfully.');
     }
 
     /**
@@ -86,7 +86,7 @@ class FAQController extends Controller
             'last_modified_date' => now(),
         ]);
 
-        return redirect()->route('faqs.index');
+        return redirect()->route('faqs.index')->with('success', 'FAQ updated successfully.');
     }
 
     /**
@@ -98,6 +98,6 @@ class FAQController extends Controller
 
         $faq->delete();
 
-        return redirect()->route('faqs.index');
+        return redirect()->route('faqs.index')->with('success', 'FAQ deleted successfully.');
     }
 }
