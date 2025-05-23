@@ -1,33 +1,55 @@
 <style>
     @keyframes blink {
-    0%, 100% { background-color: #faeded; } /* light yellow */
-    50% { background-color: #f34848; }
+
+        0%,
+        100% {
+            background-color: #faeded;
+        }
+
+        /* light yellow */
+        50% {
+            background-color: #f34848;
+        }
     }
 
     .animate-blink {
-    animation: blink 1.5s infinite;
+        animation: blink 1.5s infinite;
     }
 </style>
 <x-layouts.app>
     <div class="w-full py-2">
         <div class="bg-white rounded-lg overflow-hidden border border-gray-200">
-            <div class="px-6 py-5 border-b border-gray-200">
+            <div class="px-6 py-5 border-b border-gray-200 flex items-center justify-between">
                 <h2 class="text-xl font-semibold text-gray-800">Orders</h2>
+
+                <form method="GET" action="{{ route('orders.index') }}" class="flex items-center gap-3">
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <x-icon name="magnifying-glass" class="h-4 w-4 text-gray-400" />
+                        </div>
+                        <input type="text" name="search" value="{{ request('search') }}"
+                            class="block w-96 pl-10 pr-3 py-2 border border-gray-300 rounded-lg text-sm placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-[#BCEC88] focus:border-[#BCEC88] transition-colors"
+                            placeholder="Search orders...">
+                    </div>
+
+                    <input type="hidden" name="order_status" value="{{ request('order_status') }}">
+
+                    <button type="submit"
+                        class="inline-flex items-center px-4 py-2 bg-[#BCEC88] hover:bg-[#BCEC88]/90 focus:ring-4 focus:ring-[#BCEC88]/30 focus:outline-none text-[#5D7B2B] font-medium rounded-lg transition-colors">
+                        Search
+                    </button>
+
+                    @if (request('search'))
+                        <a href="{{ route('orders.index', ['order_status' => request('order_status')]) }}"
+                            class="inline-flex items-center px-3 py-2 border border-gray-300 text-sm font-medium rounded-lg text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#BCEC88]/30 transition-colors">
+                            <x-icon name="x-mark" class="h-4 w-4 mr-1" />
+                            Clear
+                        </a>
+                    @endif
+                </form>
             </div>
 
             @include('admin.massage-bar')
-            <form method="GET" action="{{ route('orders.index') }}" class="px-6 py-4 flex items-center gap-2">
-                <input type="text" name="search" value="{{ request('search') }}"
-                    class="border border-gray-300 rounded-md px-3 py-2 text-sm w-64 focus:outline-none focus:ring-2 focus:ring-[#6b8f3b]"
-                    placeholder="Search by Order ID, Customer, or Writer">
-                
-                <input type="hidden" name="order_status" value="{{ request('order_status') }}">
-
-                <button type="submit"
-                    class="bg-[#6b8f3b] hover:bg-[#5a7931] text-white text-sm font-medium py-2 px-4 rounded-md">
-                    Search
-                </button>
-            </form>
 
             <div class="flex border-b border-gray-200 overflow-x-auto">
                 @php
@@ -96,15 +118,11 @@
                                     $statusColors[$order->order_status] ?? 'bg-gray-50 text-gray-800 border-gray-100';
 
                                 $customer = \App\Models\User::find($order->uid);
-                                
-                            @endphp
-                            {{-- @if () --}}
-                                    <tr class="hover:bg-[#fcfcfa] transition-colors border-b border-gray-100 last:border-0 {{ $order->needsAdminReply() ? 'animate-blink' : '' }}">
-                            {{-- @else
-                                    <tr class="hover:bg-[#fcfcfa] transition-colors border-b border-gray-100 last:border-0">
-                            @endif  --}}
 
-                            {{-- <tr class="hover:bg-[#fcfcfa] transition-colors border-b border-gray-100 last:border-0"> --}}
+                            @endphp
+                            <tr
+                                class="hover:bg-[#fcfcfa] transition-colors border-b border-gray-100 last:border-0 {{ $order->needsAdminReply() ? 'animate-blink' : '' }}">
+
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <span
                                         class="text-sm font-medium text-gray-900">{{ 'RM' . sprintf('%06d', $order->id) }}</span>
@@ -140,7 +158,7 @@
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <span
-                                        class="text-sm font-medium text-gray-900">{{ $order->assignedWriter?->full_name ?? 'Not assigned' }}</span>
+                                        class="text-sm text-gray-600">{{ $order->assignedWriter?->full_name ?? 'Not assigned' }}</span>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <a href="{{ route('orders.show', $order->id) }}"
@@ -152,11 +170,18 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="7" class="px-6 py-12 text-center border-b border-gray-100">
+                                <td colspan="{{ auth()->user()->hasPermission('View order price & details') ? '8' : '7' }}"
+                                    class="px-6 py-12 text-center border-b border-gray-100">
                                     <div class="flex flex-col items-center">
                                         <x-icon name="document-text" class="w-10 h-10 text-gray-400 mb-2" />
                                         <h3 class="text-lg font-medium text-gray-700 mb-1">No orders found</h3>
-                                        <p class="text-sm text-gray-500">There are no orders matching your criteria.</p>
+                                        <p class="text-sm text-gray-500">
+                                            @if (request('search'))
+                                                No orders match your search criteria.
+                                            @else
+                                                There are no orders matching your criteria.
+                                            @endif
+                                        </p>
                                     </div>
                                 </td>
                             </tr>

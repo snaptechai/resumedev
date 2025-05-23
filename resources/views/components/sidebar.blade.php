@@ -20,11 +20,6 @@
         <x-app-logo class="size-8" />
     </a>
 
-    <!-- Platform Label -->
-    {{-- <div class="px-1 py-2">
-        <div class="text-xs leading-none text-on-surface dark:text-on-surface-dark">{{ __('Platform') }}</div>
-    </div> --}}
-
     <!-- Navigation Links -->
     <div class="flex flex-col gap-2 overflow-y-auto pb-6 h-full">
         <!-- Main Navigation -->
@@ -52,23 +47,6 @@
                     <x-icon name="user-group" outline />
                     <span>{{ __('Affiliate Users') }}</span>
                 </x-sidebar-link>
-            </li> --}}
-            {{-- <li x-data="{ open: {{ request()->routeIs('packages.*') ? 'true' : 'false' }} }">
-                <x-sidebar-link @click.prevent="open = !open">
-                    <x-icon name="archive-box-arrow-down" outline />
-                    <span>{{ __('Orders') }}</span>
-                    <svg class="w-5 h-5 transition-transform" :class="{'rotate-180': open}" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                        <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
-                    </svg>
-                </x-sidebar-link>
-                <ul x-show="open" class="pl-6 space-y-2">
-                    <li>
-                        <x-sidebar-link href="{{ route('packages.index') }}" :active="request()->routeIs('packages.index')">
-                            <x-icon name="rectangle-group" outline />
-                            <span>{{ __('Packages') }}</span>
-                        </x-sidebar-link>
-                    </li>
-                </ul>
             </li> --}}
             <li>
                 <x-sidebar-link href="{{ route('orders.index') }}" :active="request()->routeIs('orders.*')">
@@ -150,13 +128,13 @@
             </li>
         </ul>
     </div>
- 
+
     <x-dropdown align="bottom-14 left-0 lg:left-full lg:ml-2 lg:bottom-0">
         <x-slot:trigger>
             <button type="button" x-bind:class="dropDownIsOpen ? 'bg-primary/10 dark:bg-primary-dark/10' : ''"
                 class="flex w-full items-center gap-2 rounded-radius p-2 text-left text-on-surface hover:bg-primary/5 hover:text-on-surface-strong focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary dark:text-on-surface-dark dark:hover:bg-primary-dark/5 dark:hover:text-on-surface-dark-strong dark:focus-visible:outline-primary-dark">
- 
-                <div class="relative"> 
+
+                <div class="relative">
                     <x-icon name="bell-alert" outline />
                     @php $unreadCount = Auth::user()->getMessageNotifications()->count(); @endphp
                     @if ($unreadCount > 0)
@@ -166,7 +144,7 @@
                         </span>
                     @endif
                 </div>
- 
+
                 <div class="flex items-center gap-3">
                     <span
                         class="flex size-8 text-sm font-medium items-center justify-center overflow-hidden rounded-radius border border-outline bg-surface-alt tracking-wider text-on-surface/80 dark:border-outline-dark dark:bg-surface-dark-alt dark:text-on-surface-dark/80">
@@ -193,12 +171,13 @@
                     <x-dropdown-link href="{{ route('notification.index') }}">
                         <x-icon name="bell-alert" outline />
                         {{ __('Notifications') }}
-                            @php $unreadCount = Auth::user()->getMessageNotifications()->count(); @endphp
-                            @if ($unreadCount > 0)
-                                <span class="ml-auto inline-flex items-center justify-center rounded-full bg-red-600 px-2 py-0.5 text-xs font-bold text-white dark:bg-red-500">
-                                    {{ $unreadCount }}
-                                </span>
-                            @endif
+                        @php $unreadCount = Auth::user()->getMessageNotifications()->count(); @endphp
+                        @if ($unreadCount > 0)
+                            <span
+                                class="ml-auto inline-flex items-center justify-center rounded-full bg-red-600 px-2 py-0.5 text-xs font-bold text-white dark:bg-red-500">
+                                {{ $unreadCount }}
+                            </span>
+                        @endif
                     </x-dropdown-link>
                 </li>
                 <li>
@@ -215,6 +194,7 @@
         </x-slot:content>
     </x-dropdown>
     <div class="mt-auto pt-4 text-xs text-center text-on-surface/70 dark:text-on-surface-dark/70">
-        © {{ date('Y') }} All Rights Reserved by <br> <b><a href="https://snaptechai.com/" target="Blank">Snaptech ai</a> </b>
+        © {{ date('Y') }} All Rights Reserved by <br> <b><a href="https://snaptechai.com/" target="Blank">Snaptech
+                ai</a> </b>
     </div>
 </nav>
