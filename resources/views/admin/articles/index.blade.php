@@ -1,95 +1,123 @@
 <x-layouts.app>
-    <div class="flex flex-col">
-        <div class="flex flex-col gap-2">
-            <x-typography.heading accent size="xl" level="1">
-                Articles
-            </x-typography.heading>
-            <x-typography.subheading size="lg">
-                Manage articles for your website.
-            </x-typography.subheading>
-            <x-separator class="my-4" />
-        </div>
+    <div class="w-full py-2">
+        <div class="bg-white rounded-lg overflow-hidden border border-gray-200">
+            <div class="px-6 py-5 border-b border-gray-200 flex justify-between items-center">
+                <h2 class="text-xl font-semibold text-gray-800">Articles</h2>
+                <a href="{{ route('articles.create') }}"
+                    class="inline-flex items-center px-4 py-2 bg-[#BCEC88] hover:bg-[#BCEC88]/90 focus:ring-4 focus:ring-[#BCEC88]/30 focus:outline-none text-[#5D7B2B] font-medium rounded-lg transition-colors">
+                    <x-icon name="plus" class="w-4 h-4 mr-1.5" />
+                    Add Article
+                </a>
+            </div>
 
-        <div class="flex justify-end items-center mb-4">
-            <a href="{{ route('articles.create') }}"
-                class="inline-flex justify-center items-center gap-2 whitespace-nowrap rounded-radius bg-primary border border-primary dark:border-primary-dark px-4 py-2 text-sm font-medium tracking-wide text-on-primary transition hover:opacity-75 text-center focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:opacity-100 active:outline-offset-0 disabled:opacity-75 disabled:cursor-not-allowed dark:bg-primary-dark dark:text-on-primary-dark dark:focus-visible:outline-primary-dark cursor-pointer">
-                <x-icon name="plus" class="w-5 h-5" />
-                Create Article
-            </a>
-        </div>
-    </div>
+            @include('admin.massage-bar')
 
-    <div class="overflow-hidden w-full overflow-x-auto rounded-sm border border-neutral-300 dark:border-neutral-700">
-        <table class="w-full text-left text-sm text-neutral-600 dark:text-neutral-300">
-            <thead
-                class="border-b border-neutral-300 bg-neutral-50 text-sm text-neutral-900 dark:border-neutral-700 dark:bg-neutral-900 dark:text-white">
-                <tr>
-                    <th scope="col" class="p-4">ID</th>
-                    <th scope="col" class="p-4">Title</th>
-                    <th scope="col" class="p-4">Category</th>
-                    <th scope="col" class="p-4">Sub Category</th>
-                    <th scope="col" class="p-4">Featured</th>
-                    <th scope="col" class="p-4">Date Added</th>
-                    <th scope="col" class="p-4 text-right">Actions</th>
-                </tr>
-            </thead>
-            <tbody class="divide-y divide-neutral-300 dark:divide-neutral-700">
-                @foreach ($articles as $article)
-                    <tr>
-                        <td class="p-4">{{ $article->id }}</td>
-                        <td class="p-4">{{ $article->article_title }}</td>
-                        <td class="p-4">{{ $article->category_name }}</td>
-                        <td class="p-4">{{ $article->sub_category_name ?? 'None' }}</td>
-                        <td class="p-4">
-                            @if ($article->featured)
-                                <span
-                                    class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium bg-green-100 text-green-800">
-                                    Featured
-                                </span>
-                            @else
-                                <span
-                                    class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium bg-gray-100 text-gray-800">
-                                    Not Featured
-                                </span>
-                            @endif
-                        </td>
-                        <td class="p-4">{{ $article->added_date }}</td>
-                        <td class="p-4">
-                            <div class="flex justify-end gap-2">
-                                <a href="{{ route('articles.edit', $article->id) }}"
-                                    class="whitespace-nowrap rounded-radius bg-primary border border-primary px-4 py-2 text-sm font-medium tracking-wide text-on-primary transition hover:opacity-75 text-center focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:opacity-100 active:outline-offset-0 disabled:opacity-75 disabled:cursor-not-allowed dark:bg-primary-dark dark:border-primary-dark dark:text-on-primary-dark dark:focus-visible:outline-primary-dark">
-                                    Edit
-                                </a>
+            <div class="overflow-x-auto">
+                <table class="w-full">
+                    <thead>
+                        <tr>
+                            <th
+                                class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-b border-gray-200">
+                                Article #</th>
+                            <th
+                                class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-b border-gray-200">
+                                Title</th>
+                            <th
+                                class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-b border-gray-200">
+                                Category</th>
+                            <th
+                                class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-b border-gray-200">
+                                Sub Category</th>
+                            <th
+                                class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-b border-gray-200">
+                                Featured</th>
+                            <th
+                                class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-b border-gray-200">
+                                Date Added</th>
+                            <th
+                                class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-b border-gray-200">
+                                Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @forelse ($articles as $article)
+                            <tr class="hover:bg-[#fcfcfa] transition-colors border-b border-gray-100 last:border-0">
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <span class="text-sm font-medium text-gray-900">{{ $article->id }}</span>
+                                </td>
+                                <td class="px-6 py-4">
+                                    <span
+                                        class="text-sm text-gray-600">{{ Str::limit($article->article_title, 50) }}</span>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <span class="text-sm text-gray-600">{{ $article->category_name }}</span>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <span
+                                        class="text-sm text-gray-600">{{ $article->sub_category_name ?? 'None' }}</span>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    @if ($article->featured)
+                                        <span
+                                            class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                            Featured
+                                        </span>
+                                    @else
+                                        <span
+                                            class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                                            Not Featured
+                                        </span>
+                                    @endif
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <span
+                                        class="text-sm text-gray-600">{{ date('M d, Y', strtotime($article->added_date)) }}</span>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="flex gap-2">
+                                        <a href="{{ route('articles.edit', $article->id) }}"
+                                            class="inline-flex items-center px-2.5 py-1.5 text-sm font-medium text-gray-700 hover:text-[#6b8f3b] hover:underline">
+                                            <x-icon name="pencil-square" class="w-4 h-4 mr-1" />
+                                            Edit
+                                        </a>
 
-                                <x-modal>
-                                    <x-slot name="trigger">
-                                        <button x-on:click="modalIsOpen = true" type="button"
-                                            class="px-4 py-2 text-sm font-medium text-on-primary bg-danger border border-danger rounded-radius cursor-pointer">
-                                            Delete
-                                        </button>
-                                    </x-slot>
+                                        <x-modal id="delete-article-{{ $article->id }}">
+                                            <x-slot name="trigger">
+                                                <button x-on:click="modalIsOpen = true"
+                                                    class="inline-flex items-center px-2.5 py-1.5 text-sm font-medium text-red-600 hover:text-red-800 hover:underline">
+                                                    <x-icon name="trash" class="w-4 h-4 mr-1" />
+                                                    Delete
+                                                </button>
+                                            </x-slot>
 
-                                    <x-slot name="header">
-                                        <h3 class="text-lg font-semibold">Delete Article</h3>
-                                    </x-slot>
+                                            <x-slot name="header">
+                                                <h3 class="text-lg font-semibold">Delete Article</h3>
+                                            </x-slot>
 
-                                    <div class="p-4">
-                                        @include('admin.articles.delete', [
-                                            'article' => $article,
-                                        ])
+                                            <div>
+                                                @include('admin.articles.delete', [
+                                                    'article' => $article,
+                                                ])
+                                            </div>
+                                        </x-modal>
                                     </div>
-                                </x-modal>
-                            </div>
-                        </td>
-                    </tr>
-                @endforeach
-
-                @empty(count($articles))
-                    <tr>
-                        <td colspan="7" class="p-4 text-center">No articles found.</td>
-                    </tr>
-                @endempty
-            </tbody>
-        </table>
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="7" class="px-6 py-12 text-center border-b border-gray-100">
+                                    <div class="flex flex-col items-center">
+                                        <x-icon name="document-text" class="w-10 h-10 text-gray-400 mb-2" />
+                                        <h3 class="text-lg font-medium text-gray-700 mb-1">No articles found</h3>
+                                        <p class="text-sm text-gray-500">There are no articles matching your criteria.
+                                        </p>
+                                    </div>
+                                </td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
 </x-layouts.app>
