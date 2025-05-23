@@ -10,6 +10,7 @@ use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 
 class OrderController extends Controller
 {
@@ -22,7 +23,7 @@ class OrderController extends Controller
 
     //     $query = Order::query()->orderByDesc('id');
 
-    //     $writers = User::where('type', 'Writer')->get(); 
+    //     $writers = User::where('type', 'Writer')->get();
 
     //     if ($request->has('order_status')) {
     //         $query->where('order_status', $orderStatus);
@@ -32,7 +33,7 @@ class OrderController extends Controller
 
     //     return view('admin.orders.index', [
     //         'orders' => $orders,
-    //         'order_status' => $orderStatus 
+    //         'order_status' => $orderStatus
     //     ]);
     // }
 
@@ -42,20 +43,20 @@ class OrderController extends Controller
         $search = $request->get('search');
 
         $query = Order::query()->orderByDesc('id');
- 
+
         if ($orderStatus) {
             $query->where('order_status', $orderStatus);
         }
- 
+
         if ($search) {
             $query->where(function ($q) use ($search) {
-                $q->where('id', 'like', '%' . $search . '%')
-                ->orWhereHas('user', function ($q2) use ($search) {
-                    $q2->where('full_name', 'like', '%' . $search . '%');
-                })
-                ->orWhereHas('assignedWriter', function ($q3) use ($search) {
-                    $q3->where('full_name', 'like', '%' . $search . '%');
-                });
+                $q->where('id', 'like', '%'.$search.'%')
+                    ->orWhereHas('user', function ($q2) use ($search) {
+                        $q2->where('full_name', 'like', '%'.$search.'%');
+                    })
+                    ->orWhereHas('assignedWriter', function ($q3) use ($search) {
+                        $q3->where('full_name', 'like', '%'.$search.'%');
+                    });
             });
         }
 
@@ -70,7 +71,6 @@ class OrderController extends Controller
             'search' => $search,
         ]);
     }
-
 
     /**
      * Show the form for creating a new resource.
@@ -146,10 +146,26 @@ class OrderController extends Controller
     public function update(Request $request, string $id)
     {
         $order = Order::findOrFail($id);
+
+        $validator = validator($request->all(), [
+            'writer' => 'nullable',
+            'order_status' => 'required',
+        ]);
+
+        if ($request->order_status == 4) {
+            $validator = validator($request->all(), [
+                'completion_files' => 'required|array',
+                'completion_files.*' => 'file|max:10240',
+            ]);
+
+            if ($validator->fails()) {
+                return redirect()->back()->with('error', 'Please attach the completed files before marking the order as completed.');
+            }
+        }
+
         $order->update([
             'writer' => $request->writer,
             'order_status' => $request->order_status,
-            // 'payment_status' => $request->payment_status,
             'last_modified_by' => Auth::id(),
             'last_modified_date' => Carbon::now()->format('Y-m-d'),
         ]);
@@ -175,6 +191,28 @@ class OrderController extends Controller
                 'adate' => now(),
             ]);
         } elseif ($request->order_status == 4) {
+            $fileAttachments = [];
+            $attachmentPaths = [];
+
+            if ($request->hasFile('completion_files')) {
+                foreach ($request->file('completion_files') as $file) {
+                    $filePath = $file->store('order_completions/'.$order->id, 'public');
+                    $attachmentPaths[] = $filePath;
+                    $fileAttachments[] = $filePath;
+
+                    $message = new Message;
+                    $message->oid = $order->id;
+                    $message->fid = Auth::id();
+                    $message->tid = $order->uid;
+                    $message->message = 'Order completed file: '.$file->getClientOriginalName();
+                    $message->status = 0;
+                    $message->type = 'admin';
+                    $message->attachment = $filePath;
+                    $message->adate = now();
+                    $message->save();
+                }
+            }
+
             Message::create([
                 'oid' => $order->id,
                 'fid' => Auth::id(),
@@ -184,6 +222,10 @@ class OrderController extends Controller
                 'type' => 'admin',
                 'adate' => now(),
             ]);
+
+            $email = $order->user->username;
+
+            Mail::to($email)->queue(new \App\Mail\OrderReady($order, $fileAttachments));
         }
 
         return redirect()->back()->with('success', 'Order updated successfully.');
@@ -225,11 +267,15 @@ class OrderController extends Controller
             $message->attachment = $filePath;
         }
 
-            if ($message->save()) { 
-                Message::where('oid', $order->id) 
-                    ->where('type', 'user')
-                    ->update(['status' => 1]);
-            }
+        if ($message->save()) {
+            Message::where('oid', $order->id)
+                ->where('type', 'user')
+                ->update(['status' => 1]);
+        }
+
+        $email = $order->user->username;
+
+        Mail::to($email)->queue(new \App\Mail\NewMessage($message, $order));
 
         return redirect()->back()->with('success', 'Message sent successfully.');
     }
