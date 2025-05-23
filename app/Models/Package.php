@@ -30,4 +30,9 @@ class Package extends Model
     {
         return $this->hasMany(Template::class, 'package');
     }
+    
+    public function addon()
+    {
+        return $this->hasMany(addon::class, 'id','package_id');
+    }
 }

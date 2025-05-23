@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
+use App\Mail\Email;
+use App\Mail\Order_Email;
 use App\Models\Addon;
 use App\Models\Coupon;
 use App\Models\Order;
@@ -12,6 +14,8 @@ use App\Models\Payment;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 
 class CartController extends Controller
 {
@@ -85,7 +89,11 @@ class CartController extends Controller
         $order->currency_symbol = '$';
         $order->currency = 'usd';
         $order->coupon = null;
-        $order->save();
+        $order->save(); 
+ 
+        $toEmail = auth()->user()->username;
+        $maildata = ['name' => auth()->user()->full_name, 'order' => $order ]; 
+        Mail::to($toEmail)->send(new Order_Email($maildata)); 
 
         $data['order'] = $order;
 

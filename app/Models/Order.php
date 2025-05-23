@@ -54,6 +54,11 @@ class Order extends Model
         return $this->belongsTo(User::class, 'writer', 'id');
     }
 
+    public function package()
+    {
+        return $this->belongsTo(Package::class, 'package_id', 'id');
+    }
+
     public function user()
     {
         return $this->belongsTo(User::class, 'uid', 'id');
@@ -62,6 +67,11 @@ class Order extends Model
     public function message()
     {
         return $this->hasMany(message::class, 'id' , 'oid');
+    } 
+    
+    public function addons()
+    {
+        return $this->hasMany(Addon::class, 'id' , 'package_id');
     }
 
     public function needsAdminReply(): bool
