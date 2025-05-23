@@ -493,6 +493,8 @@ class CartController extends Controller
                 'package_id' => $transaction->package_id,
                 'package' => isset($package) ? $package->title : '',
                 'lines' => [],
+                'status' => $transaction->order_status,
+                'created_at' => $transaction->added_date,
             ];
             foreach ($order_lines as $line) {
                 $addon = DB::table('addons')->where('id', $line->addon_id)->first();
@@ -533,6 +535,9 @@ class CartController extends Controller
                 'package_id' => $transaction->package_id,
                 'package' => isset($package) ? $package->title : '',
                 'lines' => [],
+                'status' => $transaction->order_status,
+                'created_at' => $transaction->added_date,
+                'package_price' => (string) $package->price,
             ];
             foreach ($order_lines as $line) {
                 $addon = DB::table('addons')->where('id', $line->addon_id)->first();
