@@ -23,6 +23,6 @@ class Message extends Model
 
     public function order()
     {
-        return $this->belongsTo(order::class, 'oid', 'id');
+        return $this->belongsTo(Order::class, 'oid', 'id');
     }
 }

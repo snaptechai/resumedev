@@ -23,16 +23,16 @@ class Package extends Model
         'image',
         'europe_price',
         'old_price',
-        'europe_old_price' 
+        'europe_old_price',
     ];
 
     public function template()
     {
         return $this->hasMany(Template::class, 'package');
     }
-    
+
     public function addon()
     {
-        return $this->hasMany(addon::class, 'id','package_id');
+        return $this->hasMany(Addon::class, 'id', 'package_id');
     }
 }

@@ -3,13 +3,12 @@
 namespace App\Mail;
 
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
-class Email extends Mailable
+class NewCustomer extends Mailable
 {
     use Queueable, SerializesModels;
 
@@ -30,7 +29,7 @@ class Email extends Mailable
     public function content(): Content
     {
         return new Content(
-            view: 'emails.email',
+            view: 'emails.new-customer',
             with: ['data' => $this->data],
         );
     }

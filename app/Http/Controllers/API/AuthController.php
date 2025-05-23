@@ -3,14 +3,14 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
-use App\Mail\Email;
+use App\Mail\NewCustomer;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rules\Password;
-use Illuminate\Support\Facades\Mail;
 
 class AuthController extends Controller
 {
@@ -47,7 +47,7 @@ class AuthController extends Controller
         $toEmail = $request->username;
         $data = ['name' => $request->full_name];
 
-        Mail::to($toEmail)->send(new Email($data)); 
+        Mail::to($toEmail)->queue(new NewCustomer($data));
 
         if (! $user) {
             return response()->json([
