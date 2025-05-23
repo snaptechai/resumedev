@@ -449,8 +449,8 @@ class CartController extends Controller
         $package->oid = $transaction->id;
         $package->pid = $transaction->package_id;
         $package->addon_id = $input['addon_id'];
-        $package->quantity = $input['quantity'];
-        $package->price = $addon->price;
+        $package->quantity = $package->quantity + $input['quantity'];
+        $package->price = $package->price + $addon_price;
         $package->save();
         $paid = Payment::where('order_id', $transaction->id)->sum('amount');
         $due = $transaction->total_price - $paid;
