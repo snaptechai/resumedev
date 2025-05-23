@@ -272,7 +272,7 @@ class CartController extends Controller
         $user = auth()->user()->id;
         $transaction = Order::find($order_id);
 
-        if (isset($transaction) && $transaction->payment_status !== 'paid') {
+        if (isset($transaction) && $transaction->payment_status !== 'Success') {
             $transaction->coupon = $request->coupon_id;
             $transaction->save();
 
@@ -302,7 +302,7 @@ class CartController extends Controller
                 ]);
 
                 $transaction->order_status = '1';
-                $transaction->payment_status = 'paid';
+                $transaction->payment_status = 'Success';
                 $transaction->save();
 
                 $payment = new Payment;
@@ -472,7 +472,7 @@ class CartController extends Controller
             ]);
 
             $transaction->order_status = '1';
-            $transaction->payment_status = 'paid';
+            $transaction->payment_status = 'Success';
             $transaction->save();
 
             $payment = new Payment;

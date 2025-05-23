@@ -2,9 +2,8 @@
 
 namespace App\Models;
 
-use Carbon\Carbon; 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\Auth;
 
 class Order extends Model
 {
@@ -66,31 +65,38 @@ class Order extends Model
 
     public function message()
     {
-        return $this->hasMany(message::class, 'id' , 'oid');
-    } 
-    
+        return $this->hasMany(Message::class, 'oid', 'id');
+    }
+
     public function addons()
     {
-        return $this->hasMany(Addon::class, 'id' , 'package_id');
+        return $this->hasMany(Addon::class, 'id', 'package_id');
     }
 
     public function needsAdminReply(): bool
     {
-        $latestMessage = \App\Models\Message::where('oid', $this->id) 
+        $latestMessage = $this->message()
             ->orderByDesc('adate')
             ->first();
 
-        if ($latestMessage && $latestMessage->type === 'user') {
-            $adminReplied = \App\Models\Message::where('oid', $this->id)
-                ->where('type', 'admin')
+        if (! $latestMessage) {
+            return false;
+        }
+
+        if ($latestMessage->fid === $this->uid) {
+            $adminReplied = $this->message()
+                ->where(function ($query) {
+                    $query->where('type', 'admin')
+                        ->orWhere('fid', '!=', $this->uid);
+                })
                 ->where('adate', '>', $latestMessage->adate)
                 ->exists();
 
             $hoursPassed = Carbon::parse($latestMessage->adate)->diffInHours(now());
 
-            return !$adminReplied && $hoursPassed > 1;
+            return ! $adminReplied && $hoursPassed > 1;
         }
 
         return false;
-    } 
+    }
 }

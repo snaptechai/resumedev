@@ -71,7 +71,9 @@
                                     <span class="text-sm text-gray-600">{{ Str::limit($review->review, 50) }}</span>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
-                                    <span class="text-sm text-yellow-500">{{ $review->star }}★</span>
+                                    @if ($review->star)
+                                        <span class="text-sm text-yellow-500">{{ $review->star }}★</span>
+                                    @endif
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <span class="text-sm text-gray-600">{{ $review->service_start }}</span>

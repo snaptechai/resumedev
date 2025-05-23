@@ -122,9 +122,9 @@
                                     <div class="max-w-[80%]">
                                         <div
                                             class="{{ $msg['side'] === 'left' ? 'bg-[#f5f6f4]' : 'bg-[#bcec88]' }} p-4 rounded-xl">
-                                            <p class="text-base break-words leading-relaxed text-black">
-                                                {{ $msg['message'] }}
-                                            </p>
+                                            <div class="text-base break-words leading-relaxed text-black">
+                                                {!! $msg['message'] !!}
+                                            </div>
                                             @if ($msg['show_templates'])
                                                 <div class="mt-4">
                                                     <div class="border-t border-gray-100 pt-4">
@@ -383,7 +383,7 @@
                         </h3>
                     </x-slot>
 
-                    <div class="p-4"> 
+                    <div class="p-4">
                         @include('admin.orders.edit', ['order' => $order])
                     </div>
                 </x-modal>
@@ -484,9 +484,9 @@
                                     <div class="flex justify-between py-3 px-4">
                                         <span class="text-sm text-gray-500">Payment Status</span>
                                         <span class="text-sm font-medium">
-                                            @if ($order->payment_status == 'paid')
+                                            @if ($order->payment_status == 'Success')
                                                 <span
-                                                    class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">Paid</span>
+                                                    class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">Success</span>
                                             @else
                                                 <span
                                                     class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-orange-100 text-orange-800">{{ ucfirst($order->payment_status) }}</span>
