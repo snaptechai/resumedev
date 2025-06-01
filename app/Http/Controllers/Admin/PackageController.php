@@ -61,9 +61,9 @@ class PackageController extends Controller
         $request->validate([
             'title' => 'required|string|max:255',
             'price' => 'required|numeric',
-            'short_description' => 'nullable|string',
-            'full_description' => 'nullable|string',
-            'europe_price' => 'nullable|numeric',
+            'short_description' => 'required|string',
+            'full_description' => 'required|string',
+            'europe_price' => 'required|numeric',
             'old_price' => 'nullable|numeric',
             'europe_old_price' => 'nullable|numeric',
             'duration' => 'required|string|max:255',

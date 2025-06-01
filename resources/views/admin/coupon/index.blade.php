@@ -1,26 +1,55 @@
 <x-layouts.app>
     <div class="w-full py-2">
         <div class="bg-white rounded-lg overflow-hidden border border-gray-200">
-            <div class="px-6 py-5 border-b border-gray-200 flex justify-between items-center">
+            <div class="px-6 py-5 border-b border-gray-200 flex items-center justify-between">
                 <h2 class="text-xl font-semibold text-gray-800">Coupons</h2>
-                <x-modal id="create-coupon">
-                    <x-slot name="trigger">
-                        <button x-on:click="modalIsOpen = true" type="button"
+                <div class="flex items-center gap-3">
+                    <form method="GET" action="{{ route('coupon.index') }}" class="flex items-center gap-3">
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <x-icon name="magnifying-glass" class="h-4 w-4 text-gray-400" />
+                            </div>
+                            <input type="text" name="search" value="{{ request('search') }}"
+                                class="block w-96 pl-10 pr-3 py-2 border border-gray-300 rounded-lg text-sm placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-[#BCEC88] focus:border-[#BCEC88] transition-colors"
+                                placeholder="Search coupons...">
+                        </div>
+
+                        <button type="submit"
                             class="inline-flex items-center px-4 py-2 bg-[#BCEC88] hover:bg-[#BCEC88]/90 focus:ring-4 focus:ring-[#BCEC88]/30 focus:outline-none text-[#5D7B2B] font-medium rounded-lg transition-colors">
-                            <x-icon name="plus" class="w-4 h-4 mr-1.5" />
-                            Add Coupon
+                            Search
                         </button>
-                    </x-slot>
 
-                    <x-slot name="header">
-                        <h3 class="text-lg font-semibold">Create New Coupon</h3>
-                    </x-slot>
+                        @if (request('search'))
+                            <a href="{{ route('coupon.index') }}"
+                                class="inline-flex items-center px-3 py-2 border border-gray-300 text-sm font-medium rounded-lg text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#BCEC88]/30 transition-colors">
+                                <x-icon name="x-mark" class="h-4 w-4 mr-1" />
+                                Clear
+                            </a>
+                        @endif
 
-                    <div>
-                        @include('admin.coupon.create')
-                    </div>
-                </x-modal>
+                    </form>
+                    <x-modal id="create-coupon">
+                        <x-slot name="trigger">
+                            <button x-on:click="modalIsOpen = true" type="button"
+                                class="inline-flex items-center px-4 py-2 bg-[#BCEC88] hover:bg-[#BCEC88]/90 focus:ring-4 focus:ring-[#BCEC88]/30 focus:outline-none text-[#5D7B2B] font-medium rounded-lg transition-colors">
+                                <x-icon name="plus" class="w-4 h-4 mr-1.5" />
+                                Add Coupon
+                            </button>
+                        </x-slot>
+
+                        <x-slot name="header">
+                            <h3 class="text-lg font-semibold">Create New Coupon</h3>
+                        </x-slot>
+
+                        <div>
+                            @include('admin.coupon.create')
+                        </div>
+                    </x-modal>
+                </div>
             </div>
+
+            @include('admin.massage-bar')
+
 
             <div class="overflow-x-auto">
                 <table class="w-full">
@@ -46,7 +75,16 @@
                                 One Time</th>
                             <th
                                 class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-b border-gray-200">
+                                Used By</th>
+                            <th
+                                class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-b border-gray-200">
+                                Used For</th>
+                            <th
+                                class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-b border-gray-200">
                                 Added Date</th>
+                            <th
+                                class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-b border-gray-200">
+                                Added By</th>
                             <th
                                 class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-b border-gray-200">
                                 Actions</th>
@@ -71,11 +109,34 @@
                                     <span class="text-sm text-gray-600">{{ $coupon->end_date }}</span>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
-                                    <span
-                                        class="text-sm text-gray-600">{{ $coupon->one_time == 1 ? 'Yes' : 'No' }}</span>
+                                    <span class="text-sm text-gray-600">{{ $coupon->one_time }}</span>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <span class="text-sm text-gray-600">
+                                        {{ \App\Models\User::find($coupon->used_by)->full_name ?? $coupon->used_by }}</span>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <span class="text-sm text-gray-600">
+                                        @php
+                                            $order = \App\Models\Order::where('coupon', $coupon->id)->first();
+                                        @endphp
+                                        @if ($order)
+                                            <a href="{{ route('orders.show', $order->id) }}" target="_blank"
+                                                class="text-blue-600 hover:text-blue-800 hover:underline">
+                                                #{{ $order->id }}
+                                            </a>
+                                        @else
+                                            Not used
+                                        @endif
+                                    </span>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <span class="text-sm text-gray-600">{{ $coupon->added_date }}</span>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <span class="text-sm text-gray-600">
+                                        {{ \App\Models\User::find($coupon->added_by)->full_name ?? $coupon->added_by }}
+                                    </span>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <div class="flex gap-2">
@@ -158,8 +219,8 @@
                             <tr>
                                 <td colspan="8" class="px-6 py-12 text-center border-b border-gray-100">
                                     <div class="flex flex-col items-center">
-                                        <svg class="w-10 h-10 text-gray-400 mb-2" fill="none" stroke="currentColor"
-                                            viewBox="0 0 24 24">
+                                        <svg class="w-10 h-10 text-gray-400 mb-2" fill="none"
+                                            stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                                 d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                                         </svg>
@@ -176,7 +237,7 @@
 
             @if (method_exists($coupons, 'links'))
                 <div class="px-6 py-4 border-t border-gray-200">
-                    {{ $coupons->links() }}
+                    {{ $coupons->appends(['search' => $search])->links() }}
                 </div>
             @endif
         </div>

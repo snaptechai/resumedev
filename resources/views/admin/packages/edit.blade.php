@@ -75,6 +75,9 @@
                             value="{{ $package->short_description }}">
                         <trix-editor input="short_description"
                             class="trix-content border border-gray-300 rounded-md p-3"></trix-editor>
+                        @error('short_description')
+                            <p class="text-red-500 text-sm mt-2">{{ $message }}</p>
+                        @enderror
                     </div>
 
                     <div class="mb-6">
@@ -85,6 +88,9 @@
                             value="{{ $package->full_description }}">
                         <trix-editor input="full_description"
                             class="trix-content border border-gray-300 rounded-md p-3"></trix-editor>
+                        @error('full_description')
+                            <p class="text-red-500 text-sm mt-2">{{ $message }}</p>
+                        @enderror
                     </div>
                 </div>
 

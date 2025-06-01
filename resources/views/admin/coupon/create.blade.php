@@ -8,6 +8,7 @@
                     Coupon Code
                 </label>
                 <input type="text" id="create-coupon" name="coupon" value="{{ old('coupon') }}" required
+                    maxlength="7"
                     class="w-full rounded-lg border-gray-300 py-3 px-3 text-gray-700 focus:ring-2 focus:ring-[#BCEC88] focus:border-[#BCEC88] appearance-none border"
                     placeholder="Enter coupon code">
             </div>

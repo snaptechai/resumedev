@@ -1,16 +1,61 @@
 <x-layouts.app>
     <div class="w-full py-2">
         <div class="bg-white rounded-lg overflow-hidden border border-gray-200">
-            <div class="px-6 py-5 border-b border-gray-200 flex justify-between items-center">
+            <div class="px-6 py-5 border-b border-gray-200 flex items-center justify-between">
                 <h2 class="text-xl font-semibold text-gray-800">Users</h2>
-                <a href="{{ route('users.create') }}"
-                    class="inline-flex items-center px-4 py-2 bg-[#BCEC88] hover:bg-[#BCEC88]/90 focus:ring-4 focus:ring-[#BCEC88]/30 focus:outline-none text-[#5D7B2B] font-medium rounded-lg transition-colors">
-                    <x-icon name="plus" class="w-4 h-4 mr-1.5" />
-                    Add User
-                </a>
+
+                <form method="GET" action="{{ route('users.index') }}" class="flex items-center gap-3">
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <x-icon name="magnifying-glass" class="h-4 w-4 text-gray-400" />
+                        </div>
+                        <input type="text" name="search" value="{{ request('search') }}"
+                            class="block w-96 pl-10 pr-3 py-2 border border-gray-300 rounded-lg text-sm placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-[#BCEC88] focus:border-[#BCEC88] transition-colors"
+                            placeholder="Search users...">
+                    </div>
+
+                    <input type="hidden" name="user_type" value="{{ request('user_type') }}">
+
+                    <button type="submit"
+                        class="inline-flex items-center px-4 py-2 bg-[#BCEC88] hover:bg-[#BCEC88]/90 focus:ring-4 focus:ring-[#BCEC88]/30 focus:outline-none text-[#5D7B2B] font-medium rounded-lg transition-colors">
+                        Search
+                    </button>
+
+                    @if (request('search'))
+                        <a href="{{ route('users.index', ['user_type' => request('user_type')]) }}"
+                            class="inline-flex items-center px-3 py-2 border border-gray-300 text-sm font-medium rounded-lg text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#BCEC88]/30 transition-colors">
+                            <x-icon name="x-mark" class="h-4 w-4 mr-1" />
+                            Clear
+                        </a>
+                    @endif
+
+                    <a href="{{ route('users.create') }}"
+                        class="inline-flex items-center px-4 py-2 bg-[#BCEC88] hover:bg-[#BCEC88]/90 focus:ring-4 focus:ring-[#BCEC88]/30 focus:outline-none text-[#5D7B2B] font-medium rounded-lg transition-colors">
+                        <x-icon name="plus" class="w-4 h-4 mr-1.5" />
+                        Add User
+                    </a>
+                </form>
             </div>
 
             @include('admin.massage-bar')
+
+            <div class="flex border-b border-gray-200 overflow-x-auto">
+                @php
+                    $userTypes = ['System', 'Writer', 'Client'];
+                @endphp
+
+                <a href="{{ route('users.index') }}"
+                    class="px-5 py-3 text-sm font-medium whitespace-nowrap border-b-2 {{ !$user_type ? 'border-[#6b8f3b] text-[#6b8f3b] bg-[#f9faf7]' : 'border-transparent text-gray-600 hover:text-gray-800 hover:border-gray-300' }}">
+                    All Users
+                </a>
+
+                @foreach ($userTypes as $type)
+                    <a href="{{ route('users.index', ['user_type' => $type]) }}"
+                        class="px-5 py-3 text-sm font-medium whitespace-nowrap border-b-2 {{ $user_type == $type ? 'border-[#6b8f3b] text-[#6b8f3b] bg-[#f9faf7]' : 'border-transparent text-gray-600 hover:text-gray-800 hover:border-gray-300' }}">
+                        {{ $type }}
+                    </a>
+                @endforeach
+            </div>
 
             <div class="overflow-x-auto">
                 <table class="w-full">
@@ -142,7 +187,7 @@
             </div>
 
             <div class="px-6 py-4 border-t border-gray-200">
-                {{ $users->links() }}
+                {{ $users->appends(['user_type' => $user_type, 'search' => $search])->links() }}
             </div>
         </div>
     </div>

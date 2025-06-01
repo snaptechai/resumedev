@@ -10,11 +10,30 @@ use Illuminate\Support\Facades\Auth;
 
 class CouponController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $coupons = Coupon::orderBy('id', 'desc')->paginate(10);
+        $search = $request->get('search');
 
-        return view('admin.coupon.index', compact('coupons'));
+        $query = Coupon::query()->orderBy('id', 'desc');
+
+        if ($search) {
+            $query->where(function ($q) use ($search) {
+                $q->where('id', 'like', '%'.$search.'%')
+                    ->orWhere('coupon', 'like', '%'.$search.'%')
+                    ->orWhere('price', 'like', '%'.$search.'%')
+                    ->orWhere('start_date', 'like', '%'.$search.'%')
+                    ->orWhere('end_date', 'like', '%'.$search.'%');
+            });
+        }
+
+        $coupons = $query->paginate(10)->appends([
+            'search' => $search,
+        ]);
+
+        return view('admin.coupon.index', [
+            'coupons' => $coupons,
+            'search' => $search,
+        ]);
     }
 
     public function edit($id)
@@ -26,21 +45,27 @@ class CouponController extends Controller
 
     public function store(Request $request)
     {
-        $request->validate([
+        $validator = \Validator::make($request->all(), [
             'coupon' => 'required|string|unique:coupon,coupon',
             'price' => 'required|numeric|min:1',
             'start_date' => 'required|date',
             'end_date' => 'required|date|after_or_equal:start_date',
         ]);
 
+        if ($validator->fails()) {
+            return redirect()->back()
+                ->with('error', $validator->errors()->first())
+                ->withInput();
+        }
+
         $coupon = new Coupon;
         $coupon->coupon = strtoupper($request->coupon);
         $coupon->price = $request->price;
         $coupon->start_date = $request->start_date;
         $coupon->end_date = $request->end_date;
-        $coupon->one_time = $request->has('one_time') ? 1 : 0;
+        $coupon->one_time = $request->has('one_time') ? 'Yes' : 'No';
+        $coupon->added_date = now();
         $coupon->added_by = Auth::id();
-        $coupon->added_date = Carbon::now()->format('Y-m-d');
         $coupon->save();
 
         return redirect()->route('coupon.index')
@@ -49,12 +74,18 @@ class CouponController extends Controller
 
     public function update(Request $request, $id)
     {
-        $request->validate([
+        $validator = \Validator::make($request->all(), [
             'coupon' => 'required|string|unique:coupon,coupon,'.$id,
             'price' => 'required|numeric|min:1',
             'start_date' => 'required|date',
             'end_date' => 'required|date|after_or_equal:start_date',
         ]);
+
+        if ($validator->fails()) {
+            return redirect()->back()
+                ->with('error', $validator->errors()->first())
+                ->withInput();
+        }
 
         $coupon = Coupon::findOrFail($id);
 
@@ -64,7 +95,7 @@ class CouponController extends Controller
             'last_modified_date' => Carbon::now()->format('Y-m-d'),
             'price' => $request->price,
             'end_date' => $request->end_date,
-            'one_time' => $request->has('one_time') ? 1 : 0,
+            'one_time' => $request->has('one_time') ? 'Yes' : 'No',
             'start_date' => $request->start_date,
         ]);
 

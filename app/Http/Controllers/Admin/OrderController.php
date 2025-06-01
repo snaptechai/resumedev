@@ -10,7 +10,7 @@ use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Mail; 
+use Illuminate\Support\Facades\Mail;
 
 class OrderController extends Controller
 {
@@ -163,6 +163,8 @@ class OrderController extends Controller
             }
         }
 
+        $oldOrderStatus = $order->order_status;
+
         $order->update([
             'writer' => $request->writer,
             'order_status' => $request->order_status,
@@ -181,6 +183,18 @@ class OrderController extends Controller
                 'adate' => now(),
             ]);
         } elseif ($request->order_status == 3) {
+            if ($oldOrderStatus == 1) {
+                Message::create([
+                    'oid' => $order->id,
+                    'fid' => Auth::id(),
+                    'tid' => $order->uid,
+                    'message' => 'you submitted the requirements',
+                    'status' => 0,
+                    'type' => 'admin',
+                    'adate' => now(),
+                ]);
+            }
+
             Message::create([
                 'oid' => $order->id,
                 'fid' => Auth::id(),

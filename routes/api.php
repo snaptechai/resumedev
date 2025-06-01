@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\API\AuthController;
+use App\Http\Controllers\API\BannerController;
 use App\Http\Controllers\API\CartController;
 use App\Http\Controllers\API\FAQController;
 use App\Http\Controllers\API\MessageController;
@@ -22,6 +23,8 @@ Route::prefix('v1')->group(function () {
 
     Route::get('packages', [PackageController::class, 'index']);
     Route::get('packages/{package}', [PackageController::class, 'show']);
+    Route::get('coupon', [CartController::class, 'getCoupon']);
+    Route::get('get-banner', [BannerController::class, 'getBanner']);
 
     Route::middleware(['auth:sanctum'])->group(function () {
         Route::controller(CartController::class)->group(function () {
@@ -34,7 +37,6 @@ Route::prefix('v1')->group(function () {
             Route::get('previous-orders', 'getPrevious');
             Route::get('current-order', 'currentOrder');
             Route::put('current-order-update', 'updateCurrentOrder');
-            Route::get('coupon', 'getCoupon');
             Route::get('/get-details/{order_id}', 'getDetails');
         });
 

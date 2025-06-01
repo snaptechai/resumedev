@@ -18,14 +18,35 @@ class UserController extends Controller
      */
     public function index(Request $request)
     {
+        $userType = $request->get('user_type');
+        $search = $request->get('search');
+
         $query = User::with(['accessUsers', 'accessUsers.access'])->orderByDesc('id');
 
-        $users = $query->paginate(10);
+        if ($userType) {
+            $query->where('type', $userType);
+        }
+
+        if ($search) {
+            $query->where(function ($q) use ($search) {
+                $q->where('id', 'like', '%'.$search.'%')
+                    ->orWhere('full_name', 'like', '%'.$search.'%')
+                    ->orWhere('username', 'like', '%'.$search.'%');
+            });
+        }
+
+        $users = $query->paginate(10)->appends([
+            'user_type' => $userType,
+            'search' => $search,
+        ]);
+
         $permissions = Access::all();
 
         return view('admin.users.index', [
             'users' => $users,
             'permissions' => $permissions,
+            'user_type' => $userType,
+            'search' => $search,
         ]);
     }
 

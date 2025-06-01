@@ -4,8 +4,8 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Banner;
-use Illuminate\Http\Request;
 use Carbon\Carbon;
+use Illuminate\Http\Request;
 
 class BannerController extends Controller
 {
@@ -13,9 +13,10 @@ class BannerController extends Controller
      * Display a listing of the resource.
      */
     public function index()
-    { 
-            $banners = Banner::paginate(10);
-            return view('admin.banner.index', compact('banners')); 
+    {
+        $banners = Banner::paginate(10);
+
+        return view('admin.banner.index', compact('banners'));
     }
 
     /**
@@ -39,7 +40,7 @@ class BannerController extends Controller
      */
     public function updateBannerStatus(Request $request, $bannerId)
     {
-        $banner = Banner::findOrFail($bannerId); 
+        $banner = Banner::findOrFail($bannerId);
         $banner->banner_status = $request->banner_status;
         $banner->save();
 
@@ -58,28 +59,25 @@ class BannerController extends Controller
      * Update the specified resource in storage.
      */
     public function update(Request $request, string $id)
-    { 
-        $banner = Banner::findOrFail($id); 
+    {
+        $banner = Banner::findOrFail($id);
         $endDate = Carbon::today()->addDays((int) $request->number_of_dates)->format('Y-m-d'); // Cast to int
 
-        
-        $banner_status = $request->banner_status == "active" ?  "active" : "inactive";
-        $timmer_status = $request->timmer_status == "active" ?  "active" : "inactive";
+        $banner_status = $request->banner_status == 'active' ? 'active' : 'inactive';
+        $timmer_status = $request->timmer_status == 'active' ? 'active' : 'inactive';
 
         $banner->description = $request->description;
         $banner->background_color = $request->background_color;
         $banner->font_color = $request->font_color;
-        // $banner->added_by = $request->banner_status;
-        // $banner->added_date = $request->banner_status;
-        // $banner->last_modified_by = $request->banner_status;
-        // $banner->last_modified_date = $request->banner_status;
+        $banner->last_modified_by = auth()->user()->id;
+        $banner->last_modified_date = now();
         $banner->timmer_status = $timmer_status;
         $banner->banner_status = $banner_status;
         $banner->number_of_dates = $request->number_of_dates;
         $banner->end_date = $endDate;
         $banner->save();
 
-        return redirect()->route('banner.index')->with('success','Banner Details Successfully Updated!');
+        return redirect()->route('banner.index')->with('success', 'Banner Details Successfully Updated!');
     }
 
     /**

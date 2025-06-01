@@ -548,6 +548,11 @@
                                             <span
                                                 class="text-sm font-medium text-gray-900">{{ $customer->username }}</span>
                                         </div>
+                                        <div class="flex justify-between py-3 px-4">
+                                            <span class="text-sm text-gray-500">Customer Mobile</span>
+                                            <span
+                                                class="text-sm font-medium text-gray-900">{{ $customer->contact_no }}</span>
+                                        </div>
                                     @endif
                                 @endif
                             </div>
@@ -693,11 +698,19 @@
 
                             @if ($order->coupon)
                                 @php
-                                    $coupon = \App\Models\Coupon::where('coupon', $order->coupon)->first();
+                                    $coupon = \App\Models\Coupon::where('id', $order->coupon)->first();
+                                    $totalPrice =
+                                        count($orderPackages) > 0
+                                            ? $orderPackages->sum(function ($item) {
+                                                return $item->quantity * $item->price;
+                                            })
+                                            : 0;
+                                    $totalPrice += $package ? $package->price : 0;
+                                    $discountAmount = ($totalPrice * $coupon->price) / 100;
                                 @endphp
                                 <div class="flex justify-between text-green-600">
                                     <span>Coupon Discount</span>
-                                    <span>-${{ $coupon ? $coupon->price : '0.00' }}</span>
+                                    <span>-${{ number_format($discountAmount, 2) }}</span>
                                 </div>
                             @endif
 

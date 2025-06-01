@@ -14,15 +14,32 @@ class ArticleController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $articles = Article::join('article_category', 'article.category', '=', 'article_category.id')
-            ->leftJoin('article_sub_category', 'article.sub_category', '=', 'article_sub_category.id')
-            ->select('article.*', 'article_category.category as category_name', 'article_sub_category.sub_category as sub_category_name')
-            ->orderBy('article.added_date', 'desc')
-            ->get();
+        $search = $request->get('search');
 
-        return view('admin.articles.index', compact('articles'));
+        $query = Article::join('article_category', 'article.category', '=', 'article_category.id')
+            ->leftJoin('article_sub_category', 'article.sub_category', '=', 'article_sub_category.id')
+            ->select('article.*', 'article_category.category as category_name', 'article_sub_category.sub_category as sub_category_name');
+
+        if ($search) {
+            $query->where(function ($q) use ($search) {
+                $q->where('article.id', 'like', '%'.$search.'%')
+                    ->orWhere('article.title', 'like', '%'.$search.'%')
+                    ->orWhere('article.article_title', 'like', '%'.$search.'%')
+                    ->orWhere('article_category.category', 'like', '%'.$search.'%')
+                    ->orWhere('article_sub_category.sub_category', 'like', '%'.$search.'%');
+            });
+        }
+
+        $articles = $query->orderBy('article.added_date', 'desc')->paginate(10)->appends([
+            'search' => $search,
+        ]);
+
+        return view('admin.articles.index', [
+            'articles' => $articles,
+            'search' => $search,
+        ]);
     }
 
     /**
