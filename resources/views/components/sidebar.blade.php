@@ -126,6 +126,12 @@
                     <span>{{ __('Page Content') }}</span>
                 </x-sidebar-link>
             </li>
+            <li>
+                <x-sidebar-link href="{{ route('seo-tags.index') }}" :active="request()->routeIs('seo-tags.*')">
+                    <x-icon name="sparkles" outline />
+                    <span>{{ __('SEO Tags') }}</span>
+                </x-sidebar-link>
+            </li>
         </ul>
     </div>
 

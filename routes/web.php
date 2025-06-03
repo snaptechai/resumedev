@@ -11,6 +11,7 @@ use App\Http\Controllers\Admin\PackageController;
 use App\Http\Controllers\Admin\PageDetailController;
 use App\Http\Controllers\Admin\RedirectLinkController;
 use App\Http\Controllers\Admin\ReviewController;
+use App\Http\Controllers\Admin\SeoTagsController;
 use App\Http\Controllers\Admin\TagController;
 use App\Http\Controllers\Admin\TemplatesController;
 use App\Http\Controllers\Admin\UserController;
@@ -237,6 +238,7 @@ Route::middleware('auth')->group(function () {
         Route::post('/update-banner-status/{id}', [BannerController::class, 'updateBannerStatus']);
     });
     Route::resource('notification', NotificationController::class);
+    Route::resource('seo-tags', SeoTagsController::class);
 });
 
 require __DIR__.'/auth.php';
