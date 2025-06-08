@@ -97,6 +97,12 @@
                 </x-sidebar-link>
             </li>
             <li>
+                <x-sidebar-link href="{{ route('addon.index') }}" :active="request()->routeIs('addon.index')">
+                    <x-icon name="squares-plus" outline />
+                    <span>{{ __('Addon') }}</span>
+                </x-sidebar-link>
+            </li>
+            <li>
                 <x-sidebar-link href="{{ route('templates.index') }}" :active="request()->routeIs('templates.index')">
                     <x-icon name="clipboard-document-list" outline />
                     <span>{{ __('Template') }}</span>

@@ -14,28 +14,6 @@ use Illuminate\Support\Facades\Mail;
 
 class OrderController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    // public function index(Request $request)
-    // {
-    //     $orderStatus = $request->get('order_status');
-
-    //     $query = Order::query()->orderByDesc('id');
-
-    //     $writers = User::where('type', 'Writer')->get();
-
-    //     if ($request->has('order_status')) {
-    //         $query->where('order_status', $orderStatus);
-    //     }
-
-    //     $orders = $query->paginate(10);
-
-    //     return view('admin.orders.index', [
-    //         'orders' => $orders,
-    //         'order_status' => $orderStatus
-    //     ]);
-    // }
 
     public function index(Request $request)
     {
@@ -135,9 +113,15 @@ class OrderController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function update_admin_note(Request $request,string $id)
     {
-        //
+        $order = Order::findOrFail($id);
+        $order->update([
+            'admin_note' => $request->admin_note,
+            'last_modified_by' => Auth::id(),
+            'last_modified_date' => Carbon::now()->format('Y-m-d'),
+        ]);
+        return redirect()->back()->with('success', 'Admin Note updated successfully.');
     }
 
     /**

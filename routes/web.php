@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\AddonController;
 use App\Http\Controllers\Admin\ArticleCategoryController;
 use App\Http\Controllers\Admin\ArticleController;
 use App\Http\Controllers\Admin\BannerController;
@@ -38,6 +39,7 @@ Route::middleware('auth')->group(function () {
         Route::middleware('permission:Edit order')->group(function () {
             Route::get('orders/{id}/edit', [OrderController::class, 'edit'])->name('orders.edit');
             Route::put('orders/{id}', [OrderController::class, 'update'])->name('orders.update');
+            Route::put('orders/{id}/update-admin-note', [OrderController::class, 'update_admin_note'])->name('orders.update-admin-note');
         });
         Route::middleware('permission:Delete order')->group(function () {
             Route::delete('orders/{id}', [OrderController::class, 'destroy'])->name('orders.destroy');
@@ -239,6 +241,7 @@ Route::middleware('auth')->group(function () {
     });
     Route::resource('notification', NotificationController::class);
     Route::resource('seo-tags', SeoTagsController::class);
+    Route::resource('addon', AddonController::class);
 });
 
 require __DIR__.'/auth.php';

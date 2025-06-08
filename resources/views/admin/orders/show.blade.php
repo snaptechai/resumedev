@@ -364,6 +364,52 @@
         </div>
 
         <div class="bg-white rounded-xl overflow-hidden border border-gray-100 mt-6">
+        <div class="bg-[#f0f9e8] px-6 py-4 border-b border-gray-100 flex justify-between items-center">
+            <h2 class="text-xl font-semibold text-gray-800 dark:text-white">Admin Notes</h2>
+            <x-modal id="edit-note-edit-{{ $order->id }}">
+                    <x-slot name="trigger">
+                        <button x-on:click="modalIsOpen = true" type="button"
+                            class="whitespace-nowrap rounded-lg bg-[#BCEC88] border border-transparent px-4 py-2 text-sm font-medium tracking-wide text-[#000000] transition hover:bg-[#BCEC88]/90 text-center focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#BCEC88] active:opacity-100 active:outline-offset-0 disabled:opacity-75 disabled:cursor-not-allowed">
+                            <div class="flex items-center">
+                                <x-icon name="pencil-square" class="h-4 w-4 mr-1.5" />
+                                Edit Notes
+                            </div>
+                        </button>
+                    </x-slot>
+
+                    <x-slot name="header">
+                        <h3 class="text-lg font-semibold">
+                            Edit Admin Notes
+                        </h3>
+                    </x-slot>
+
+                    <div class="p-4">
+                        @include('admin.orders.note-edit', ['order' => $order])
+                    </div>
+                </x-modal>
+        </div>
+        <div class="p-6 flex items-center justify-center">
+            @if ($order->admin_note)
+                <div class="w-full text-left">
+                    <textarea
+                        class="w-full rounded-lg p-3 resize-none overflow-auto text-left leading-relaxed"
+                        style="max-height: calc(1.5em * 10);"
+                        oninput="autoResize(this)"
+                        readonly
+                    >{{ $order->admin_note }}</textarea>
+                </div>
+               
+            @else
+                <div class="text-center">
+                    <x-icon name="rectangle-stack" class="w-10 text-gray-400 mx-auto mb-2" />
+                    <h3 class="text-lg font-medium text-gray-700 mb-1">No Admin Notes found</h3>
+                    <p class="text-sm text-gray-500">There are no Admin Notes campaigns configured yet.</p>
+                </div> 
+            @endif 
+        </div>
+    </div>
+
+        <div class="bg-white rounded-xl overflow-hidden border border-gray-100 mt-6">
             <div class="bg-[#f0f9e8] px-6 py-4 border-b border-gray-100 flex justify-between items-center">
                 <h2 class="text-xl font-semibold text-gray-800 dark:text-white">Order Details</h2>
                 <x-modal id="edit-order-{{ $order->id }}">
@@ -387,7 +433,7 @@
                         @include('admin.orders.edit', ['order' => $order])
                     </div>
                 </x-modal>
-            </div>
+            </div> 
 
             <div class="p-6">
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
@@ -796,6 +842,21 @@
                     messageInput.focus();
                 });
             });
+        });
+
+         function autoResize(textarea) {
+            textarea.style.height = 'auto';
+            textarea.style.height = Math.min(textarea.scrollHeight, 1.5 * 16 * 10) + 'px';
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            const textarea = document.querySelector('textarea[readonly]');
+            if (textarea) autoResize(textarea);
+        });
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const textarea = document.getElementById('admin_note');
+            if (textarea) autoResize(textarea);
         });
     </script>
 </x-layouts.app>
