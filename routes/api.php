@@ -1,10 +1,12 @@
 <?php
 
+use App\Http\Controllers\API\ArticleController;
 use App\Http\Controllers\API\AuthController;
 use App\Http\Controllers\API\BannerController;
 use App\Http\Controllers\API\CartController;
 use App\Http\Controllers\API\FAQController;
 use App\Http\Controllers\API\MessageController;
+use App\Http\Controllers\API\MetaTagController;
 use App\Http\Controllers\API\PackageController;
 use App\Http\Controllers\API\TemplateController;
 use Illuminate\Support\Facades\Route;
@@ -25,7 +27,12 @@ Route::prefix('v1')->group(function () {
     Route::get('packages/{package}', [PackageController::class, 'show']);
     Route::get('coupon', [CartController::class, 'getCoupon']);
     Route::get('get-banner', [BannerController::class, 'getBanner']);
+    
+    Route::get('meta', [MetaTagController::class, 'getMeta']);
 
+    Route::get('articles', [ArticleController::class, 'index']);
+    Route::get('articles/{article}', [ArticleController::class, 'show']);
+    
     Route::middleware(['auth:sanctum'])->group(function () {
         Route::controller(CartController::class)->group(function () {
             Route::post('add-to-cart', 'addCart');

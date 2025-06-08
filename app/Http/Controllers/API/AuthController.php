@@ -19,17 +19,22 @@ class AuthController extends Controller
 
         $validator = Validator::make($request->all(), [
             'full_name' => 'required|string|max:255',
-            'username' => 'required|string|max:255|unique:user,username',
+            'username' => 'required|email|max:255|unique:user,username',
             'contact_no' => 'required|string|max:15',
             'password' => ['required', 'confirmed', Password::defaults()],
+        ], [
+            'username.required' => 'The email field is required.',
+            'username.email' => 'The email must be a valid email address.',
+            'username.max' => 'The email may not be greater than 255 characters.',
+            'username.unique' => 'The email has already been taken.',
         ]);
 
         if ($validator->fails()) {
             return response()->json([
-                'http_status' => 400,
-                'http_status_message' => 'Bad Request',
-                'message' => 'Validation failed',
-                'errors' => $validator->errors(),
+            'http_status' => 400,
+            'http_status_message' => 'Bad Request',
+            'message' => 'Validation failed. Please check your input data.',
+            'errors' => $validator->errors(),
             ], 400);
         }
 
@@ -75,13 +80,18 @@ class AuthController extends Controller
         $validator = Validator::make($request->all(), [
             'username' => 'required|email|exists:user,username',
             'password' => 'required',
+        ], [
+            'username.required' => 'The email field is required.',
+            'username.email' => 'The email must be a valid email address.',
+            'username.exists' => 'Invalid email or password.',
+            'password.required' => 'The password field is required.',
         ]);
 
         if ($validator->fails()) {
             return response()->json([
                 'http_status' => 400,
                 'http_status_message' => 'Bad Request',
-                'message' => 'Validation failed',
+                'message' => 'Validation failed. Please check your input data.',
                 'errors' => $validator->errors(),
             ], 400);
         }

@@ -353,8 +353,8 @@
                             </label>
                             <span id="file-name" class="ml-3 text-sm text-gray-600"></span>
                         </div>
-                        <button type="submit"
-                            class="inline-flex items-center px-5 py-2.5 text-sm font-medium text-[#5D7B2B] bg-[#BCEC88] border border-transparent rounded-lg shadow-sm transition duration-200 hover:bg-[#BCEC88]/90 focus:outline-none">
+                        <button type="submit" id="send-message-btn"
+                            class="inline-flex items-center px-5 py-2.5 text-sm font-medium text-[#5D7B2B] bg-[#BCEC88] border border-transparent rounded-lg shadow-sm transition duration-200 hover:bg-[#BCEC88]/90 focus:outline-none hover:cursor-pointer">
                             <span>Send Message</span>
                             <x-icon name="paper-airplane" class="h-5 w-5 ml-2" />
                         </button>
@@ -741,6 +741,16 @@
             const textarea = document.getElementById('message-input');
             const emojiButton = document.getElementById('emoji-button');
             const emojiPickerContainer = document.getElementById('emoji-picker-container');
+
+            textarea.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter' && e.shiftKey) {
+                    e.preventDefault();
+                    const form = textarea.closest('form');
+                    if (textarea.value.trim() !== '') {
+                        form.submit();
+                    }
+                }
+            });
 
             let pickerVisible = false;
 

@@ -82,6 +82,7 @@ class PackageController extends Controller
             'old_price' => $request->old_price,
             'europe_old_price' => $request->europe_old_price,
             'duration' => $request->duration,
+            'is_popular' => $request->has('is_popular') ? 1 : 0,
         ]);
 
         return redirect()->route('packages.index')->with('success', 'Package updated successfully!');

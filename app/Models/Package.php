@@ -24,6 +24,7 @@ class Package extends Model
         'europe_price',
         'old_price',
         'europe_old_price',
+        'is_popular',
     ];
 
     public function template()

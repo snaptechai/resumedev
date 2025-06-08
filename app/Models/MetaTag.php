@@ -12,7 +12,7 @@ class MetaTag extends Model
         'meta_title',
         'meta_description',
         'meta_keywords',
-        'google_tag_script',
+        'javascript_code',
         'is_active',
     ];
 }

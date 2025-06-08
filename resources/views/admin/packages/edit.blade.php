@@ -92,6 +92,15 @@
                             <p class="text-red-500 text-sm mt-2">{{ $message }}</p>
                         @enderror
                     </div>
+
+                    <div class="mb-6">
+                        <label for="is_popular" class="flex items-center">
+                            <input type="checkbox" name="is_popular" id="is_popular" value="1"
+                                class="rounded border-gray-300 text-[#BCEC88] focus:ring-[#BCEC88] focus:border-[#BCEC88]"
+                                {{ $package->is_popular ? 'checked' : '' }}>
+                            <span class="ml-2 text-sm font-medium text-gray-700">Mark as Popular</span>
+                        </label>
+                    </div>
                 </div>
 
                 <div class="flex items-center justify-end p-6 gap-3 border-t border-gray-200">

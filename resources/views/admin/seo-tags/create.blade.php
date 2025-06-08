@@ -18,7 +18,8 @@
                             <label for="page_name" class="block text-sm font-medium text-gray-700 mb-1">
                                 Page Name <span class="text-red-500">*</span>
                             </label>
-                            <input type="text" id="page_name" name="page_name" value="{{ old('page_name') }}" required
+                            <input type="text" id="page_name" name="page_name" value="{{ old('page_name') }}"
+                                required
                                 class="w-full rounded-lg border-gray-300 py-2 px-3 text-gray-700 focus:ring-2 focus:ring-[#BCEC88] focus:border-[#BCEC88] border"
                                 placeholder="Enter unique page name">
                         </div>
@@ -29,14 +30,24 @@
                             </label>
                             <input type="text" id="url" name="url" value="{{ old('url') }}"
                                 class="w-full rounded-lg border-gray-300 py-2 px-3 text-gray-700 focus:ring-2 focus:ring-[#BCEC88] focus:border-[#BCEC88] border"
-                                placeholder="Enter page URL (optional)">
+                                placeholder="Enter page URL">
+                            <p class="mt-2 text-sm text-gray-500">
+                                You can only have one meta tag/details for one URL. Keep this empty to apply tags and
+                                scripts to the whole website. When there is a global meta tag activated and you also
+                                have a URL specific tag, title and description will get replaced by specific URL title
+                                and description. Keywords and scripts will be appended. So if you have one script in
+                                global tag and one in specific tag, both will be executed when visiting that page.
+                                <br><strong>Note:</strong> URL should be a relative path starting with "/", such as
+                                /about or /contact-us. Do not include the domain name.
+                            </p>
                         </div>
 
                         <div>
                             <label for="meta_title" class="block text-sm font-medium text-gray-700 mb-1">
                                 Meta Title <span class="text-red-500">*</span>
                             </label>
-                            <input type="text" id="meta_title" name="meta_title" value="{{ old('meta_title') }}" required
+                            <input type="text" id="meta_title" name="meta_title" value="{{ old('meta_title') }}"
+                                required
                                 class="w-full rounded-lg border-gray-300 py-2 px-3 text-gray-700 focus:ring-2 focus:ring-[#BCEC88] focus:border-[#BCEC88] border"
                                 placeholder="Enter meta title">
                         </div>
@@ -54,22 +65,26 @@
                             <label for="meta_keywords" class="block text-sm font-medium text-gray-700 mb-1">
                                 Meta Keywords
                             </label>
-                            <input type="text" id="meta_keywords" name="meta_keywords" value="{{ old('meta_keywords') }}"
+                            <textarea id="meta_keywords" name="meta_keywords" rows="3" required
                                 class="w-full rounded-lg border-gray-300 py-2 px-3 text-gray-700 focus:ring-2 focus:ring-[#BCEC88] focus:border-[#BCEC88] border"
-                                placeholder="Enter keywords separated by commas">
+                                placeholder="Enter keywords separated by commas">{{ old('meta_keywords') }}</textarea>
+                            <p class="mt-2 text-sm text-gray-500">
+                                Keywords should be separated by comma (,). Example: resume, cv, portfolio
+                            </p>
                         </div>
                     </div>
 
                     <div class="space-y-4 bg-gray-50 p-5 rounded-lg">
-                        <h3 class="text-lg font-medium text-gray-900 border-b border-gray-200 pb-2">Scripts & Status</h3>
+                        <h3 class="text-lg font-medium text-gray-900 border-b border-gray-200 pb-2">Scripts & Status
+                        </h3>
 
                         <div>
-                            <label for="google_tag_script" class="block text-sm font-medium text-gray-700 mb-1">
-                                Google Tag Script
+                            <label for="javascript_code" class="block text-sm font-medium text-gray-700 mb-1">
+                                JavaScript Code
                             </label>
-                            <textarea id="google_tag_script" name="google_tag_script" rows="15"
+                            <textarea id="javascript_code" name="javascript_code" rows="15"
                                 class="w-full rounded-lg border-gray-300 py-2 px-3 text-gray-700 focus:ring-2 focus:ring-[#BCEC88] focus:border-[#BCEC88] border"
-                                placeholder="Paste Google tag or any tracking script">{{ old('google_tag_script') }}</textarea>
+                                placeholder="Paste javascript code or any tracking script">{{ old('javascript_code') }}</textarea>
                         </div>
 
                         <div class="flex items-center mt-4">
@@ -80,15 +95,14 @@
                         </div>
                     </div>
                 </div>
-
-                <div class="flex items-center justify-end border-t border-gray-200 pt-5 mt-6">
-                    <button type="button" onclick="window.location='{{ route('seo-tags.index') }}'"
+                <div class="flex items-center justify-end p-6 gap-3 border-t border-gray-200">
+                    <a href="{{ route('seo-tags.index') }}"
                         class="px-4 py-2.5 bg-white text-gray-700 rounded-lg border border-gray-300 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-300 transition-colors font-medium">
                         Cancel
-                    </button>
+                    </a>
                     <button type="submit"
-                        class="ml-3 px-5 py-2.5 bg-[#BCEC88] hover:bg-[#BCEC88]/90 focus:ring-4 focus:ring-[#BCEC88]/30 focus:outline-none text-[#000000] font-medium rounded-lg transition-colors">
-                        Save Meta Tag
+                        class="px-5 py-2.5 bg-[#BCEC88] hover:bg-[#BCEC88]/90 focus:ring-4 focus:ring-[#BCEC88]/30 focus:outline-none text-[#5D7B2B] font-medium rounded-lg transition-colors flex items-center">
+                        Add Meta Tag
                     </button>
                 </div>
             </form>

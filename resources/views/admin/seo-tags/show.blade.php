@@ -2,7 +2,7 @@
     <div class="w-full py-6">
         <div class="bg-white rounded-lg overflow-hidden border border-gray-200">
             <div class="px-6 py-5 border-b border-gray-200 flex justify-between items-center">
-                <h2 class="text-xl font-semibold text-gray-800">Meta Tag Details</h2> 
+                <h2 class="text-xl font-semibold text-gray-800">Meta Tag Details</h2>
             </div>
 
             <div class="p-6 space-y-6">
@@ -33,13 +33,16 @@
                     </div>
 
                     <div class="md:col-span-2">
-                        <p class="text-sm text-gray-600">Google Tag Script</p>
-                        <pre class="bg-gray-100 p-3 rounded text-gray-800 text-sm overflow-auto">{{ $seoTag->google_tag_script ?? '-' }}</pre>
+                        <p class="text-sm text-gray-600">
+                            JavaScript Code
+                        </p>
+                        <pre class="bg-gray-100 p-3 rounded text-gray-800 text-sm overflow-auto">{{ $seoTag->javascript_code ?? '-' }}</pre>
                     </div>
 
                     <div>
                         <p class="text-sm text-gray-600">Status</p>
-                        <span class="inline-flex px-3 py-1 rounded-full text-sm font-semibold {{ $seoTag->is_active ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">
+                        <span
+                            class="inline-flex px-3 py-1 rounded-full text-sm font-semibold {{ $seoTag->is_active ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">
                             {{ $seoTag->is_active ? 'Active' : 'Inactive' }}
                         </span>
                     </div>
@@ -48,7 +51,7 @@
                     <a href="{{ route('seo-tags.index') }}"
                         class="px-4 py-2.5 bg-white text-gray-700 rounded-lg border border-gray-300 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-300 transition-colors font-medium">
                         Cancel
-                    </a> 
+                    </a>
                 </div>
             </div>
         </div>

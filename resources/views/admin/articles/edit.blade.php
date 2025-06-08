@@ -79,7 +79,7 @@
 
                         <div class="flex items-center mt-4">
                             <input type="checkbox" id="featured" name="featured" value="1"
-                                {{ old('featured', $article->featured) ? 'checked' : '' }}
+                                {{ old('featured', $article->featured) == 'yes' ? 'checked' : '' }}
                                 class="rounded border-gray-300 text-[#BCEC88] focus:ring-[#BCEC88]">
                             <label for="featured" class="ml-2 text-sm text-gray-700">Feature this article</label>
                         </div>
@@ -99,8 +99,8 @@
                             </label>
                             @if ($article->image)
                                 <div class="mb-3">
-                                    <img src="{{ asset($article->image) }}" alt="Current featured image" required
-                                        class="h-32 w-auto object-cover rounded-lg border border-gray-200">
+                                    <img src="{{ asset('storage/' . $article->image) }}" alt="Current featured image"
+                                        required class="h-32 w-auto object-cover rounded-lg border border-gray-200">
                                     <p class="text-xs text-gray-500 mt-1">Current image:
                                         {{ basename($article->image) }}</p>
                                 </div>

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\MetaTag;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class SeoTagsController extends Controller
 {
@@ -33,13 +34,24 @@ class SeoTagsController extends Controller
      */
     public function store(Request $request)
     {
+        $urlRules = ['nullable', 'string'];
+        
+        if ($request->url === null) {
+            $nullUrlExists = MetaTag::whereNull('url')->exists();
+            if ($nullUrlExists) {
+                $urlRules[] = 'required'; 
+            }
+        } else {
+            $urlRules[] = Rule::unique('meta_tags', 'url');
+        }
+
         $validated = $request->validate([
             'page_name' => 'required|string|unique:meta_tags,page_name',
-            'url' => 'nullable|string',
+            'url' => $urlRules,
             'meta_title' => 'required|string',
             'meta_description' => 'required|string',
             'meta_keywords' => 'nullable|string',
-            'google_tag_script' => 'nullable|string',
+            'javascript_code' => 'nullable|string',
             'is_active' => 'boolean',
         ]);
 
@@ -77,19 +89,35 @@ class SeoTagsController extends Controller
      */
     public function update(Request $request, string $id)
     {
+        $seoTag = MetaTag::findOrFail($id);
+        
+        $urlRules = ['nullable', 'string'];
+        
+        if ($request->url === null && $seoTag->url !== null) {
+            $nullUrlExists = MetaTag::whereNull('url')->exists();
+            if ($nullUrlExists) {
+                $urlRules[] = 'required';
+            }
+        } elseif ($request->url !== null) {
+            $urlRules[] = Rule::unique('meta_tags', 'url')->ignore($id);
+        }
+        
         $request->validate([
-            'page_name' => 'required|string|max:255|',
+            'page_name' => 'required|string|max:255|' . Rule::unique('meta_tags')->ignore($id),
+            'url' => $urlRules,
             'meta_title' => 'required|string|max:255',
             'meta_description' => 'required|string',
+            'meta_keywords' => 'nullable|string',
+            'javascript_code' => 'nullable|string',
         ]);
-        $seoTag = MetaTag::findOrFail($id); 
+        
         $seoTag->update([
             'page_name' => $request->page_name,
             'url' => $request->url,
             'meta_title' => $request->meta_title,
             'meta_description' => $request->meta_description,
             'meta_keywords' => $request->meta_keywords,
-            'google_tag_script' => $request->google_tag_script,
+            'javascript_code' => $request->javascript_code,
             'is_active' => $request->has('is_active'),
         ]);
 

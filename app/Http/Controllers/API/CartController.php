@@ -430,7 +430,7 @@ class CartController extends Controller
     public function getPrevious()
     {
         $user = auth()->user()->id;
-        $transactions = Order::where('uid', $user)->get();
+        $transactions = Order::where('uid', $user)->latest('id')->get();
         $orders = [];
         foreach ($transactions as $transaction) {
             $order_lines = OrderPackage::where('oid', $transaction->id)->distinct()->pluck('pid')->toArray();

@@ -32,4 +32,14 @@ class Article extends Model
     ];
 
     public $timestamps = false;
+
+    public function articleCategory()
+    {
+        return $this->belongsTo(ArticleCategory::class, 'category', 'id');
+    }
+
+    public function articleSubCategory()
+    {
+        return $this->belongsTo(ArticleSubCategory::class, 'sub_category', 'id');
+    }
 }

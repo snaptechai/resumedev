@@ -80,16 +80,13 @@ class ArticleController extends Controller
 
         $articleData = $request->except(['_token', 'image']);
 
-        $articleData['featured'] = $request->has('featured') ? 1 : 0;
+        $articleData['featured'] = $request->has('featured') ? 'yes' : 'no';
 
         $articleData['added_by'] = Auth::id();
         $articleData['added_date'] = $request->added_date ?? now();
 
         if ($request->hasFile('image')) {
-            $image = $request->file('image');
-            $imageName = time().'_'.$image->getClientOriginalName();
-            $image->move(public_path('uploads/articles'), $imageName);
-            $articleData['image'] = 'uploads/articles/'.$imageName;
+            $articleData['image'] = $request->file('image')->store('articles', 'public');
         }
 
         Article::create($articleData);
@@ -142,20 +139,13 @@ class ArticleController extends Controller
         $article = Article::findOrFail($id);
         $articleData = $request->except(['_token', '_method', 'image']);
 
-        $articleData['featured'] = $request->has('featured') ? 1 : 0;
+        $articleData['featured'] = $request->has('featured')  ? 'yes' : 'no';
 
         $articleData['last_modified_by'] = Auth::id();
         $articleData['last_modified_date'] = now();
 
         if ($request->hasFile('image')) {
-            if ($article->image && file_exists(public_path($article->image))) {
-                unlink(public_path($article->image));
-            }
-
-            $image = $request->file('image');
-            $imageName = time().'_'.$image->getClientOriginalName();
-            $image->move(public_path('uploads/articles'), $imageName);
-            $articleData['image'] = 'uploads/articles/'.$imageName;
+            $articleData['image'] = $request->file('image')->store('articles', 'public');
         }
 
         $article->update($articleData);
