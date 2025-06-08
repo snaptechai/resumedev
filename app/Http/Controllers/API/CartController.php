@@ -111,8 +111,8 @@ class CartController extends Controller
         $order->uid = $user;
         $order->package_id = $input['package_id'];
         $order->added_by = $user;
-        $order->added_date = date('Y-m-d');
-        $order->end_date = date('Y-m-d');
+        $order->added_date = now();
+        $order->end_date = now()->addHours((int) $package->duration);
         $order->payment_status = 'pending';
         $order->order_status = 1;
         $order->total_price = $total_price;

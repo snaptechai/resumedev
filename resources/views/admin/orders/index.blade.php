@@ -81,6 +81,9 @@
                                 Order Date</th>
                             <th
                                 class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-b border-gray-200">
+                                Time Left</th>
+                            <th
+                                class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-b border-gray-200">
                                 Customer</th>
                             @if (auth()->user()->hasPermission('View order price & details'))
                                 <th
@@ -130,6 +133,30 @@
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <span
                                         class="text-sm text-gray-600">{{ date('M d, Y', strtotime($order->added_date)) }}</span>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    @php
+                                        $timeLeft = '';
+                                        $isOverdue = false;
+
+                                        if (
+                                            $order->end_date &&
+                                            \Carbon\Carbon::hasFormat($order->end_date, 'Y-m-d H:i:s')
+                                        ) {
+                                            $endDate = \Carbon\Carbon::parse($order->end_date);
+                                            $now = \Carbon\Carbon::now();
+                                            $timeLeft = $now->diffForHumans($endDate, true);
+                                            $isOverdue = $now->gt($endDate);
+                                        }
+                                    @endphp
+                                    @if ($timeLeft)
+                                        <span
+                                            class="text-sm {{ $isOverdue ? 'text-red-600 font-medium' : 'text-gray-600' }}">
+                                            {{ $isOverdue ? 'Overdue by ' . $timeLeft : $timeLeft . ' left' }}
+                                        </span>
+                                    @else
+                                        <span class="text-sm text-gray-400">-</span>
+                                    @endif
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <span
