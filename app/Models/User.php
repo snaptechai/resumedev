@@ -31,6 +31,7 @@ class User extends Authenticatable
         'added_date',
         'last_modified_by',
         'last_modified_date',
+        'contact_no'
     ];
 
     /**
