@@ -18,7 +18,7 @@ class ArticleController extends Controller
     {
         $search = $request->get('search');
 
-        $query = Article::join('article_category', 'article.category', '=', 'article_category.id')
+        $query = Article::leftJoin('article_category', 'article.category', '=', 'article_category.id')
             ->leftJoin('article_sub_category', 'article.sub_category', '=', 'article_sub_category.id')
             ->select('article.*', 'article_category.category as category_name', 'article_sub_category.sub_category as sub_category_name');
 
