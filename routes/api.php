@@ -8,6 +8,7 @@ use App\Http\Controllers\API\FAQController;
 use App\Http\Controllers\API\MessageController;
 use App\Http\Controllers\API\MetaTagController;
 use App\Http\Controllers\API\PackageController;
+use App\Http\Controllers\Api\ReviewController;
 use App\Http\Controllers\API\TemplateController;
 use Illuminate\Support\Facades\Route;
 
@@ -32,6 +33,7 @@ Route::prefix('v1')->group(function () {
 
     Route::get('articles', [ArticleController::class, 'index']);
     Route::get('articles/{article}', [ArticleController::class, 'show']);
+    Route::get('/accept-review', [ReviewController::class, 'index']);
     
     Route::middleware(['auth:sanctum'])->group(function () {
         Route::controller(CartController::class)->group(function () {
