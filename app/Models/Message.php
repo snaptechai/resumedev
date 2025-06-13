@@ -19,6 +19,7 @@ class Message extends Model
         'type',
         'adate',
         'attachment',
+        'original_filename',
     ];
 
     public function order()

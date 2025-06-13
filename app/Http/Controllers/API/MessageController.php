@@ -66,7 +66,7 @@ class MessageController extends Controller
     {
         $request->validate([
             'order_id' => 'required|exists:order,id',
-            'message' => 'required|string',
+            'message' => 'nullable|string',
             // 'attachment' => 'nullable|file|max:10240',
         ]);
 
@@ -92,7 +92,7 @@ class MessageController extends Controller
         $message->oid = $request->order_id;
         $message->fid = $user->id;
         $message->tid = 1;
-        $message->message = $request->message;
+        $message->message = $request->message ? $request->message : '';
         $message->status = 0;
         $message->type = 'user';
         $message->adate = now();

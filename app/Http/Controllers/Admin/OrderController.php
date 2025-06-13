@@ -194,7 +194,14 @@ class OrderController extends Controller
 
             if ($request->hasFile('completion_files')) {
                 foreach ($request->file('completion_files') as $file) {
-                    $filePath = $file->store('order_completions/'.$order->id, 'public');
+                    $originalFilename = $file->getClientOriginalName();
+                    $timestamp = time();
+                    $newFilename = $timestamp . '_' . $originalFilename;
+                    $filePath = $file->storeAs(
+                        'order_completions/' . $order->id, 
+                        $newFilename, 
+                        'public'
+                    );
                     $attachmentPaths[] = $filePath;
                     $fileAttachments[] = $filePath;
 
@@ -202,7 +209,7 @@ class OrderController extends Controller
                     $message->oid = $order->id;
                     $message->fid = Auth::id();
                     $message->tid = $order->uid;
-                    $message->message = 'Order completed file: '.$file->getClientOriginalName();
+                    $message->message = 'Order completed file: ' . $originalFilename;
                     $message->status = 0;
                     $message->type = 'admin';
                     $message->attachment = $filePath;
@@ -244,10 +251,13 @@ class OrderController extends Controller
     public function storeMessage(Request $request, $id)
     {
         $request->validate([
-            'message' => 'required|string',
-            'attachment' => 'nullable|file|max:10240',
+            'message' => 'nullable|string',
+            'attachment' => 'nullable|file|max:20480',
         ]);
 
+        if (empty($request->message) && !$request->hasFile('attachment')) {
+            return redirect()->back()->with('error', 'Please provide either a message or an attachment.');
+        }
         $order = Order::findOrFail($id);
         $admin = Auth::user();
 
@@ -255,14 +265,23 @@ class OrderController extends Controller
         $message->oid = $order->id;
         $message->fid = $admin->id;
         $message->tid = $order->uid;
-        $message->message = $request->message;
+        $message->message = $request->message ?? '';
         $message->status = 0;
         $message->type = 'admin';
         $message->adate = now();
 
         if ($request->hasFile('attachment')) {
-            $filePath = $request->file('attachment')->store('attachments', 'public');
+            $file = $request->file('attachment');
+            $originalFilename = $file->getClientOriginalName();
+            $timestamp = time();
+            $newFilename = $timestamp . '_' . $originalFilename;
+            $filePath = $file->storeAs(
+                'attachments/' . $order->id, 
+                $newFilename, 
+                'public'
+            );
             $message->attachment = $filePath;
+            $message->original_filename = $originalFilename;
         }
 
         if ($message->save()) {

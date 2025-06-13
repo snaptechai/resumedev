@@ -7,6 +7,7 @@
                 </div>
                 <h2 class="text-xl font-semibold text-gray-800">Conversation</h2>
             </div>
+            @include('admin.massage-bar')
 
             <div class="h-[550px] overflow-y-auto p-6 bg-white space-y-6" id="messages">
                 @if (count($formattedMessages) > 0)
@@ -123,7 +124,9 @@
                                         <div
                                             class="{{ $msg['side'] === 'left' ? 'bg-[#f5f6f4]' : 'bg-[#bcec88]' }} p-4 rounded-xl">
                                             <div class="text-base break-words leading-relaxed text-black">
-                                                {!! $msg['message'] !!}
+                                                @if (!empty(trim($msg['message'])))
+                                                    {!! $msg['message'] !!}
+                                                @endif
                                             </div>
                                             @if ($msg['show_templates'])
                                                 <div class="mt-4">
@@ -210,7 +213,8 @@
                                                 </div>
                                             @endif
                                             @if (count($msg['attachments']) > 0)
-                                                <div class="mt-3 pt-2 border-t border-gray-100">
+                                                <div
+                                                    class=" {{ !empty(trim($msg['message'])) ? 'border-t border-gray-100 mt-3 pt-2' : '' }}">
                                                     @foreach ($msg['attachments'] as $attachment)
                                                         @php
                                                             $extension = pathinfo($attachment, PATHINFO_EXTENSION);
@@ -239,7 +243,15 @@
                                                                             stroke-linejoin="round" stroke-width="2"
                                                                             d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" />
                                                                     </svg>
-                                                                    {{ basename($attachment) }}
+                                                                    @php
+                                                                        $filename = basename($attachment);
+                                                                        $displayName = preg_replace(
+                                                                            '/^\d+_/',
+                                                                            '',
+                                                                            $filename,
+                                                                        );
+                                                                    @endphp
+                                                                    {{ $displayName }}
                                                                 </a>
                                                             </div>
                                                         @else
@@ -253,7 +265,15 @@
                                                                         stroke-linejoin="round" stroke-width="2"
                                                                         d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" />
                                                                 </svg>
-                                                                {{ basename($attachment) }}
+                                                                @php
+                                                                    $filename = basename($attachment);
+                                                                    $displayName = preg_replace(
+                                                                        '/^\d+_/',
+                                                                        '',
+                                                                        $filename,
+                                                                    );
+                                                                @endphp
+                                                                {{ $displayName }}
                                                             </a>
                                                         @endif
                                                     @endforeach
@@ -335,7 +355,7 @@
                     <div class="relative">
                         <textarea id="message-input" name="message" rows="3"
                             class="w-full px-4 py-3 text-gray-700 bg-white border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#BCEC88] focus:border-[#BCEC88] focus:outline-none transition"
-                            placeholder="Type your message here..." required></textarea>
+                            placeholder="Type your message here..."></textarea>
                         <button type="button" id="emoji-button"
                             class="absolute right-3 bottom-3 text-gray-500 hover:text-gray-700 transition-colors cursor-pointer">
                             <x-icon name="face-smile" class="h-6 w-6" />
@@ -364,9 +384,9 @@
         </div>
 
         <div class="bg-white rounded-xl overflow-hidden border border-gray-100 mt-6">
-        <div class="bg-[#f0f9e8] px-6 py-4 border-b border-gray-100 flex justify-between items-center">
-            <h2 class="text-xl font-semibold text-gray-800 dark:text-white">Admin Notes</h2>
-            <x-modal id="edit-note-edit-{{ $order->id }}">
+            <div class="bg-[#f0f9e8] px-6 py-4 border-b border-gray-100 flex justify-between items-center">
+                <h2 class="text-xl font-semibold text-gray-800 dark:text-white">Admin Notes</h2>
+                <x-modal id="edit-note-edit-{{ $order->id }}">
                     <x-slot name="trigger">
                         <button x-on:click="modalIsOpen = true" type="button"
                             class="whitespace-nowrap rounded-lg bg-[#BCEC88] border border-transparent px-4 py-2 text-sm font-medium tracking-wide text-[#000000] transition hover:bg-[#BCEC88]/90 text-center focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#BCEC88] active:opacity-100 active:outline-offset-0 disabled:opacity-75 disabled:cursor-not-allowed">
@@ -387,27 +407,22 @@
                         @include('admin.orders.note-edit', ['order' => $order])
                     </div>
                 </x-modal>
+            </div>
+            <div class="p-6 flex items-center justify-center">
+                @if ($order->admin_note)
+                    <div class="w-full text-left">
+                        <textarea class="w-full rounded-lg p-3 resize-none overflow-auto text-left leading-relaxed"
+                            style="max-height: calc(1.5em * 10);" oninput="autoResize(this)" readonly>{{ $order->admin_note }}</textarea>
+                    </div>
+                @else
+                    <div class="text-center">
+                        <x-icon name="rectangle-stack" class="w-10 text-gray-400 mx-auto mb-2" />
+                        <h3 class="text-lg font-medium text-gray-700 mb-1">No Admin Notes found</h3>
+                        <p class="text-sm text-gray-500">There are no Admin Notes campaigns configured yet.</p>
+                    </div>
+                @endif
+            </div>
         </div>
-        <div class="p-6 flex items-center justify-center">
-            @if ($order->admin_note)
-                <div class="w-full text-left">
-                    <textarea
-                        class="w-full rounded-lg p-3 resize-none overflow-auto text-left leading-relaxed"
-                        style="max-height: calc(1.5em * 10);"
-                        oninput="autoResize(this)"
-                        readonly
-                    >{{ $order->admin_note }}</textarea>
-                </div>
-               
-            @else
-                <div class="text-center">
-                    <x-icon name="rectangle-stack" class="w-10 text-gray-400 mx-auto mb-2" />
-                    <h3 class="text-lg font-medium text-gray-700 mb-1">No Admin Notes found</h3>
-                    <p class="text-sm text-gray-500">There are no Admin Notes campaigns configured yet.</p>
-                </div> 
-            @endif 
-        </div>
-    </div>
 
         <div class="bg-white rounded-xl overflow-hidden border border-gray-100 mt-6">
             <div class="bg-[#f0f9e8] px-6 py-4 border-b border-gray-100 flex justify-between items-center">
@@ -433,7 +448,7 @@
                         @include('admin.orders.edit', ['order' => $order])
                     </div>
                 </x-modal>
-            </div> 
+            </div>
 
             <div class="p-6">
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
@@ -798,6 +813,16 @@
                 }
             });
 
+            document.querySelector('form[action*="orders.message"]').addEventListener('submit', function(e) {
+                const messageInput = this.querySelector('#message-input');
+                const fileInput = this.querySelector('#attachment');
+
+                if (messageInput.value.trim() === '' && (!fileInput.files || fileInput.files.length === 0)) {
+                    e.preventDefault();
+                    alert('Please provide either a message or an attachment.');
+                }
+            });
+
             let pickerVisible = false;
 
             const pickerOptions = {
@@ -844,12 +869,12 @@
             });
         });
 
-         function autoResize(textarea) {
+        function autoResize(textarea) {
             textarea.style.height = 'auto';
             textarea.style.height = Math.min(textarea.scrollHeight, 1.5 * 16 * 10) + 'px';
         }
 
-        document.addEventListener('DOMContentLoaded', function () {
+        document.addEventListener('DOMContentLoaded', function() {
             const textarea = document.querySelector('textarea[readonly]');
             if (textarea) autoResize(textarea);
         });
