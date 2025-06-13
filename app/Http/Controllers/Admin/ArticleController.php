@@ -75,7 +75,7 @@ class ArticleController extends Controller
             'img_description' => 'nullable|string',
             'img_alt' => 'nullable|string|max:255',
             'schema_code' => 'nullable|string',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg,webp,bmp|max:10248',
         ]);
 
         $articleData = $request->except(['_token', 'image']);
@@ -133,7 +133,7 @@ class ArticleController extends Controller
             'img_description' => 'nullable|string',
             'img_alt' => 'nullable|string|max:255',
             'schema_code' => 'nullable|string',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg,webp,bmp|max:10248',
         ]);
 
         $article = Article::findOrFail($id);
