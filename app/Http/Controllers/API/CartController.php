@@ -434,7 +434,12 @@ class CartController extends Controller
         $orders = [];
         foreach ($transactions as $transaction) {
             $order_lines = OrderPackage::where('oid', $transaction->id)->distinct()->pluck('pid')->toArray();
-            $package = DB::table('package')->whereIn('id', $order_lines)->first();
+            $package = null;
+            if (empty($order_lines)) {
+                $package = DB::table('package')->where('id', $transaction->package_id)->first();
+            } else {
+                $package = DB::table('package')->whereIn('id', $order_lines)->first();
+            }
             $status = DB::table('order_setps')->where('id', $transaction->order_status)->first();
 
             $lines = [
@@ -471,6 +476,7 @@ class CartController extends Controller
                 'lines' => [],
                 'status' => $transaction->order_status,
                 'created_at' => $transaction->added_date,
+                'package_price' => (string) $package->price,
             ];
             foreach ($order_lines as $line) {
                 $addon = DB::table('addons')->where('id', $line->addon_id)->first();

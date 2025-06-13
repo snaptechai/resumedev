@@ -14,13 +14,14 @@ class ArticleController extends Controller
         
         $featuredArticle = Article::with(['articleCategory', 'articleSubCategory'])
             ->where('featured', 'yes')
-            ->orderBy('id', 'desc')
+            ->orderBy('added_date', 'desc')
             ->first();
         
         $articles = Article::with(['articleCategory', 'articleSubCategory'])
             ->when($featuredArticle, function($query) use ($featuredArticle) {
                 return $query->where('id', '!=', $featuredArticle->id);
             })
+            ->orderBy('id', 'desc')
             ->paginate($perPage);
         
         return response()->json([
