@@ -8,7 +8,7 @@ use App\Http\Controllers\API\FAQController;
 use App\Http\Controllers\API\MessageController;
 use App\Http\Controllers\API\MetaTagController;
 use App\Http\Controllers\API\PackageController;
-use App\Http\Controllers\Api\ReviewController;
+use App\Http\Controllers\API\ReviewController;
 use App\Http\Controllers\API\TemplateController;
 use Illuminate\Support\Facades\Route;
 
