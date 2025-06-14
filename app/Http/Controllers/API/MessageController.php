@@ -112,7 +112,15 @@ class MessageController extends Controller
         }
 
         if ($request->hasFile('attachment')) {
-            $filePath = $request->file('attachment')->store('attachments', 'public');
+            $file = $request->file('attachment');
+            $originalFilename = $file->getClientOriginalName();
+            $timestamp = time();
+            $newFilename = $timestamp . '_' . $originalFilename;
+            $filePath = $file->storeAs(
+                'attachments/' . $order->id, 
+                $newFilename, 
+                'public'
+            );
             $message->attachment = $filePath;
         }
 
