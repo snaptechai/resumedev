@@ -294,6 +294,6 @@ class OrderController extends Controller
 
         Mail::to($email)->queue(new \App\Mail\NewMessage($message, $order));
 
-        return redirect()->back()->with('success', 'Message sent successfully.');
+        return redirect()->back();
     }
 }
