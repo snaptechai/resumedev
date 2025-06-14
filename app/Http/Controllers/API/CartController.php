@@ -447,6 +447,7 @@ class CartController extends Controller
                 'name' => isset($package) ? $package->title : '',
                 'ID' => 'ORDER #'.$transaction->id,
                 'status' => isset($status) ? $status->step : '',
+                'created_at' => $transaction->added_date,
             ];
             array_push($orders, $lines);
         }
@@ -467,6 +468,17 @@ class CartController extends Controller
         if (isset($transaction)) {
             $order_lines = OrderPackage::where('oid', $transaction->id)->get();
             $package = DB::table('package')->where('id', $transaction->package_id)->first();
+            $discount = 0;
+            if ($transaction->coupon) {
+                $coupon = Coupon::find($transaction->coupon);
+                if ($coupon) {
+                    $addon_total = 0;
+                    foreach ($order_lines as $line) {
+                        $addon_total += $line->price * $line->quantity;
+                    }
+                    $discount = (($package->price + $addon_total) * $coupon->price) / 100;
+                }
+            }
             $lines = [
                 'order_id' => $transaction->id,
                 'total' => (string) $transaction->total_price,
@@ -477,6 +489,7 @@ class CartController extends Controller
                 'status' => $transaction->order_status,
                 'created_at' => $transaction->added_date,
                 'package_price' => (string) $package->price,
+                'discount' => (string) $discount,
             ];
             foreach ($order_lines as $line) {
                 $addon = DB::table('addons')->where('id', $line->addon_id)->first();
@@ -593,6 +606,17 @@ class CartController extends Controller
         if (isset($transaction)) {
             $order_lines = OrderPackage::where('oid', $transaction->id)->get();
             $package = DB::table('package')->where('id', $transaction->package_id)->first();
+            $discount = 0;
+            if ($transaction->coupon) {
+                $coupon = Coupon::find($transaction->coupon);
+                if ($coupon) {
+                    $addon_total = 0;
+                    foreach ($order_lines as $line) {
+                        $addon_total += $line->price * $line->quantity;
+                    }
+                    $discount = (($package->price + $addon_total) * $coupon->price) / 100;
+                }
+            }
             $lines = [
                 'order_id' => $transaction->id,
                 'total' => (string) $transaction->total_price,
@@ -603,6 +627,7 @@ class CartController extends Controller
                 'status' => $transaction->order_status,
                 'created_at' => $transaction->added_date,
                 'package_price' => (string) $package->price,
+                'discount' => (string) $discount,
             ];
             foreach ($order_lines as $line) {
                 $addon = DB::table('addons')->where('id', $line->addon_id)->first();
