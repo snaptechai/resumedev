@@ -97,6 +97,20 @@ class MessageController extends Controller
         $message->type = 'user';
         $message->adate = now();
 
+        if(str_contains($request->message, "I would like to request a modification for my resume.")) {
+            $order->order_status = 3;
+            $order->save();
+            Message::create([
+                'oid' => $order->id,
+                'fid' => 1,
+                'tid' => $order->uid,
+                'message' => 'your order started',
+                'status' => 0,
+                'type' => 'admin',
+                'adate' => now()->addSeconds(5),
+            ]);
+        }
+
         if ($request->hasFile('attachment')) {
             $filePath = $request->file('attachment')->store('attachments', 'public');
             $message->attachment = $filePath;

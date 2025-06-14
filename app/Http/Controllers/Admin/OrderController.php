@@ -233,7 +233,7 @@ class OrderController extends Controller
             Mail::to($email)->queue(new \App\Mail\OrderReady($order, $fileAttachments));
         }
 
-        return redirect()->back()->with('success', 'Order updated successfully.');
+        return redirect()->back();
     }
 
     /**
