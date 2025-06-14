@@ -134,7 +134,7 @@
                                     <span
                                         class="text-sm text-gray-600">{{ date('M d, Y', strtotime($order->added_date)) }}</span>
                                 </td>
-                                <td class="px-6 py-4 whitespace-nowrap">
+                                {{-- <td class="px-6 py-4 whitespace-nowrap">
                                     @php
                                         $timeLeft = '';
                                         $isOverdue = false;
@@ -157,7 +157,30 @@
                                     @else
                                         <span class="text-sm text-gray-400">-</span>
                                     @endif
+                                </td> --}}
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    @php
+                                        $endDateFormatted = null;
+
+                                        if (
+                                            $order->end_date &&
+                                            \Carbon\Carbon::hasFormat($order->end_date, 'Y-m-d H:i:s')
+                                        ) {
+                                            $endDateFormatted = \Carbon\Carbon::parse($order->end_date)->format('Y-m-d H:i:s');
+                                        }
+                                    @endphp
+
+                                    @if ($endDateFormatted)
+                                        <span
+                                            class="text-sm countdown-timer text-gray-600"
+                                            data-end="{{ $endDateFormatted }}">
+                                            Loading...
+                                        </span>
+                                    @else
+                                        <span class="text-sm text-gray-400">-</span>
+                                    @endif
                                 </td>
+
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <span
                                         class="text-sm text-gray-600">{{ $customer ? $customer->full_name : 'User #' . $order->uid }}</span>
@@ -223,3 +246,56 @@
         </div>
     </div>
 </x-layouts.app>
+<script>
+    function startCountdown(el, endTimeStr) {
+        const end = new Date(endTimeStr).getTime();
+
+        function update() {
+            const now = new Date().getTime();
+            const distance = end - now;
+
+            if (distance <= 0) {
+                el.textContent = 'Overdue';
+                el.classList.remove('text-gray-600');
+                el.classList.add('text-red-600', 'font-medium');
+                return;
+            }
+
+            const hoursLeft = distance / (1000 * 60 * 60);
+ 
+            if (hoursLeft <= 12) {
+                el.classList.remove('text-gray-600');
+                el.classList.add('text-red-600', 'font-medium');
+            } else {
+                el.classList.remove('text-red-600', 'font-medium');
+                el.classList.add('text-gray-600');
+            }
+
+            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+            const formatted = 
+                (days > 0 ? `${days}d ` : '') +
+                `${hours.toString().padStart(2, '0')}:` +
+                `${minutes.toString().padStart(2, '0')}:` +
+                `${seconds.toString().padStart(2, '0')}`;
+
+            el.textContent = formatted;
+            setTimeout(update, 1000);
+        }
+
+        update();
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        document.querySelectorAll('.countdown-timer').forEach(el => {
+            const end = el.dataset.end;
+            if (end) {
+                startCountdown(el, end);
+            }
+        });
+    });
+</script>
+

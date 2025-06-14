@@ -5,8 +5,19 @@
                 <div class="h-8 w-8 flex items-center justify-center bg-[#BCEC88]/20 rounded-lg mr-3">
                     <x-icon name="chat-bubble-oval-left" class="h-5 w-5 text-[#6b8f3b]" />
                 </div>
-                <h2 class="text-xl font-semibold text-gray-800">Conversation</h2>
-            </div>
+                <h2 class="text-xl font-semibold text-gray-800">Conversation</h2> 
+                {{-- <h2 class="px-6 text-xl font-semibold text-gray-800">{{$order->end_date}}</h2> --}}
+                @if ($order->end_date && \Carbon\Carbon::hasFormat($order->end_date, 'Y-m-d H:i:s'))
+                    <span
+                        class="ml-4 text-xl font-medium countdown-timer text-gray-600"
+                        data-end="{{ \Carbon\Carbon::parse($order->end_date)->format('Y-m-d H:i:s') }}">
+                        Loading...
+                    </span>
+                @else
+                    <span class="ml-4 text-xl text-gray-400">No End Date</span>
+                @endif
+            </div> 
+            
             @include('admin.massage-bar')
 
             <div class="h-[550px] overflow-y-auto p-6 bg-white space-y-6" id="messages">
@@ -1019,26 +1030,26 @@
             if (copyTemplateBtn) {
                 copyTemplateBtn.addEventListener('click', function() {
                     const templateText = `
-A. Your target job title
-(Place separate orders if you are targeting multiple industries)
+                    A. Your target job title
+                    (Place separate orders if you are targeting multiple industries)
 
-B. Work experience
-1. Company
-2. Position
-3. Period
+                    B. Work experience
+                    1. Company
+                    2. Position
+                    3. Period
 
-C. Personal details
-1. Address
-2. Phone
-3. Email
+                    C. Personal details
+                    1. Address
+                    2. Phone
+                    3. Email
 
-D. Education details
-1. College/school/university
-2. Course
-3. Year
+                    D. Education details
+                    1. College/school/university
+                    2. Course
+                    3. Year
 
-E. Your current CV/Resume (If you have one)
-                    `.trim();
+                    E. Your current CV/Resume (If you have one)
+                                        `.trim();
 
                     navigator.clipboard.writeText(templateText).then(() => {
                         copyText.textContent = "Copied!";
@@ -1053,3 +1064,56 @@ E. Your current CV/Resume (If you have one)
         });
     </script>
 </x-layouts.app>
+
+<script>
+    function startCountdown(el, endTimeStr) {
+        const end = new Date(endTimeStr).getTime();
+
+        function update() {
+            const now = new Date().getTime();
+            const distance = end - now;
+
+            if (distance <= 0) {
+                el.textContent = 'Overdue';
+                el.classList.remove('text-gray-600');
+                el.classList.add('text-red-600', 'font-xl');
+                return;
+            }
+
+            const hoursLeft = distance / (1000 * 60 * 60);
+            if (hoursLeft <= 12) {
+                el.classList.remove('text-gray-600');
+                el.classList.add('text-red-600', 'font-xl');
+            } else {
+                el.classList.remove('text-red-600', 'font-xl');
+                el.classList.add('text-gray-600');
+            }
+
+            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+            const formatted =
+                (days > 0 ? `${days}d ` : '') +
+                `${hours.toString().padStart(2, '0')}:` +
+                `${minutes.toString().padStart(2, '0')}:` +
+                `${seconds.toString().padStart(2, '0')} left`;
+
+            el.textContent = formatted;
+            setTimeout(update, 1000);
+        }
+
+        update();
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        document.querySelectorAll('.countdown-timer').forEach(el => {
+            const end = el.dataset.end;
+            if (end) {
+                startCountdown(el, end);
+            }
+        });
+    }); 
+
+</script>
