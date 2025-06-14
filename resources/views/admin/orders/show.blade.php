@@ -862,7 +862,7 @@
                                                 {{ date('M d, Y', strtotime($orderPackage->created_at)) }}</span>
                                             @if (auth()->user()->hasPermission('View order price & details'))
                                                 <span class="font-medium text-gray-900">Subtotal:
-                                                    ${{ number_format($orderPackage->quantity * $orderPackage->price, 2) }}</span>
+                                                    ${{ number_format($orderPackage->quantity * $addon->price, 2) }}</span>
                                             @endif
                                         </div>
                                     </div>
@@ -894,7 +894,10 @@
                                 <div class="flex justify-between">
                                     <span class="text-gray-600">Addons</span>
                                     <span
-                                        class="font-medium">${{ $orderPackages->sum(function ($item) {return $item->quantity * $item->price;}) }}</span>
+                                        class="font-medium">${{ $orderPackages->sum(function ($item) {
+                                            $addon = \App\Models\Addon::find($item->addon_id);
+                                            return $item->quantity * ($addon ? $addon->price : 0);
+                                        }) }}</span>
                                 </div>
                             @endif
 
