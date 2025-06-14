@@ -71,10 +71,7 @@
                         <label for="short_description" class="block text-sm font-medium text-gray-700 mb-2">
                             Short Description
                         </label>
-                        <input id="short_description" type="hidden" name="short_description"
-                            value="{{ $package->short_description }}">
-                        <trix-editor input="short_description"
-                            class="trix-content border border-gray-300 rounded-md p-3"></trix-editor>
+                        <textarea id="tinymce-editor" name="short_description" class="tinymce-editor">{{ old('short_description', $package->short_description) }}</textarea>
                         @error('short_description')
                             <p class="text-red-500 text-sm mt-2">{{ $message }}</p>
                         @enderror
@@ -84,10 +81,8 @@
                         <label for="full_description" class="block text-sm font-medium text-gray-700 mb-2">
                             Full Description
                         </label>
-                        <input id="full_description" type="hidden" name="full_description"
-                            value="{{ $package->full_description }}">
-                        <trix-editor input="full_description"
-                            class="trix-content border border-gray-300 rounded-md p-3"></trix-editor>
+                        <textarea id="tinymce-editor" name="full_description" class="tinymce-editor">{{ old('full_description', $package->full_description) }}</textarea>
+
                         @error('full_description')
                             <p class="text-red-500 text-sm mt-2">{{ $message }}</p>
                         @enderror

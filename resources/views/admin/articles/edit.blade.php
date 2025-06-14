@@ -210,10 +210,7 @@
                         <label for="description" class="block text-sm font-medium text-gray-700 mb-2">
                             Content <span class="text-red-500">*</span>
                         </label>
-                        <input id="description" type="hidden" name="description"
-                            value="{{ old('description', $article->description) }}">
-                        <trix-editor input="description"
-                            class="trix-content min-h-[400px] prose max-w-none bg-white rounded-lg border border-gray-300"></trix-editor>
+                        <textarea id="tinymce-editor" name="description" class="tinymce-editor">{{ old('description', $article->description) }}</textarea>
                     </div>
                 </div>
 

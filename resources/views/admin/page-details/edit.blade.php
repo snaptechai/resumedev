@@ -8,9 +8,7 @@
             </label>
             <input type="hidden" name="type" value="{{ $pageDetail->type }}">
             <div class="mt-1 rounded-lg border border-gray-300 overflow-hidden">
-                <input id="content-{{ $pageDetail->id }}" type="hidden" name="content"
-                    value="{{ $pageDetail->content }}">
-                <trix-editor input="content-{{ $pageDetail->id }}" class="min-h-[200px] trix-content"></trix-editor>
+                <textarea id="tinymce-editor" name="content" class="tinymce-editor">{{ old('content', $pageDetail->content) }}</textarea>
             </div>
             <p class="mt-2 text-sm text-gray-500">
                 Edit the content that will appear on the website.
