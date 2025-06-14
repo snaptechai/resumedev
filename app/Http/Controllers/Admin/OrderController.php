@@ -281,7 +281,6 @@ class OrderController extends Controller
                 'public'
             );
             $message->attachment = $filePath;
-            $message->original_filename = $originalFilename;
         }
 
         if ($message->save()) {
