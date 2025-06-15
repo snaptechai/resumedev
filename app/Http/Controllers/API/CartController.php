@@ -347,7 +347,7 @@ class CartController extends Controller
             $due = $transaction->total_price - $paid;
 
             if ($request->payment_method_id) {
-                $stripe = new \Stripe\StripeClient('sk_test_51LzZb5Fp8KE7uxpzr67sAT2BfstMXudx3uRHozPJPKZAhyEQbGEm7bvQAg9oLl6CDsghApc6dCKzpoXJZ8eaHU2Y00EHwAfclJ');
+                $stripe = new \Stripe\StripeClient(env('STRIPE_SECRET_KEY'));
 
                 $paymentIntent = $stripe->paymentIntents->create([
                     'amount' => $due * 100,
@@ -535,7 +535,7 @@ class CartController extends Controller
         $paid = Payment::where('order_id', $transaction->id)->sum('amount');
         $due = $transaction->total_price - $paid;
         if ($request->payment_method_id) {
-            $stripe = new \Stripe\StripeClient('sk_test_51LzZb5Fp8KE7uxpzr67sAT2BfstMXudx3uRHozPJPKZAhyEQbGEm7bvQAg9oLl6CDsghApc6dCKzpoXJZ8eaHU2Y00EHwAfclJ');
+            $stripe = new \Stripe\StripeClient(env('STRIPE_SECRET_KEY'));
 
             $paymentIntent = $stripe->paymentIntents->create([
                 'amount' => $due * 100,
