@@ -31,7 +31,10 @@ class User extends Authenticatable
         'added_date',
         'last_modified_by',
         'last_modified_date',
-        'contact_no'
+        'contact_no',
+        'google_id',
+        'google_access_token',
+        'google_refresh_token',
     ];
 
     /**

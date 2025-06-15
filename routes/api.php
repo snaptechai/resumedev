@@ -10,11 +10,16 @@ use App\Http\Controllers\API\MetaTagController;
 use App\Http\Controllers\API\PackageController;
 use App\Http\Controllers\API\ReviewController;
 use App\Http\Controllers\API\TemplateController;
+use App\Http\Controllers\API\GoogleOAuthController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('v1')->group(function () {
     Route::post('login', [AuthController::class, 'login']);
     Route::post('register', [AuthController::class, 'register']);
+
+
+    Route::get('/auth/google', [GoogleOAuthController::class, 'redirectToGoogle'])->name('auth.google');
+    Route::get('/auth/google/callback', [GoogleOAuthController::class, 'handleGoogleCallback'])->name('auth.google.callback');
 
     Route::controller(TemplateController::class)->group(function () {
         Route::get('sliders', 'index');

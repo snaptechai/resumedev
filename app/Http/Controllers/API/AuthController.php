@@ -31,10 +31,10 @@ class AuthController extends Controller
 
         if ($validator->fails()) {
             return response()->json([
-            'http_status' => 400,
-            'http_status_message' => 'Bad Request',
-            'message' => 'Validation failed. Please check your input data.',
-            'errors' => $validator->errors(),
+                'http_status' => 400,
+                'http_status_message' => 'Bad Request',
+                'message' => 'Validation failed. Please check your input data.',
+                'errors' => $validator->errors(),
             ], 400);
         }
 
@@ -63,6 +63,8 @@ class AuthController extends Controller
         }
 
         $token = $user->createToken('web')->plainTextToken;
+
+        unset($user->password, $user->google_access_token, $user->google_refresh_token);
 
         return response()->json([
             'http_status' => 200,
@@ -108,6 +110,8 @@ class AuthController extends Controller
         $user = Auth::user();
 
         $token = $user->createToken('web')->plainTextToken;
+
+        unset($user->password, $user->google_access_token, $user->google_refresh_token);
 
         return response()->json([
             'http_status' => 200,
