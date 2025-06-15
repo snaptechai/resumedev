@@ -5,19 +5,18 @@
                 <div class="h-8 w-8 flex items-center justify-center bg-[#BCEC88]/20 rounded-lg mr-3">
                     <x-icon name="chat-bubble-oval-left" class="h-5 w-5 text-[#6b8f3b]" />
                 </div>
-                <h2 class="text-xl font-semibold text-gray-800">Conversation</h2> 
+                <h2 class="text-xl font-semibold text-gray-800">Conversation</h2>
                 {{-- <h2 class="px-6 text-xl font-semibold text-gray-800">{{$order->end_date}}</h2> --}}
                 @if ($order->end_date && \Carbon\Carbon::hasFormat($order->end_date, 'Y-m-d H:i:s'))
-                    <span
-                        class="ml-4 text-xl font-medium countdown-timer text-gray-600"
+                    <span class="ml-4 text-xl font-medium countdown-timer text-gray-600"
                         data-end="{{ \Carbon\Carbon::parse($order->end_date)->format('Y-m-d H:i:s') }}">
                         Loading...
                     </span>
                 @else
                     <span class="ml-4 text-xl text-gray-400">No End Date</span>
                 @endif
-            </div> 
-            
+            </div>
+
             @include('admin.massage-bar')
 
             <div class="h-[550px] overflow-y-auto p-6 bg-white space-y-6" id="messages">
@@ -240,6 +239,23 @@
                             </svg>
                             <div class="ml-3">
                                 <span class="text-sm font-medium text-gray-600 block">Order delivered</span>
+                                <span class="text-xs text-gray-500">{{ $msg['created_at'] }}</span>
+                            </div>
+                        </div>
+                    @elseif (strpos($msg['message'], 'addon added:') === 0)
+                        <div class="flex items-start mb-3 justify-center">
+                            <div
+                                class="h-10 w-10 flex items-center justify-center bg-[#FFF1E5] rounded-full flex-shrink-0">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                    stroke-width="1.5" stroke="#E67E22" class="size-6">
+                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                        d="M14.25 6.087c0-.355.186-.676.401-.959.221-.29.349-.634.349-1.003 0-1.036-1.007-1.875-2.25-1.875s-2.25.84-2.25 1.875c0 .369.128.713.349 1.003.215.283.401.604.401.959v0a.64.64 0 0 1-.657.643 48.39 48.39 0 0 1-4.163-.3c.186 1.613.293 3.25.315 4.907a.656.656 0 0 1-.658.663v0c-.355 0-.676-.186-.959-.401a1.647 1.647 0 0 0-1.003-.349c-1.036 0-1.875 1.007-1.875 2.25s.84 2.25 1.875 2.25c.369 0 .713-.128 1.003-.349.283-.215.604-.401.959-.401v0c.31 0 .555.26.532.57a48.039 48.039 0 0 1-.642 5.056c1.518.19 3.058.309 4.616.354a.64.64 0 0 0 .657-.643v0c0-.355-.186-.676-.401-.959a1.647 1.647 0 0 1-.349-1.003c0-1.035 1.008-1.875 2.25-1.875 1.243 0 2.25.84 2.25 1.875 0 .369-.128.713-.349 1.003-.215.283-.4.604-.4.959v0c0 .333.277.599.61.58a48.1 48.1 0 0 0 5.427-.63 48.05 48.05 0 0 0 .582-4.717.532.532 0 0 0-.533-.57v0c-.355 0-.676.186-.959.401-.29.221-.634.349-1.003.349-1.035 0-1.875-1.007-1.875-2.25s.84-2.25 1.875-2.25c.37 0 .713.128 1.003.349.283.215.604.401.96.401v0a.656.656 0 0 0 .658-.663 48.422 48.422 0 0 0-.37-5.36c-1.886.342-3.81.574-5.766.689a.578.578 0 0 1-.61-.58v0Z" />
+                                </svg>
+                            </div>
+                            <div class="ml-3">
+                                <span class="text-sm font-medium text-gray-600 block">
+                                    {{ str_replace('addon added: ', 'Addon added: ', $msg['message']) }}
+                                </span>
                                 <span class="text-xs text-gray-500">{{ $msg['created_at'] }}</span>
                             </div>
                         </div>
@@ -1110,61 +1126,60 @@
         update();
     }
 
-    document.addEventListener('DOMContentLoaded', function () {
+    document.addEventListener('DOMContentLoaded', function() {
         document.querySelectorAll('.countdown-timer').forEach(el => {
             const end = el.dataset.end;
             if (end) {
                 startCountdown(el, end);
             }
         });
-    }); 
-
-</script> 
+    });
+</script>
 <script>
     let refreshInterval;
     let isRefreshing = false;
     let lastMessageCount = 0;
     let lastMessageId = null;
- 
+
     function refreshMessages() {
         if (isRefreshing) return;
-        
+
         isRefreshing = true;
         const orderId = '{{ $order->id }}';
-        
+
         fetch(`/admin/orders/${orderId}/getmessages`, {
-            method: 'GET',
-            headers: {
-                'X-Requested-With': 'XMLHttpRequest',
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-            }
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                const messagesContainer = document.getElementById('messages');
-                const currentMessageCount = data.messageCount || 0;
-                const currentLastMessageId = data.lastMessageId || null;
-                
-                const hasNewMessages = currentMessageCount > lastMessageCount || 
-                                    (currentLastMessageId && currentLastMessageId !== lastMessageId);
-                
-                messagesContainer.innerHTML = data.html;
-                
-                if (hasNewMessages) {
-                    messagesContainer.scrollTop = messagesContainer.scrollHeight;
-                    
-                    lastMessageCount = currentMessageCount;
-                    lastMessageId = currentLastMessageId;
+                method: 'GET',
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
                 }
-            }
-        })
-        .catch(error => {
-            console.error('Error refreshing messages:', error);
-        })
-        .finally(() => {
-            isRefreshing = false;
-        });
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    const messagesContainer = document.getElementById('messages');
+                    const currentMessageCount = data.messageCount || 0;
+                    const currentLastMessageId = data.lastMessageId || null;
+
+                    const hasNewMessages = currentMessageCount > lastMessageCount ||
+                        (currentLastMessageId && currentLastMessageId !== lastMessageId);
+
+                    messagesContainer.innerHTML = data.html;
+
+                    if (hasNewMessages) {
+                        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+
+                        lastMessageCount = currentMessageCount;
+                        lastMessageId = currentLastMessageId;
+                    }
+                }
+            })
+            .catch(error => {
+                console.error('Error refreshing messages:', error);
+            })
+            .finally(() => {
+                isRefreshing = false;
+            });
     }
 
     document.addEventListener('DOMContentLoaded', function() {
@@ -1176,7 +1191,7 @@
                 lastMessageId = messages[messages.length - 1].getAttribute('data-message-id');
             }
         }
-        
+
         refreshInterval = setInterval(refreshMessages, 1000);
     });
 
@@ -1187,7 +1202,7 @@
             refreshInterval = setInterval(refreshMessages, 1000);
         }
     });
- 
+
     window.addEventListener('beforeunload', function() {
         clearInterval(refreshInterval);
     });

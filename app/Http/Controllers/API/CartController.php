@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Mail\Order_Email;
 use App\Models\Addon;
 use App\Models\Coupon;
+use App\Models\Message;
 use App\Models\Order;
 use App\Models\OrderPackage;
 use App\Models\Package;
@@ -262,7 +263,6 @@ class CartController extends Controller
                 ];
 
                 array_push($lines['lines'], $data);
-
             }
         }
 
@@ -292,7 +292,6 @@ class CartController extends Controller
                 'http_status_message' => 'Success',
                 'message' => 'Success Deleted',
             ], 200);
-
         }
 
         return response()->json([
@@ -315,7 +314,6 @@ class CartController extends Controller
                 'http_status_message' => 'Success',
                 'message' => 'Success Deleted',
             ], 200);
-
         }
 
         return response()->json([
@@ -323,7 +321,6 @@ class CartController extends Controller
             'http_status_message' => 'warning',
             'message' => 'Bad Request',
         ], 404);
-
     }
 
     public function post(Request $request)
@@ -445,7 +442,7 @@ class CartController extends Controller
             $lines = [
                 'order_id' => $transaction->id,
                 'name' => isset($package) ? $package->title : '',
-                'ID' => 'ORDER #'.$transaction->id,
+                'ID' => 'ORDER #' . $transaction->id,
                 'status' => isset($status) ? $status->step : '',
                 'created_at' => $transaction->added_date,
             ];
@@ -503,7 +500,6 @@ class CartController extends Controller
                 ];
 
                 array_push($lines['lines'], $data);
-
             }
         }
 
@@ -523,7 +519,7 @@ class CartController extends Controller
         $transaction = Order::find($order_id);
         $addon_price = $input['quantity'] * $addon->price;
         $transaction->total_price = $addon_price + $transaction->total_price;
-        $transaction->payment_status = 'partial';
+        $transaction->payment_status = 'Partial';
         $transaction->save();
         $package = OrderPackage::where('addon_id', $input['addon_id'])->where('oid', $order_id)->first();
         if (! isset($package)) {
@@ -549,7 +545,6 @@ class CartController extends Controller
                 'confirm' => true,
             ]);
 
-            $transaction->order_status = '1';
             $transaction->payment_status = 'Success';
             $transaction->save();
 
@@ -558,6 +553,16 @@ class CartController extends Controller
             $payment->amount = $due;
             $payment->transaction_id = $paymentIntent->id;
             $payment->save();
+
+            Message::create([
+                'oid' => $transaction->id,
+                'fid' => 1,
+                'tid' => $transaction->uid,
+                'message' => 'addon added: ' . $addon->title, // Changed format to make it identifiable
+                'status' => 0,
+                'type' => 'admin',
+                'adate' => now(),
+            ]);
         }
 
         $lines = [];
@@ -586,7 +591,6 @@ class CartController extends Controller
                 ];
 
                 array_push($lines['lines'], $data);
-
             }
         }
 
@@ -641,7 +645,6 @@ class CartController extends Controller
                 ];
 
                 array_push($lines['lines'], $data);
-
             }
         }
 
