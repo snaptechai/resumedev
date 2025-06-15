@@ -1119,4 +1119,76 @@
         });
     }); 
 
+</script> 
+<script>
+    let refreshInterval;
+    let isRefreshing = false;
+    let lastMessageCount = 0;
+    let lastMessageId = null;
+ 
+    function refreshMessages() {
+        if (isRefreshing) return;
+        
+        isRefreshing = true;
+        const orderId = '{{ $order->id }}';
+        
+        fetch(`/admin/orders/${orderId}/getmessages`, {
+            method: 'GET',
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                const messagesContainer = document.getElementById('messages');
+                const currentMessageCount = data.messageCount || 0;
+                const currentLastMessageId = data.lastMessageId || null;
+                
+                const hasNewMessages = currentMessageCount > lastMessageCount || 
+                                    (currentLastMessageId && currentLastMessageId !== lastMessageId);
+                
+                messagesContainer.innerHTML = data.html;
+                
+                if (hasNewMessages) {
+                    messagesContainer.scrollTop = messagesContainer.scrollHeight;
+                    
+                    lastMessageCount = currentMessageCount;
+                    lastMessageId = currentLastMessageId;
+                }
+            }
+        })
+        .catch(error => {
+            console.error('Error refreshing messages:', error);
+        })
+        .finally(() => {
+            isRefreshing = false;
+        });
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const messagesContainer = document.getElementById('messages');
+        if (messagesContainer) {
+            const messages = messagesContainer.querySelectorAll('[data-message-id]');
+            lastMessageCount = messages.length;
+            if (messages.length > 0) {
+                lastMessageId = messages[messages.length - 1].getAttribute('data-message-id');
+            }
+        }
+        
+        refreshInterval = setInterval(refreshMessages, 1000);
+    });
+
+    document.addEventListener('visibilitychange', function() {
+        if (document.hidden) {
+            clearInterval(refreshInterval);
+        } else {
+            refreshInterval = setInterval(refreshMessages, 1000);
+        }
+    });
+ 
+    window.addEventListener('beforeunload', function() {
+        clearInterval(refreshInterval);
+    });
 </script>

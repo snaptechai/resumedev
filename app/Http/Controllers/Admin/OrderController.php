@@ -295,4 +295,54 @@ class OrderController extends Controller
 
         return redirect()->back();
     }
+
+    public function getMessages(string $id)
+    {
+        $order = Order::findOrFail($id);
+        $messages = Message::where('oid', $id)
+            ->orderBy('adate', 'asc')
+            ->get();
+
+        $customer = User::find($order->uid);
+        $templates = \App\Models\Template::where('is_active', 1)->get();
+        $templateCount = $templates->count();
+
+        $formattedMessages = [];
+        foreach ($messages as $message) {
+            $sender = User::find($message->fid);
+            $senderName = $sender ? $sender->full_name : 'Unknown';
+            $side = ($message->fid == $order->uid) ? 'left' : 'right';
+
+            $showTemplates = false;
+            if (stripos($message->message, 'please tell us your preferred template from the options below') !== false) {
+                $showTemplates = true;
+            }
+
+            $formattedMessages[] = [
+                'id' => $message->id,
+                'message' => $message->message,
+                'side' => $side,
+                'user' => $senderName,
+                'created_at' => Carbon::parse($message->adate)->diffForHumans(),
+                'attachments' => $message->attachment ? [$message->attachment] : [],
+                'type' => $message->type,
+                'show_templates' => $showTemplates,
+            ];
+        }
+
+        $formattedMessages = collect($formattedMessages);
+ 
+        $html = view('admin.orders.partials.messages', compact(
+            'formattedMessages', 
+            'templates', 
+            'templateCount'
+        ))->render();
+
+        return response()->json([
+            'success' => true,
+            'html' => $html,
+            'messageCount' => $formattedMessages->count(),
+            'lastMessageId' => $formattedMessages->last()['id'] ?? null
+        ]);
+    }
 }

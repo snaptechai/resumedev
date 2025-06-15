@@ -46,8 +46,12 @@ Route::middleware('auth')->group(function () {
         });
         Route::middleware('permission:Send chat messages')->group(function () {
             Route::post('orders/{id}/message', [OrderController::class, 'storeMessage'])->name('orders.message');
+            Route::get('/admin/orders/{id}/getmessages', [OrderController::class, 'getMessages'])->name('admin.orders.getmessages');
         });
+        
+        
     });
+    
 
     Route::middleware('permission:View review')->group(function () {
         Route::get('reviews', [ReviewController::class, 'index'])->name('reviews.index');

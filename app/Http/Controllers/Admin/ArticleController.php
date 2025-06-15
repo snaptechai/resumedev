@@ -97,7 +97,14 @@ class ArticleController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id) {}
+    public function show(string $id) {
+
+        $article = Article::findOrFail($id);
+        $categories = ArticleCategory::all();
+        $subcategories = ArticleSubCategory::all();
+
+        return view('admin.articles.show', compact('article', 'categories', 'subcategories'));
+    }
 
     /**
      * Show the form for editing the specified resource.
