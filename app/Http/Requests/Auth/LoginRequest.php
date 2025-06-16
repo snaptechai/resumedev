@@ -19,7 +19,7 @@ class LoginRequest extends FormRequest
     {
         $user = User::where('username', $this->input('username'))->first();
 
-        if ($user->hasPermission('Login to admin panel') && $user->type == 'System') {
+        if ($user->hasPermission('Login to admin panel') && in_array($user->type, ['System', 'Writer'])) {
             return true;
         }
 
