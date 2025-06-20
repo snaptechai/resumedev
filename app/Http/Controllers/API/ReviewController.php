@@ -12,10 +12,17 @@ class ReviewController extends Controller
         $reviews = Review::where('status', 1)
             ->whereRaw('CHAR_LENGTH(review) < 160')
             ->orderByDesc('added_date')
-            ->get([
-                'id', 'name', 'username', 'review', 'star', 'service_start', 'recommend_star', 'added_date'
+            ->limit(8)->get([
+                'id',
+                'name',
+                'username',
+                'review',
+                'star',
+                'service_start',
+                'recommend_star',
+                'added_date'
             ]);
- 
+
         return response()->json([
             'http_status' => 200,
             'http_status_message' => 'Success',
