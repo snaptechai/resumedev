@@ -57,6 +57,11 @@ class Order extends Model
     {
         return $this->belongsTo(Package::class, 'package_id', 'id');
     }
+    
+    public function couponTable()
+    {
+        return $this->belongsTo(Coupon::class, 'coupon', 'id');
+    }
 
     public function user()
     {

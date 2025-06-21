@@ -5,12 +5,15 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Message;
 use App\Models\Order;
+use App\Models\OrderAdminFile;
 use App\Models\Payment;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Storage;
 
 class OrderController extends Controller
 {
@@ -72,6 +75,7 @@ class OrderController extends Controller
     public function show(string $id)
     {
         $order = Order::findOrFail($id);
+        $files = OrderAdminFile::where('oid',$id)->get();
         $messages = Message::where('oid', $id)
             ->orderBy('adate', 'asc')
             ->get();
@@ -98,7 +102,7 @@ class OrderController extends Controller
                 'message' => $message->message,
                 'side' => $side,
                 'user' => $senderName,
-                'created_at' => Carbon::parse($message->adate)->diffForHumans(),
+                'created_at' => $message->adate,
                 'attachments' => $message->attachment ? [$message->attachment] : [],
                 'type' => $message->type,
                 'show_templates' => $showTemplates,
@@ -107,7 +111,7 @@ class OrderController extends Controller
 
         $formattedMessages = collect($formattedMessages);
 
-        return view('admin.orders.show', compact('order', 'formattedMessages', 'customer', 'paymentDetails', 'templates', 'templateCount'));
+        return view('admin.orders.show', compact('order', 'formattedMessages', 'customer', 'paymentDetails', 'templates', 'templateCount','files'));
     }
 
     /**
@@ -323,6 +327,7 @@ class OrderController extends Controller
                 'message' => $message->message,
                 'side' => $side,
                 'user' => $senderName,
+                'adate' => Carbon::parse($message->adate)->format('M d, Y'),
                 'created_at' => Carbon::parse($message->adate)->diffForHumans(),
                 'attachments' => $message->attachment ? [$message->attachment] : [],
                 'type' => $message->type,
@@ -345,4 +350,43 @@ class OrderController extends Controller
             'lastMessageId' => $formattedMessages->last()['id'] ?? null
         ]);
     }
+
+    public function uploadAdminNoteFile(Request $request, $orderId)
+    {
+        $request->validate([
+            'admin_note_attachment' => 'required|file|mimes:pdf,jpg,jpeg,png,doc,docx,xlsx,xls,txt|max:5120' // 5MB max
+        ]);
+
+        $file = $request->file('admin_note_attachment');
+ 
+        $extension = $file->getClientOriginalExtension();
+        $random = Str::random(4);
+        $filename = "rm_{$orderId}_{$random}." . $extension;
+ 
+        $path = $file->storeAs('admin_files', $filename, 'public');
+ 
+        OrderAdminFile::create([
+            'oid' => $orderId,
+            'file_path' => $path,
+            'added_by' => Auth::id(),
+            'added_date' => now()
+        ]);
+
+        return redirect()->back()->with('success', 'File uploaded successfully!');
+    }
+
+    public function deleteAdminNoteFile($orderId, $fileId)
+    {
+        $file = \App\Models\OrderAdminFile::where('oid', $orderId)->where('id', $fileId)->firstOrFail();
+        
+        if (Storage::disk('public')->exists($file->file_path)) {
+            Storage::disk('public')->delete($file->file_path);
+        }
+        
+        $file->delete();
+
+        return redirect()->back()->with('success', 'File deleted successfully!');
+    }
+
+
 }

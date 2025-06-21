@@ -543,33 +543,47 @@
         <div class="bg-white rounded-xl overflow-hidden border border-gray-100 mt-6">
             <div class="bg-[#f0f9e8] px-6 py-4 border-b border-gray-100 flex justify-between items-center">
                 <h2 class="text-xl font-semibold text-gray-800 dark:text-white">Admin Notes</h2>
-                <x-modal id="edit-note-edit-{{ $order->id }}">
-                    <x-slot name="trigger">
-                        <button x-on:click="modalIsOpen = true" type="button"
-                            class="whitespace-nowrap rounded-lg bg-[#BCEC88] border border-transparent px-4 py-2 text-sm font-medium tracking-wide text-[#000000] transition hover:bg-[#BCEC88]/90 text-center focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#BCEC88] active:opacity-100 active:outline-offset-0 disabled:opacity-75 disabled:cursor-not-allowed">
-                            <div class="flex items-center">
-                                <x-icon name="pencil-square" class="h-4 w-4 mr-1.5" />
-                                Edit Notes
-                            </div>
-                        </button>
-                    </x-slot>
 
-                    <x-slot name="header">
-                        <h3 class="text-lg font-semibold">
-                            Edit Admin Notes
-                        </h3>
-                    </x-slot>
+                <div class="flex items-center space-x-2">
+                    <!-- Upload Form -->
+                    <form id="admin-note-upload-form" method="POST" action="{{ route('order.admin-note.upload', $order->id) }}" enctype="multipart/form-data">
+                        @csrf
+                        <label for="admin_note_attachment"
+                            class="inline-flex items-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 cursor-pointer transition">
+                            <x-icon name="paper-clip" class="h-4 w-4 mr-1.5 text-gray-500" />
+                            Attach File
+                            <input id="admin_note_attachment" name="admin_note_attachment" type="file" class="hidden" onchange="this.form.submit()">
+                        </label>
+                    </form>
 
-                    <div class="p-4">
-                        @include('admin.orders.note-edit', ['order' => $order])
-                    </div>
-                </x-modal>
+                    <!-- Edit Notes Modal Trigger -->
+                    <x-modal id="edit-note-edit-{{ $order->id }}">
+                        <x-slot name="trigger">
+                            <button x-on:click="modalIsOpen = true" type="button"
+                                class="whitespace-nowrap rounded-lg bg-[#BCEC88] border border-transparent px-4 py-2 text-sm font-medium tracking-wide text-[#000000] transition hover:bg-[#BCEC88]/90 focus:outline-none">
+                                <div class="flex items-center">
+                                    <x-icon name="pencil-square" class="h-4 w-4 mr-1.5" />
+                                    Edit Notes
+                                </div>
+                            </button>
+                        </x-slot>
+
+                        <x-slot name="header">
+                            <h3 class="text-lg font-semibold">Edit Admin Notes</h3>
+                        </x-slot>
+
+                        <div class="p-4">
+                            @include('admin.orders.note-edit', ['order' => $order])
+                        </div>
+                    </x-modal>
+                </div>
             </div>
-            <div class="p-6 flex items-center justify-center">
+
+            <div class="p-6">
                 @if ($order->admin_note)
-                    <div class="w-full text-left">
-                        <textarea class="w-full rounded-lg p-3 resize-none overflow-auto text-left leading-relaxed"
-                            style="max-height: calc(1.5em * 10);" oninput="autoResize(this)" readonly>{{ $order->admin_note }}</textarea>
+                    <div class="w-full">
+                        <textarea class="w-full rounded-lg p-3 resize-none overflow-auto leading-relaxed bg-gray-50"
+                            style="max-height: calc(1.5em * 10);" readonly>{{ $order->admin_note }}</textarea>
                     </div>
                 @else
                     <div class="text-center">
@@ -579,7 +593,38 @@
                     </div>
                 @endif
             </div>
+
+            @if($files->count())
+                <div class="px-6 pb-4">
+                    <h4 class="text-md font-semibold mb-2 text-gray-700">Attached Files</h4>
+                    <ul class="space-y-1">
+                        @foreach($files as $file)
+                            <li class="flex items-center text-sm text-gray-700">
+                                <x-icon name="paper-clip" class="w-4 h-4 mr-2 text-gray-500" />
+                                
+                                <a href="{{ asset('storage/' . $file->file_path) }}" target="_blank" class="hover:underline hover:text-green-600" title="view">
+                                    {{ basename($file->file_path) }}
+                                </a>
+                                <a href="{{ asset('storage/' . $file->file_path) }}" download class="ml-3 hover:underline hover:text-green-600" title="Download">
+                                    <x-icon name="arrow-down-tray" class="w-4 h-4" />
+                                </a>
+                                <span class="ml-auto text-xs text-gray-900">
+                                    {{ \Carbon\Carbon::parse($file->added_date)->format('Y-m-d') }}
+                                </span>
+                                <form action="{{ route('order.admin-note.file.delete', [$order->id, $file->id]) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this file?');" class="ml-4">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="text-red-700 hover:underline hover:text-red-400 cursor-pointer" title="Delete">
+                                        <x-icon name="trash" class="w-4 h-4" />
+                                    </button>
+                                </form>
+                            </li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
         </div>
+
 
         <div class="bg-white rounded-xl overflow-hidden border border-gray-100 mt-6">
             <div class="bg-[#f0f9e8] px-6 py-4 border-b border-gray-100 flex justify-between items-center">
@@ -731,10 +776,9 @@
                                     <div class="flex justify-between py-3 px-4">
                                         <span class="text-sm text-gray-500">Coupon Applied</span>
                                         <span class="text-sm font-medium">
-                                            @if ($order->coupon)
-                                                <span
-                                                    class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                                                    {{ $order->coupon }}
+                                            @if ($order->couponTable)
+                                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                                                    {{ $order->couponTable->coupon }}
                                                 </span>
                                             @else
                                                 <span class="text-gray-500">None</span>
@@ -917,7 +961,7 @@
                                 </div>
                             @endif
 
-                            @if ($order->coupon)
+                            @if ($order->couponTable)
                                 @php
                                     $coupon = \App\Models\Coupon::where('id', $order->coupon)->first();
                                     $totalPrice =

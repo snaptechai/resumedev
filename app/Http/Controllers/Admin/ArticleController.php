@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Models\Article;
 use App\Models\ArticleCategory;
 use App\Models\ArticleSubCategory;
+use App\Models\ArticleTag;
+use App\Models\Tag;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -49,8 +51,9 @@ class ArticleController extends Controller
     {
         $categories = ArticleCategory::all();
         $subcategories = ArticleSubCategory::all();
-
-        return view('admin.articles.create', compact('categories', 'subcategories'));
+        $article_tags = Tag::all();
+        
+        return view('admin.articles.create', compact('categories', 'subcategories','article_tags'));
     }
 
     /**
@@ -102,8 +105,9 @@ class ArticleController extends Controller
         $article = Article::findOrFail($id);
         $categories = ArticleCategory::all();
         $subcategories = ArticleSubCategory::all();
+        $article_tag = ArticleTag::where('article',$id)->first();
 
-        return view('admin.articles.show', compact('article', 'categories', 'subcategories'));
+        return view('admin.articles.show', compact('article', 'categories', 'subcategories','article_tag'));
     }
 
     /**
@@ -114,8 +118,16 @@ class ArticleController extends Controller
         $article = Article::findOrFail($id);
         $categories = ArticleCategory::all();
         $subcategories = ArticleSubCategory::all();
+        $article_tags = Tag::all();
+        $article_tag = ArticleTag::where('article', $id)->first();
+        
+        if ($article_tag) {
+            $article_tag_id = $article_tag->tag;
+        } else {      
+            $article_tag_id = 0;
+        }
 
-        return view('admin.articles.edit', compact('article', 'categories', 'subcategories'));
+        return view('admin.articles.edit', compact('article', 'categories', 'subcategories','article_tags','article_tag_id'));
     }
 
     /**
@@ -155,7 +167,23 @@ class ArticleController extends Controller
             $articleData['image'] = $request->file('image')->store('articles', 'public');
         }
 
-        $article->update($articleData);
+        $updated = $article->update($articleData);
+
+        if ($updated && $request->article_tag) {
+            $article_tag = ArticleTag::where('article', $id)->first();
+
+            if ($article_tag) {
+                $article_tag->tag = $request->article_tag;
+                $article_tag->save();
+            } else {
+                $article_tag = new ArticleTag();
+                $article_tag->article = $id;
+                $article_tag->tag = $request->article_tag;
+                $article_tag->added_by = Auth::id();
+                $article_tag->added_date = $request->added_date ?? now();
+                $article_tag->save();
+            }
+        }
 
         return redirect()->route('articles.index')->with('success', 'Article updated successfully!');
     }

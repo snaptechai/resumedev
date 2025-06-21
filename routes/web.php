@@ -40,6 +40,8 @@ Route::middleware('auth')->group(function () {
             Route::get('orders/{id}/edit', [OrderController::class, 'edit'])->name('orders.edit');
             Route::put('orders/{id}', [OrderController::class, 'update'])->name('orders.update');
             Route::put('orders/{id}/update-admin-note', [OrderController::class, 'update_admin_note'])->name('orders.update-admin-note');
+            Route::post('orders/{order}/upload-admin-note', [OrderController::class, 'uploadAdminNoteFile'])->name('order.admin-note.upload');
+            Route::delete('orders/{order}/file/{file}', [OrderController::class, 'deleteAdminNoteFile'])->name('order.admin-note.file.delete');
         });
         Route::middleware('permission:Delete order')->group(function () {
             Route::delete('orders/{id}', [OrderController::class, 'destroy'])->name('orders.destroy');

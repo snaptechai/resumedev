@@ -23,4 +23,9 @@ class ArticleSubCategory extends Model
     {
         return $this->belongsTo(ArticleCategory::class, 'category', 'id');
     }
+
+    public function articleTable()
+    {
+        return $this->hasMany(Article::class, 'id', 'sub_category');
+    }
 }

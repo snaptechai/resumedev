@@ -22,4 +22,10 @@ class Coupon extends Model
         'one_time',
         'start_date'
     ];
+
+    
+    public function Order()
+    {
+        return $this->hasMany(Order::class, 'id', 'coupon');
+    }
 }

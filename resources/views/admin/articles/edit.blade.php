@@ -42,6 +42,21 @@
                                 class="w-full rounded-lg border-gray-300 py-2 px-3 text-gray-700 focus:ring-2 focus:ring-[#BCEC88] focus:border-[#BCEC88] appearance-none border"
                                 placeholder="Enter URL title">
                         </div>
+                        <div>
+                            <label for="article_tag" class="block text-sm font-medium text-gray-700 mb-1">
+                                Article Tag <span class="text-red-500">*</span>
+                            </label>
+                            <select id="article_tag" name="article_tag"
+                                class="select2 w-full rounded-lg border-gray-300 py-2 px-3 text-gray-700 focus:ring-2 focus:ring-[#BCEC88] focus:border-[#BCEC88] border">
+                                <option value="">Select an Article Tag</option>
+                                @foreach ($article_tags as $article_tag)
+                                    <option value="{{ $article_tag->id }}"
+                                        {{ $article_tag_id == $article_tag->id ? 'selected' : '' }}>
+                                        {{ $article_tag->tag }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
 
                         <div>
                             <label for="category" class="block text-sm font-medium text-gray-700 mb-1">

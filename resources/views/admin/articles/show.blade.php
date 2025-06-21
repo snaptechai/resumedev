@@ -14,18 +14,25 @@
                         <p class="text-gray-500 text-sm">URL Title</p>
                         <p class="text-gray-800">{{ $article->title }}</p>
                     </div>
+                    
+                    <div>
+                        <p class="text-gray-500 text-sm">Article Tag</p>
+                        <p class="text-gray-800">
+                           {{ isset($article_tag) ? $article_tag->tagTable->tag : 'N/A' }}
+                        </p>
+                    </div>
 
                     <div>
                         <p class="text-gray-500 text-sm">Category</p>
                         <p class="text-gray-800">
-                            {{ $article->categoryData->category ?? 'N/A' }}
+                            {{ $article->articleCategory->category ?? 'N/A' }}
                         </p>
                     </div>
 
                     <div>
                         <p class="text-gray-500 text-sm">Sub Category</p>
                         <p class="text-gray-800">
-                            {{ $article->subCategoryData->sub_category ?? 'N/A' }}
+                            {{ $article->articleSubCategory->sub_category ?? 'N/A' }}
                         </p>
                     </div>
 

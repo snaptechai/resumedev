@@ -17,4 +17,9 @@ class Tag extends Model
     ];
 
     public $timestamps = false;
+
+    public function articleTag()
+    {
+        return $this->hasMany(ArticleTag::class,'id','tag');
+    }
 }

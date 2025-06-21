@@ -42,10 +42,10 @@
                 <x-button variant="primary" type="submit" class="w-full">{{ __('Log in') }}</x-button>
             </div>
 
-            <div class="space-x-1 text-center text-sm text-on-surface dark:text-on-surface-dark">
+            {{-- <div class="space-x-1 text-center text-sm text-on-surface dark:text-on-surface-dark">
                 {{ __('Don\'t have an account?') }}
                 <x-link href="{{ route('register') }}">{{ __('Sign up') }}</x-link>
-            </div>
+            </div> --}}
 
         </form>
     </div>

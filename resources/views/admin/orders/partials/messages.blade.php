@@ -398,9 +398,8 @@
                             class="font-medium text-sm {{ $msg['side'] === 'left' ? 'text-blue-800' : 'text-green-800' }}">
                             {{ $msg['user'] }}
                         </span>
-                        <span
-                            class="text-xs text-gray-500 {{ $msg['side'] === 'left' ? 'text-left' : 'text-right' }}">
-                            {{ $msg['created_at'] }}
+                        <span class="text-xs text-gray-500 {{ $msg['side'] === 'left' ? 'text-left' : 'text-right' }}">
+                            {{ \Carbon\Carbon::parse($msg['created_at'])->diffInHours(now()) > 24 ? $msg['adate'] : $msg['created_at'] }}
                         </span>
                     </div>
                     @if ($msg['side'] === 'right')

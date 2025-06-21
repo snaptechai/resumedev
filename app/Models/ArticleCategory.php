@@ -22,4 +22,9 @@ class ArticleCategory extends Model
     {
         return $this->hasMany(ArticleSubCategory::class, 'category', 'id');
     }
+
+    public function articleTable()
+    {
+        return $this->hasMany(Article::class, 'id', 'category');
+    }
 }
