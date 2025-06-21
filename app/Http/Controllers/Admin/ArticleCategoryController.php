@@ -70,7 +70,7 @@ class ArticleCategoryController extends Controller
         } catch (\Exception $e) {
             DB::rollBack();
 
-            return redirect()->back()->with('error', 'Failed to create category: '.$e->getMessage());
+            return redirect()->back()->with('error', 'Failed to create category: ' . $e->getMessage());
         }
     }
 
@@ -151,7 +151,7 @@ class ArticleCategoryController extends Controller
         } catch (\Exception $e) {
             DB::rollBack();
 
-            return redirect()->back()->with('error', 'Failed to update category: '.$e->getMessage());
+            return redirect()->back()->with('error', 'Failed to update category: ' . $e->getMessage());
         }
     }
 

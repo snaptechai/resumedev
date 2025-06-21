@@ -963,26 +963,6 @@
             const emojiButton = document.getElementById('emoji-button');
             const emojiPickerContainer = document.getElementById('emoji-picker-container');
 
-            textarea.addEventListener('keydown', function(e) {
-                if (e.key === 'Enter' && e.shiftKey) {
-                    e.preventDefault();
-                    const form = textarea.closest('form');
-                    if (textarea.value.trim() !== '') {
-                        form.submit();
-                    }
-                }
-            });
-
-            document.querySelector('form[action*="orders.message"]').addEventListener('submit', function(e) {
-                const messageInput = this.querySelector('#message-input');
-                const fileInput = this.querySelector('#attachment');
-
-                if (messageInput.value.trim() === '' && (!fileInput.files || fileInput.files.length === 0)) {
-                    e.preventDefault();
-                    alert('Please provide either a message or an attachment.');
-                }
-            });
-
             let pickerVisible = false;
 
             const pickerOptions = {
@@ -1012,6 +992,26 @@
                 if (!emojiButton.contains(event.target) && !emojiPickerContainer.contains(event.target)) {
                     pickerVisible = false;
                     emojiPickerContainer.style.display = 'none';
+                }
+            });
+
+            textarea.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter' && e.shiftKey) {
+                    e.preventDefault();
+                    const form = textarea.closest('form');
+                    if (textarea.value.trim() !== '') {
+                        form.submit();
+                    }
+                }
+            });
+
+            document.querySelector('form[action*="orders.message"]').addEventListener('submit', function(e) {
+                const messageInput = this.querySelector('#message-input');
+                const fileInput = this.querySelector('#attachment');
+
+                if (messageInput.value.trim() === '' && (!fileInput.files || fileInput.files.length === 0)) {
+                    e.preventDefault();
+                    alert('Please provide either a message or an attachment.');
                 }
             });
         };
