@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\Controller;
 use App\Models\Message;
 use App\Models\Order;
+use App\Models\OrderAttachment;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -40,18 +41,22 @@ class MessageController extends Controller
 
             $senderName = ($message->fid == $user->id) ? 'You' : 'Resume Mansion';
 
+            $attachments = OrderAttachment::where('message_id', $message->id)
+                ->get()
+                ->map(function ($attachment) {
+                    return [
+                        'url' => asset('storage/' . $attachment->file_path),
+                        'name' => $attachment->file_name,
+                    ];
+                });
+
             $formattedMessages[] = [
                 'id' => $message->id,
                 'message' => $message->message,
                 'side' => $side,
                 'user' => $senderName,
                 'created_at' => date('Y-m-d H:i:s', strtotime($message->adate)),
-                'attachments' => $message->attachment ? collect([
-                    [
-                        'url' => asset('storage/' . $message->attachment),
-                        'name' => basename($message->attachment),
-                    ],
-                ]) : collect([]),
+                'attachments' => $attachments,
             ];
         }
 
@@ -111,20 +116,27 @@ class MessageController extends Controller
             ]);
         }
 
-        if ($request->hasFile('attachment')) {
-            $file = $request->file('attachment');
-            $originalFilename = $file->getClientOriginalName();
-            $timestamp = time();
-            $newFilename = $timestamp . '_' . $originalFilename;
-            $filePath = $file->storeAs(
-                'attachments/' . $order->id,
-                $newFilename,
-                'public'
-            );
-            $message->attachment = $filePath;
-        }
-
         $message->save();
+
+        if ($request->hasFile('attachments')) {
+            foreach ($request->file('attachments') as $file) {
+                $originalFilename = $file->getClientOriginalName();
+                $timestamp = time();
+                $newFilename = $timestamp . '_' . $originalFilename;
+                $filePath = $file->storeAs(
+                    'attachments/' . $order->id,
+                    $newFilename,
+                    'public'
+                );
+
+                OrderAttachment::create([
+                    'order_id' => $order->id,
+                    'message_id' => $message->id,
+                    'file_name' => $originalFilename,
+                    'file_path' => $filePath,
+                ]);
+            }
+        }
 
         return response()->json([
             'http_status' => 201,

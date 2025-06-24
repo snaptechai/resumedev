@@ -5,6 +5,7 @@ use App\Http\Controllers\API\ArticleController;
 use App\Http\Controllers\API\AuthController;
 use App\Http\Controllers\API\BannerController;
 use App\Http\Controllers\API\CartController;
+use App\Http\Controllers\API\ContactUsController;
 use App\Http\Controllers\API\FAQController;
 use App\Http\Controllers\API\MessageController;
 use App\Http\Controllers\API\MetaTagController;
@@ -49,6 +50,8 @@ Route::prefix('v1')->group(function () {
     Route::get('tags/{tag}', [ArticleController::class, 'byTag']);
 
     Route::get('/accept-review', [ReviewController::class, 'index']);
+
+    Route::post('contact-us', [ContactUsController::class, 'contactUs']);
 
     Route::middleware(['auth:sanctum'])->group(function () {
         Route::controller(CartController::class)->group(function () {
