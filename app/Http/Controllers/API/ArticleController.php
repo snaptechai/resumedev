@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\Controller;
 use App\Models\Article;
 use App\Models\ArticleCategory;
+use App\Models\Tag;
 use Illuminate\Http\Request;
 
 class ArticleController extends Controller
@@ -38,7 +39,7 @@ class ArticleController extends Controller
     public function show(string $slug)
     {
         $title = str_replace('-', ' ', $slug);
-        $article = Article::with(['articleCategory', 'articleSubCategory'])
+        $article = Article::with(['articleCategory', 'articleSubCategory', 'tags'])
             ->where(function ($query) use ($title) {
                 $query->where('title', $title)
                     ->orWhere('article_title', $title);
@@ -55,6 +56,22 @@ class ArticleController extends Controller
             'status' => 'success',
             'data' => $article,
             'message' => 'Article retrieved successfully'
+        ]);
+    }
+
+    public function latest()
+    {
+        $articles = Article::with(['articleCategory', 'articleSubCategory'])
+            ->orderBy('id', 'desc')
+            ->limit(3)
+            ->get();
+
+        return response()->json([
+            'status' => 'success',
+            'data' => [
+                'articles' => $articles,
+            ],
+            'message' => 'Articles retrieved successfully'
         ]);
     }
 
@@ -112,6 +129,36 @@ class ArticleController extends Controller
             'status' => 'success',
             'data' => $categories,
             'message' => 'Categories retrieved successfully'
+        ]);
+    }
+
+    public function tagSitemap()
+    {
+        $tags = Tag::select('id', 'tag', 'added_date', 'last_modified_date')
+            ->orderBy('added_date', 'desc')
+            ->get();
+        return response()->json([
+            'status' => 'success',
+            'data' => $tags,
+            'message' => 'Tags retrieved successfully'
+        ]);
+    }
+
+    public function byTag(string $tagSlug)
+    {
+        $tag = str_replace('-', ' ', $tagSlug);
+        $articles = Article::with(['articleCategory', 'articleSubCategory'])
+            ->whereHas('tags', function ($query) use ($tag) {
+                $query->where('tag.tag', $tag);
+            })
+            ->orderBy('id', 'desc')
+            ->get();
+        return response()->json([
+            'status' => 'success',
+            'data' => [
+                'articles' => $articles,
+            ],
+            'message' => 'Articles by tag retrieved successfully'
         ]);
     }
 }

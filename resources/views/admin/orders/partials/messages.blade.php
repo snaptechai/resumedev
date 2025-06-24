@@ -224,6 +224,42 @@
                 <span class="text-xs text-gray-500">{{ $msg['created_at'] }}</span>
             </div>
         </div>
+    @elseif ($msg['message'] == 'you requested revision')
+        <div class="flex items-start mb-3 justify-center">
+            <svg width="44" height="44" viewBox="0 0 44 44" fill="none"
+                xmlns="http://www.w3.org/2000/svg">
+                <g clip-path="url(#clip0_208_18602)">
+                    <circle cx="22" cy="22" r="22" fill="#FFE7D3" />
+                    <g clip-path="url(#clip1_208_18602)">
+                        <path
+                            d="M25.0001 14.55C24.0217 14.156 22.9754 13.9586 21.9207 13.969C20.8661 13.9794 19.8238 14.1975 18.8535 14.6107C17.8831 15.0239 17.0036 15.6242 16.2652 16.3773C15.5269 17.1305 14.9441 18.0216 14.5501 19C13.7544 20.9758 13.7763 23.1868 14.6108 25.1466C15.4454 27.1064 17.0242 28.6543 19.0001 29.45M19.0001 25V30H14.0001"
+                            stroke="#B03200" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                        <path d="M28.3701 17.16V17.17" stroke="#B03200" stroke-width="2" stroke-linecap="round"
+                            stroke-linejoin="round" />
+                        <path d="M23 29.94V29.95" stroke="#B03200" stroke-width="2" stroke-linecap="round"
+                            stroke-linejoin="round" />
+                        <path d="M26.8398 28.37V28.38" stroke="#B03200" stroke-width="2" stroke-linecap="round"
+                            stroke-linejoin="round" />
+                        <path d="M29.3701 25.1V25.11" stroke="#B03200" stroke-width="2" stroke-linecap="round"
+                            stroke-linejoin="round" />
+                        <path d="M29.9404 21V21.01" stroke="#B03200" stroke-width="2" stroke-linecap="round"
+                            stroke-linejoin="round" />
+                    </g>
+                </g>
+                <defs>
+                    <clipPath id="clip0_208_18602">
+                        <rect width="44" height="44" fill="white" />
+                    </clipPath>
+                    <clipPath id="clip1_208_18602">
+                        <rect width="24" height="24" fill="white" transform="translate(10 10)" />
+                    </clipPath>
+                </defs>
+            </svg>
+            <div class="ml-3">
+                <span class="text-sm font-medium text-gray-600 block">You requested revision</span>
+                <span class="text-xs text-gray-500">{{ $msg['created_at'] }}</span>
+            </div>
+        </div>
     @else
         <div class="{{ $msg['side'] === 'left' ? 'pl-2' : 'pr-2' }}">
             <div class="flex {{ $msg['side'] === 'left' ? '' : 'justify-end' }} mb-3">
@@ -398,7 +434,8 @@
                             class="font-medium text-sm {{ $msg['side'] === 'left' ? 'text-blue-800' : 'text-green-800' }}">
                             {{ $msg['user'] }}
                         </span>
-                        <span class="text-xs text-gray-500 {{ $msg['side'] === 'left' ? 'text-left' : 'text-right' }}">
+                        <span
+                            class="text-xs text-gray-500 {{ $msg['side'] === 'left' ? 'text-left' : 'text-right' }}">
                             {{ \Carbon\Carbon::parse($msg['created_at'])->diffInHours(now()) > 24 ? $msg['adate'] : $msg['created_at'] }}
                         </span>
                     </div>

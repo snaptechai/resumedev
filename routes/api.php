@@ -40,10 +40,13 @@ Route::prefix('v1')->group(function () {
     Route::get('articles', [ArticleController::class, 'index']);
 
     Route::get('articles/sitemap', [ArticleController::class, 'sitemap']);
+    Route::get('articles/latest', [ArticleController::class, 'latest']);
     Route::get('articles/{article}', [ArticleController::class, 'show']);
     Route::get('categories', [ArticleController::class, 'categories']);
     Route::get('categories/sitemap', [ArticleController::class, 'categorySitemap']);
     Route::get('categories/{category}', [ArticleController::class, 'byCategory']);
+    Route::get('tags/sitemap', [ArticleController::class, 'tagSitemap']);
+    Route::get('tags/{tag}', [ArticleController::class, 'byTag']);
 
     Route::get('/accept-review', [ReviewController::class, 'index']);
 

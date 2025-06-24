@@ -259,6 +259,44 @@
                                 <span class="text-xs text-gray-500">{{ $msg['created_at'] }}</span>
                             </div>
                         </div>
+                    @elseif ($msg['message'] == 'you requested revision')
+                        <div class="flex items-start mb-3 justify-center">
+                            <svg width="44" height="44" viewBox="0 0 44 44" fill="none"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <g clip-path="url(#clip0_208_18602)">
+                                    <circle cx="22" cy="22" r="22" fill="#FFE7D3" />
+                                    <g clip-path="url(#clip1_208_18602)">
+                                        <path
+                                            d="M25.0001 14.55C24.0217 14.156 22.9754 13.9586 21.9207 13.969C20.8661 13.9794 19.8238 14.1975 18.8535 14.6107C17.8831 15.0239 17.0036 15.6242 16.2652 16.3773C15.5269 17.1305 14.9441 18.0216 14.5501 19C13.7544 20.9758 13.7763 23.1868 14.6108 25.1466C15.4454 27.1064 17.0242 28.6543 19.0001 29.45M19.0001 25V30H14.0001"
+                                            stroke="#B03200" stroke-width="2" stroke-linecap="round"
+                                            stroke-linejoin="round" />
+                                        <path d="M28.3701 17.16V17.17" stroke="#B03200" stroke-width="2"
+                                            stroke-linecap="round" stroke-linejoin="round" />
+                                        <path d="M23 29.94V29.95" stroke="#B03200" stroke-width="2"
+                                            stroke-linecap="round" stroke-linejoin="round" />
+                                        <path d="M26.8398 28.37V28.38" stroke="#B03200" stroke-width="2"
+                                            stroke-linecap="round" stroke-linejoin="round" />
+                                        <path d="M29.3701 25.1V25.11" stroke="#B03200" stroke-width="2"
+                                            stroke-linecap="round" stroke-linejoin="round" />
+                                        <path d="M29.9404 21V21.01" stroke="#B03200" stroke-width="2"
+                                            stroke-linecap="round" stroke-linejoin="round" />
+                                    </g>
+                                </g>
+                                <defs>
+                                    <clipPath id="clip0_208_18602">
+                                        <rect width="44" height="44" fill="white" />
+                                    </clipPath>
+                                    <clipPath id="clip1_208_18602">
+                                        <rect width="24" height="24" fill="white"
+                                            transform="translate(10 10)" />
+                                    </clipPath>
+                                </defs>
+                            </svg>
+                            <div class="ml-3">
+                                <span class="text-sm font-medium text-gray-600 block">You requested revision</span>
+                                <span class="text-xs text-gray-500">{{ $msg['created_at'] }}</span>
+                            </div>
+                        </div>
                     @else
                         <div class="{{ $msg['side'] === 'left' ? 'pl-2' : 'pr-2' }}">
                             <div class="flex {{ $msg['side'] === 'left' ? '' : 'justify-end' }} mb-3">
@@ -544,17 +582,19 @@
             <div class="bg-[#f0f9e8] px-6 py-4 border-b border-gray-100 flex justify-between items-center">
                 <h2 class="text-xl font-semibold text-gray-800 dark:text-white">Admin Notes</h2>
 
-                <div class="flex items-center space-x-2"> 
-                    <form id="admin-note-upload-form" method="POST" action="{{ route('order.admin-note.upload', $order->id) }}" enctype="multipart/form-data">
+                <div class="flex items-center space-x-2">
+                    <form id="admin-note-upload-form" method="POST"
+                        action="{{ route('order.admin-note.upload', $order->id) }}" enctype="multipart/form-data">
                         @csrf
                         <label for="admin_note_attachment"
                             class="inline-flex items-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 cursor-pointer transition">
                             <x-icon name="paper-clip" class="h-4 w-4 mr-1.5 text-gray-500" />
                             Attach File
-                            <input id="admin_note_attachment" name="admin_note_attachment" type="file" class="hidden" onchange="this.form.submit()">
+                            <input id="admin_note_attachment" name="admin_note_attachment" type="file"
+                                class="hidden" onchange="this.form.submit()">
                         </label>
                     </form>
- 
+
                     <x-modal id="edit-note-edit-{{ $order->id }}">
                         <x-slot name="trigger">
                             <button x-on:click="modalIsOpen = true" type="button"
@@ -592,27 +632,34 @@
                 @endif
             </div>
 
-            @if($files->count())
+            @if ($files->count())
                 <div class="px-6 pb-4">
                     <h4 class="text-md font-semibold mb-2 text-gray-700">Attached Files</h4>
                     <ul class="space-y-1">
-                        @foreach($files as $file)
+                        @foreach ($files as $file)
                             <li class="flex items-center text-sm text-gray-700">
                                 <x-icon name="paper-clip" class="w-4 h-4 mr-2 text-gray-500" />
-                                
-                                <a href="{{ asset('storage/' . $file->file_path) }}" target="_blank" class="hover:underline hover:text-green-600" title="view">
+
+                                <a href="{{ asset('storage/' . $file->file_path) }}" target="_blank"
+                                    class="hover:underline hover:text-green-600" title="view">
                                     {{ basename($file->file_path) }}
                                 </a>
-                                <a href="{{ asset('storage/' . $file->file_path) }}" download class="ml-3 hover:underline hover:text-green-600" title="Download">
+                                <a href="{{ asset('storage/' . $file->file_path) }}" download
+                                    class="ml-3 hover:underline hover:text-green-600" title="Download">
                                     <x-icon name="arrow-down-tray" class="w-4 h-4" />
                                 </a>
                                 <span class="ml-auto text-xs text-gray-900">
                                     {{ \Carbon\Carbon::parse($file->added_date)->format('Y-m-d') }}
                                 </span>
-                                <form action="{{ route('order.admin-note.file.delete', [$order->id, $file->id]) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this file?');" class="ml-4">
+                                <form action="{{ route('order.admin-note.file.delete', [$order->id, $file->id]) }}"
+                                    method="POST"
+                                    onsubmit="return confirm('Are you sure you want to delete this file?');"
+                                    class="ml-4">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit" class="text-red-700 hover:underline hover:text-red-400 cursor-pointer" title="Delete">
+                                    <button type="submit"
+                                        class="text-red-700 hover:underline hover:text-red-400 cursor-pointer"
+                                        title="Delete">
                                         <x-icon name="trash" class="w-4 h-4" />
                                     </button>
                                 </form>
@@ -775,7 +822,8 @@
                                         <span class="text-sm text-gray-500">Coupon Applied</span>
                                         <span class="text-sm font-medium">
                                             @if ($order->couponTable)
-                                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                                                <span
+                                                    class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
                                                     {{ $order->couponTable->coupon }}
                                                 </span>
                                             @else
@@ -1127,7 +1175,7 @@
 </x-layouts.app>
 
 <script>
-    document.getElementById('attachment').addEventListener('change', function () {
+    document.getElementById('attachment').addEventListener('change', function() {
         const fileNameSpan = document.getElementById('file-name');
         const files = Array.from(this.files);
 
@@ -1168,7 +1216,7 @@
             const formatted =
                 `${totalHours.toString().padStart(2, '0')}:` +
                 `${minutes.toString().padStart(2, '0')}:` +
-                `${seconds.toString().padStart(2, '0')}`+ ' left';
+                `${seconds.toString().padStart(2, '0')}` + ' left';
 
             el.textContent = formatted;
             setTimeout(update, 1000);
@@ -1177,7 +1225,7 @@
         update();
     }
 
-    document.addEventListener('DOMContentLoaded', function () {
+    document.addEventListener('DOMContentLoaded', function() {
         document.querySelectorAll('.countdown-timer').forEach(el => {
             const end = el.dataset.end;
             if (end) {

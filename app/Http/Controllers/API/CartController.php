@@ -104,7 +104,7 @@ class CartController extends Controller
                 return response()->json([
                     'http_status' => 404,
                     'http_status_message' => 'Not Found',
-                    'message' => 'Promo Code Not Found or Expired',
+                    'message' => 'Coupon is not valid or has already been used.',
                 ], 404);
             }
         }

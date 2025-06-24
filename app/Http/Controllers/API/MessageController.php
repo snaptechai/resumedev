@@ -48,7 +48,7 @@ class MessageController extends Controller
                 'created_at' => date('Y-m-d H:i:s', strtotime($message->adate)),
                 'attachments' => $message->attachment ? collect([
                     [
-                        'url' => asset('storage/'.$message->attachment),
+                        'url' => asset('storage/' . $message->attachment),
                         'name' => basename($message->attachment),
                     ],
                 ]) : collect([]),
@@ -97,14 +97,14 @@ class MessageController extends Controller
         $message->type = 'user';
         $message->adate = now();
 
-        if(str_contains($request->message, "I would like to request a modification for my resume.")) {
+        if (str_contains($request->message, "I would like to request a modification for my resume.")) {
             $order->order_status = 3;
             $order->save();
             Message::create([
                 'oid' => $order->id,
                 'fid' => 1,
                 'tid' => $order->uid,
-                'message' => 'your order started',
+                'message' => 'you requested revision',
                 'status' => 0,
                 'type' => 'admin',
                 'adate' => now()->addSeconds(5),
@@ -117,8 +117,8 @@ class MessageController extends Controller
             $timestamp = time();
             $newFilename = $timestamp . '_' . $originalFilename;
             $filePath = $file->storeAs(
-                'attachments/' . $order->id, 
-                $newFilename, 
+                'attachments/' . $order->id,
+                $newFilename,
                 'public'
             );
             $message->attachment = $filePath;
