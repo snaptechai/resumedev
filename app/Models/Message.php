@@ -26,4 +26,9 @@ class Message extends Model
     {
         return $this->belongsTo(Order::class, 'oid', 'id');
     }
+
+    public function attachments()
+{
+    return $this->hasMany(OrderAttachment::class, 'message_id', 'id');
+}
 }

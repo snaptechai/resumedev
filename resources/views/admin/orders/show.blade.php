@@ -526,9 +526,9 @@
                                 class="inline-flex items-center px-3.5 py-2.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 focus:outline-none cursor-pointer transition">
                                 <x-icon name="paper-clip" class="h-5 w-5 text-gray-500 mr-2" />
                                 Attach File
-                                <input id="attachment" name="attachment" type="file" class="hidden">
+                                <input id="attachment" name="attachment[]" type="file" class="hidden" multiple>
                             </label>
-                            <span id="file-name" class="ml-3 text-sm text-gray-600"></span>
+                            <span id="file-name" class="ml-3 text-sm text-gray-600 block break-words"></span>
                         </div>
                         <button type="submit" id="send-message-btn"
                             class="inline-flex items-center px-5 py-2.5 text-sm font-medium text-[#5D7B2B] bg-[#BCEC88] border border-transparent rounded-lg shadow-sm transition duration-200 hover:bg-[#BCEC88]/90 focus:outline-none hover:cursor-pointer">
@@ -544,8 +544,7 @@
             <div class="bg-[#f0f9e8] px-6 py-4 border-b border-gray-100 flex justify-between items-center">
                 <h2 class="text-xl font-semibold text-gray-800 dark:text-white">Admin Notes</h2>
 
-                <div class="flex items-center space-x-2">
-                    <!-- Upload Form -->
+                <div class="flex items-center space-x-2"> 
                     <form id="admin-note-upload-form" method="POST" action="{{ route('order.admin-note.upload', $order->id) }}" enctype="multipart/form-data">
                         @csrf
                         <label for="admin_note_attachment"
@@ -555,8 +554,7 @@
                             <input id="admin_note_attachment" name="admin_note_attachment" type="file" class="hidden" onchange="this.form.submit()">
                         </label>
                     </form>
-
-                    <!-- Edit Notes Modal Trigger -->
+ 
                     <x-modal id="edit-note-edit-{{ $order->id }}">
                         <x-slot name="trigger">
                             <button x-on:click="modalIsOpen = true" type="button"
@@ -1129,6 +1127,18 @@
 </x-layouts.app>
 
 <script>
+    document.getElementById('attachment').addEventListener('change', function () {
+        const fileNameSpan = document.getElementById('file-name');
+        const files = Array.from(this.files);
+
+        if (files.length > 0) {
+            const names = files.map(file => file.name).join(', ');
+            fileNameSpan.textContent = names;
+        } else {
+            fileNameSpan.textContent = '';
+        }
+    });
+
     function startCountdown(el, endTimeStr) {
         const end = new Date(endTimeStr).getTime();
 
@@ -1139,29 +1149,26 @@
             if (distance <= 0) {
                 el.textContent = 'Overdue';
                 el.classList.remove('text-gray-600');
-                el.classList.add('text-red-600', 'font-xl');
+                el.classList.add('text-red-600', 'font-medium');
                 return;
             }
 
-            const hoursLeft = distance / (1000 * 60 * 60);
-            if (hoursLeft <= 12) {
-                el.classList.remove('text-gray-600');
-                el.classList.add('text-red-600', 'font-xl');
-            } else {
-                el.classList.remove('text-red-600', 'font-xl');
-                el.classList.add('text-gray-600');
-            }
-
-            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const totalHours = Math.floor(distance / (1000 * 60 * 60));
             const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
             const seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
+            if (totalHours <= 12) {
+                el.classList.remove('text-gray-600');
+                el.classList.add('text-red-600', 'font-medium');
+            } else {
+                el.classList.remove('text-red-600', 'font-medium');
+                el.classList.add('text-gray-600');
+            }
+
             const formatted =
-                (days > 0 ? `${days}d ` : '') +
-                `${hours.toString().padStart(2, '0')}:` +
+                `${totalHours.toString().padStart(2, '0')}:` +
                 `${minutes.toString().padStart(2, '0')}:` +
-                `${seconds.toString().padStart(2, '0')} left`;
+                `${seconds.toString().padStart(2, '0')}`+ ' left';
 
             el.textContent = formatted;
             setTimeout(update, 1000);
@@ -1170,7 +1177,7 @@
         update();
     }
 
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', function () {
         document.querySelectorAll('.countdown-timer').forEach(el => {
             const end = el.dataset.end;
             if (end) {

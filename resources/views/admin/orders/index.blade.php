@@ -261,9 +261,11 @@
                 return;
             }
 
-            const hoursLeft = distance / (1000 * 60 * 60);
- 
-            if (hoursLeft <= 12) {
+            const totalHours = Math.floor(distance / (1000 * 60 * 60));
+            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+            if (totalHours <= 12) {
                 el.classList.remove('text-gray-600');
                 el.classList.add('text-red-600', 'font-medium');
             } else {
@@ -271,14 +273,8 @@
                 el.classList.add('text-gray-600');
             }
 
-            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
-
-            const formatted = 
-                (days > 0 ? `${days}d ` : '') +
-                `${hours.toString().padStart(2, '0')}:` +
+            const formatted =
+                `${totalHours.toString().padStart(2, '0')}:` +
                 `${minutes.toString().padStart(2, '0')}:` +
                 `${seconds.toString().padStart(2, '0')}`;
 
@@ -298,4 +294,5 @@
         });
     });
 </script>
+
 

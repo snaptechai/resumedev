@@ -6,7 +6,9 @@ use App\Http\Controllers\Controller;
 use App\Models\Message;
 use App\Models\Order;
 use App\Models\OrderAdminFile;
+use App\Models\OrderAttachment;
 use App\Models\Payment;
+use App\Models\Template;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -197,28 +199,39 @@ class OrderController extends Controller
             $attachmentPaths = [];
 
             if ($request->hasFile('completion_files')) {
+                $attachmentPaths = [];
+                $fileAttachments = [];
+
+                $message = new Message;
+                $message->oid = $order->id;
+                $message->fid = Auth::id();
+                $message->tid = $order->uid;
+                $message->message = 'Order completed with attachments.';
+                $message->status = 0;
+                $message->type = 'admin';
+                $message->adate = now();
+                $message->save();
+
                 foreach ($request->file('completion_files') as $file) {
                     $originalFilename = $file->getClientOriginalName();
                     $timestamp = time();
                     $newFilename = $timestamp . '_' . $originalFilename;
+
                     $filePath = $file->storeAs(
-                        'order_completions/' . $order->id, 
-                        $newFilename, 
+                        'order_completions/' . $order->id,
+                        $newFilename,
                         'public'
                     );
+
                     $attachmentPaths[] = $filePath;
                     $fileAttachments[] = $filePath;
 
-                    $message = new Message;
-                    $message->oid = $order->id;
-                    $message->fid = Auth::id();
-                    $message->tid = $order->uid;
-                    $message->message = 'Order completed file: ' . $originalFilename;
-                    $message->status = 0;
-                    $message->type = 'admin';
-                    $message->attachment = $filePath;
-                    $message->adate = now();
-                    $message->save();
+                    $OrderAttachment = new OrderAttachment;
+                    $OrderAttachment->order_id = $order->id;
+                    $OrderAttachment->message_id = $message->id;
+                    $OrderAttachment->file_name = $originalFilename;
+                    $OrderAttachment->file_path = $filePath;
+                    $OrderAttachment->save();
                 }
             }
 
@@ -252,16 +265,65 @@ class OrderController extends Controller
         return redirect()->back()->with('error', 'Order Removed successfully.');
     }
 
+    // public function storeMessage(Request $request, $id)
+    // {
+    //     $request->validate([
+    //         'message' => 'nullable|string',
+    //         'attachment' => 'nullable|file|max:20480',
+    //     ]);
+
+    //     if (empty($request->message) && !$request->hasFile('attachment')) {
+    //         return redirect()->back()->with('error', 'Please provide either a message or an attachment.');
+    //     }
+    //     $order = Order::findOrFail($id);
+    //     $admin = Auth::user();
+
+    //     $message = new Message;
+    //     $message->oid = $order->id;
+    //     $message->fid = $admin->id;
+    //     $message->tid = $order->uid;
+    //     $message->message = $request->message ?? '';
+    //     $message->status = 0;
+    //     $message->type = 'admin';
+    //     $message->adate = now();
+
+    //     if ($request->hasFile('attachment')) {
+    //         $file = $request->file('attachment');
+    //         $originalFilename = $file->getClientOriginalName();
+    //         $timestamp = time();
+    //         $newFilename = $timestamp . '_' . $originalFilename;
+    //         $filePath = $file->storeAs(
+    //             'attachments/' . $order->id, 
+    //             $newFilename, 
+    //             'public'
+    //         );
+    //         $message->attachment = $filePath;
+    //     }
+
+    //     if ($message->save()) {
+    //         Message::where('oid', $order->id)
+    //             ->where('type', 'user')
+    //             ->update(['status' => 1]);
+    //     }
+
+    //     $email = $order->user->username;
+
+    //     Mail::to($email)->queue(new \App\Mail\NewMessage($message, $order));
+
+    //     return redirect()->back();
+    // }
+
     public function storeMessage(Request $request, $id)
     {
         $request->validate([
             'message' => 'nullable|string',
-            'attachment' => 'nullable|file|max:20480',
+            'attachment.*' => 'nullable|file|max:20480',
         ]);
 
         if (empty($request->message) && !$request->hasFile('attachment')) {
             return redirect()->back()->with('error', 'Please provide either a message or an attachment.');
         }
+
         $order = Order::findOrFail($id);
         $admin = Auth::user();
 
@@ -273,42 +335,49 @@ class OrderController extends Controller
         $message->status = 0;
         $message->type = 'admin';
         $message->adate = now();
-
+        $message->save();
+ 
         if ($request->hasFile('attachment')) {
-            $file = $request->file('attachment');
-            $originalFilename = $file->getClientOriginalName();
-            $timestamp = time();
-            $newFilename = $timestamp . '_' . $originalFilename;
-            $filePath = $file->storeAs(
-                'attachments/' . $order->id, 
-                $newFilename, 
-                'public'
-            );
-            $message->attachment = $filePath;
-        }
+            foreach ($request->file('attachment') as $file) {
+                $originalFilename = $file->getClientOriginalName();
+                $timestamp = time();
+                $newFilename = $timestamp . '_' . $originalFilename;
 
-        if ($message->save()) {
-            Message::where('oid', $order->id)
-                ->where('type', 'user')
-                ->update(['status' => 1]);
+                $filePath = $file->storeAs(
+                    'order_attachments/' . $order->id,
+                    $newFilename,
+                    'public'
+                );
+                $OrderAttachment = new OrderAttachment;
+                $OrderAttachment->order_id = $order->id;
+                $OrderAttachment->message_id = $message->id;
+                $OrderAttachment->file_name = $originalFilename;
+                $OrderAttachment->file_path = $filePath;
+                $OrderAttachment->save();
+            }
         }
+ 
+        Message::where('oid', $order->id)
+            ->where('type', 'user')
+            ->update(['status' => 1]);
 
         $email = $order->user->username;
-
         Mail::to($email)->queue(new \App\Mail\NewMessage($message, $order));
 
-        return redirect()->back();
+        return redirect()->back()->with('success', 'Message and attachments sent successfully.');
     }
+
 
     public function getMessages(string $id)
     {
         $order = Order::findOrFail($id);
         $messages = Message::where('oid', $id)
+            ->with('attachments')
             ->orderBy('adate', 'asc')
             ->get();
 
         $customer = User::find($order->uid);
-        $templates = \App\Models\Template::where('is_active', 1)->get();
+        $templates = Template::where('is_active', 1)->get();
         $templateCount = $templates->count();
 
         $formattedMessages = [];
@@ -321,6 +390,9 @@ class OrderController extends Controller
             if (stripos($message->message, 'please tell us your preferred template from the options below') !== false) {
                 $showTemplates = true;
             }
+            $attachments = $message->attachments->map(function ($attachment) {
+                return $attachment->file_path;
+            })->toArray();
 
             $formattedMessages[] = [
                 'id' => $message->id,
@@ -329,7 +401,7 @@ class OrderController extends Controller
                 'user' => $senderName,
                 'adate' => Carbon::parse($message->adate)->format('M d, Y'),
                 'created_at' => Carbon::parse($message->adate)->diffForHumans(),
-                'attachments' => $message->attachment ? [$message->attachment] : [],
+                'attachments' =>   $attachments,
                 'type' => $message->type,
                 'show_templates' => $showTemplates,
             ];
@@ -354,7 +426,7 @@ class OrderController extends Controller
     public function uploadAdminNoteFile(Request $request, $orderId)
     {
         $request->validate([
-            'admin_note_attachment' => 'required|file|mimes:pdf,jpg,jpeg,png,doc,docx,xlsx,xls,txt|max:5120' // 5MB max
+            'admin_note_attachment' => 'required|file|mimes:pdf,jpg,jpeg,png,doc,docx,xlsx,xls,txt|max:5120'
         ]);
 
         $file = $request->file('admin_note_attachment');
