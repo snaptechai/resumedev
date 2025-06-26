@@ -122,10 +122,6 @@ class CartController extends Controller
         $order->coupon = $coupon_id;
         $order->save();
 
-        $toEmail = auth()->user()->username;
-        $maildata = ['name' => auth()->user()->full_name, 'order' => $order];
-        Mail::to($toEmail)->queue(new Order_Email($maildata));
-
         $data = [
             'order' => $order,
             'original_price' => $package->price,
@@ -553,6 +549,10 @@ class CartController extends Controller
             $payment->amount = $due;
             $payment->transaction_id = $paymentIntent->id;
             $payment->save();
+
+            $toEmail = auth()->user()->username;
+            $maildata = ['name' => auth()->user()->full_name, 'order' => $order];
+            Mail::to($toEmail)->queue(new Order_Email($maildata));
 
             Message::create([
                 'oid' => $transaction->id,
