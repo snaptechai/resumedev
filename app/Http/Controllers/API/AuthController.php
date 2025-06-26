@@ -6,15 +6,13 @@ use App\Http\Controllers\Controller;
 use App\Mail\NewCustomer;
 use App\Models\User;
 use App\Notifications\CustomResetPassword;
-use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Validation\Rules\Password as PasswordRule;
+use Illuminate\Validation\Rules\Password;
 
 class AuthController extends Controller
 {
