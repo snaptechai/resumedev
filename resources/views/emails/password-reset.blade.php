@@ -52,7 +52,7 @@
 
         .reset-button {
             background-color: #2c5530;
-            color: white;
+            color: white !important;
             padding: 12px 24px;
             text-decoration: none;
             border-radius: 6px;
@@ -63,6 +63,14 @@
 
         .reset-button:hover {
             background-color: #1e3a22;
+        }
+
+        .reset-button:visited {
+            color: white !important;
+        }
+
+        .reset-button:link {
+            color: white !important;
         }
 
         .signature {
@@ -225,7 +233,9 @@
                             </div>
 
                             <div style="text-align: center; margin: 30px 0;">
-                                <a href="{{ $resetUrl }}" class="reset-button">Reset Password</a>
+                                <a href="{{ $resetUrl }}" class="reset-button"
+                                    style="background-color: #2c5530; color: white !important; padding: 12px 24px; text-decoration: none; border-radius: 6px; display: inline-block; font-weight: 600;">Reset
+                                    Password</a>
                             </div>
 
                             <div class="normal-text">
