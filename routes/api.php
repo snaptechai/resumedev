@@ -18,7 +18,8 @@ use Illuminate\Support\Facades\Route;
 Route::prefix('v1')->group(function () {
     Route::post('login', [AuthController::class, 'login']);
     Route::post('register', [AuthController::class, 'register']);
-
+    Route::post('forget-password', [AuthController::class, 'forgetPassword']);
+    Route::post('reset-password', [AuthController::class, 'resetPassword']);
 
     Route::get('/auth/google', [GoogleOAuthController::class, 'redirectToGoogle'])->name('auth.google');
     Route::get('/auth/google/callback', [GoogleOAuthController::class, 'handleGoogleCallback'])->name('auth.google.callback');

@@ -124,4 +124,9 @@ class User extends Authenticatable
 
         return collect();
     }
+
+    public function routeNotificationForMail($notification)
+    {
+        return $this->username;
+    }
 }

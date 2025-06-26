@@ -5,12 +5,16 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\Controller;
 use App\Mail\NewCustomer;
 use App\Models\User;
+use App\Notifications\CustomResetPassword;
+use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Validation\Rules\Password;
+use Illuminate\Validation\Rules\Password as PasswordRule;
 
 class AuthController extends Controller
 {
@@ -121,6 +125,118 @@ class AuthController extends Controller
                 'token' => $token,
                 'info' => $user,
             ],
+        ], 200);
+    }
+
+    public function forgetPassword(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'username' => 'required|email|exists:user,username',
+        ], [
+            'username.required' => 'The email field is required.',
+            'username.email' => 'The email must be a valid email address.',
+            'username.exists' => 'We can\'t find a user with that email address.',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'http_status' => 400,
+                'http_status_message' => 'Bad Request',
+                'message' => 'Validation failed. Please check your input data.',
+                'errors' => $validator->errors(),
+            ], 400);
+        }
+
+        $user = User::where('username', $request->username)->first();
+
+        if (!$user) {
+            return response()->json([
+                'http_status' => 400,
+                'http_status_message' => 'Bad Request',
+                'message' => 'We can\'t find a user with that email address.',
+            ], 400);
+        }
+
+        $token = \Illuminate\Support\Str::random(64);
+
+        DB::table('password_reset_tokens')->updateOrInsert(
+            ['email' => $request->username],
+            [
+                'email' => $request->username,
+                'token' => Hash::make($token),
+                'created_at' => now()
+            ]
+        );
+
+        $user->notify(new CustomResetPassword($token));
+
+        return response()->json([
+            'http_status' => 200,
+            'http_status_message' => 'Success',
+            'message' => 'Password reset link sent to your email address.',
+        ], 200);
+    }
+
+    public function resetPassword(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'token' => 'required',
+            'username' => 'required|email|exists:user,username',
+            'password' => ['required', 'confirmed', PasswordRule::defaults()],
+        ], [
+            'token.required' => 'The reset token is required.',
+            'username.required' => 'The email field is required.',
+            'username.email' => 'The email must be a valid email address.',
+            'username.exists' => 'We can\'t find a user with that email address.',
+            'password.required' => 'The password field is required.',
+            'password.confirmed' => 'The password confirmation does not match.',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'http_status' => 400,
+                'http_status_message' => 'Bad Request',
+                'message' => 'Validation failed. Please check your input data.',
+                'errors' => $validator->errors(),
+            ], 400);
+        }
+
+        $tokenRecord = DB::table('password_reset_tokens')
+            ->where('email', $request->username)
+            ->first();
+
+        if (!$tokenRecord || !Hash::check($request->token, $tokenRecord->token)) {
+            return response()->json([
+                'http_status' => 400,
+                'http_status_message' => 'Bad Request',
+                'message' => 'Unable to reset password.',
+                'error' => ['info' => 'Invalid or expired reset token.'],
+            ], 400);
+        }
+
+        if (now()->subMinutes(60)->gt($tokenRecord->created_at)) {
+            return response()->json([
+                'http_status' => 400,
+                'http_status_message' => 'Bad Request',
+                'message' => 'Unable to reset password.',
+                'error' => ['info' => 'Reset token has expired.'],
+            ], 400);
+        }
+
+        $user = User::where('username', $request->username)->first();
+        $user->forceFill([
+            'password' => Hash::make($request->password)
+        ]);
+        $user->save();
+
+        DB::table('password_reset_tokens')
+            ->where('email', $request->username)
+            ->delete();
+
+        return response()->json([
+            'http_status' => 200,
+            'http_status_message' => 'Success',
+            'message' => 'Password has been reset successfully.',
         ], 200);
     }
 }
