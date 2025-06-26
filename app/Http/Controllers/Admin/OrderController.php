@@ -33,13 +33,19 @@ class OrderController extends Controller
 
         if ($search) {
             $query->where(function ($q) use ($search) {
-                $q->where('id', 'like', '%'.$search.'%')
+                $q->where('id', 'like', '%' . $search . '%')
                     ->orWhereHas('user', function ($q2) use ($search) {
-                        $q2->where('full_name', 'like', '%'.$search.'%');
+                        $q2->where('full_name', 'like', '%' . $search . '%');
                     })
                     ->orWhereHas('assignedWriter', function ($q3) use ($search) {
-                        $q3->where('full_name', 'like', '%'.$search.'%');
+                        $q3->where('full_name', 'like', '%' . $search . '%');
                     });
+            });
+        }
+
+        if (Auth::user()->type == "Writer") {
+            $query->where(function ($q) {
+                $q->where('writer', auth()->id());
             });
         }
 
@@ -77,7 +83,16 @@ class OrderController extends Controller
     public function show(string $id)
     {
         $order = Order::findOrFail($id);
-        $files = OrderAdminFile::where('oid',$id)->get();
+
+        if (!$order) {
+            return redirect()->back();
+        }
+
+        if (Auth::user()->type == "Writer" && $order->writer != Auth::id()) {
+            return abort(403, 'Unauthorized action.');
+        }
+
+        $files = OrderAdminFile::where('oid', $id)->get();
         $messages = Message::where('oid', $id)
             ->orderBy('adate', 'asc')
             ->get();
@@ -113,13 +128,13 @@ class OrderController extends Controller
 
         $formattedMessages = collect($formattedMessages);
 
-        return view('admin.orders.show', compact('order', 'formattedMessages', 'customer', 'paymentDetails', 'templates', 'templateCount','files'));
+        return view('admin.orders.show', compact('order', 'formattedMessages', 'customer', 'paymentDetails', 'templates', 'templateCount', 'files'));
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function update_admin_note(Request $request,string $id)
+    public function update_admin_note(Request $request, string $id)
     {
         $order = Order::findOrFail($id);
         $order->update([
@@ -336,7 +351,7 @@ class OrderController extends Controller
         $message->type = 'admin';
         $message->adate = now();
         $message->save();
- 
+
         if ($request->hasFile('attachment')) {
             foreach ($request->file('attachment') as $file) {
                 $originalFilename = $file->getClientOriginalName();
@@ -356,7 +371,7 @@ class OrderController extends Controller
                 $OrderAttachment->save();
             }
         }
- 
+
         Message::where('oid', $order->id)
             ->where('type', 'user')
             ->update(['status' => 1]);
@@ -408,10 +423,10 @@ class OrderController extends Controller
         }
 
         $formattedMessages = collect($formattedMessages);
- 
+
         $html = view('admin.orders.partials.messages', compact(
-            'formattedMessages', 
-            'templates', 
+            'formattedMessages',
+            'templates',
             'templateCount'
         ))->render();
 
@@ -430,13 +445,13 @@ class OrderController extends Controller
         ]);
 
         $file = $request->file('admin_note_attachment');
- 
+
         $extension = $file->getClientOriginalExtension();
         $random = Str::random(4);
         $filename = "rm_{$orderId}_{$random}." . $extension;
- 
+
         $path = $file->storeAs('admin_files', $filename, 'public');
- 
+
         OrderAdminFile::create([
             'oid' => $orderId,
             'file_path' => $path,
@@ -450,15 +465,13 @@ class OrderController extends Controller
     public function deleteAdminNoteFile($orderId, $fileId)
     {
         $file = \App\Models\OrderAdminFile::where('oid', $orderId)->where('id', $fileId)->firstOrFail();
-        
+
         if (Storage::disk('public')->exists($file->file_path)) {
             Storage::disk('public')->delete($file->file_path);
         }
-        
+
         $file->delete();
 
         return redirect()->back()->with('success', 'File deleted successfully!');
     }
-
-
 }
