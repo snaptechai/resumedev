@@ -48,96 +48,126 @@
                     <span>{{ __('Affiliate Users') }}</span>
                 </x-sidebar-link>
             </li> --}}
-            <li>
-                <x-sidebar-link href="{{ route('orders.index') }}" :active="request()->routeIs('orders.*')">
-                    <x-icon name="archive-box-arrow-down" outline />
-                    <span>{{ __('Orders') }}</span>
-                </x-sidebar-link>
-            </li>
-            <li>
-                <x-sidebar-link href="{{ route('reviews.index') }}" :active="request()->routeIs('reviews.*')">
-                    <x-icon name="ticket" outline />
-                    <span>{{ __('Review') }}</span>
-                </x-sidebar-link>
-            </li>
-            <li>
-                <x-sidebar-link href="{{ route('articles.index') }}" :active="request()->routeIs('articles.*')">
-                    <x-icon name="newspaper" outline />
-                    <span>{{ __('Articles') }}</span>
-                </x-sidebar-link>
-            </li>
-            <li>
-                <x-sidebar-link href="{{ route('article-categories.index') }}" :active="request()->routeIs('article-categories.*')">
-                    <x-icon name="square-3-stack-3d" outline />
-                    <span>{{ __('Article Category') }}</span>
-                </x-sidebar-link>
-            </li>
-            <li>
-                <x-sidebar-link href="{{ route('tags.index') }}" :active="request()->routeIs('tags.*')">
-                    <x-icon name="tag" outline />
-                    <span>{{ __('Article Tag') }}</span>
-                </x-sidebar-link>
-            </li>
-            <li>
-                <x-sidebar-link href="{{ route('redirect-links.index') }}" :active="request()->routeIs('redirect-links.*')">
-                    <x-icon name="link" outline />
-                    <span>{{ __('Redirect Link') }}</span>
-                </x-sidebar-link>
-            </li>
-            <li>
-                <x-sidebar-link href="{{ route('users.index') }}" :active="request()->routeIs('users.*')">
-                    <x-icon name="users" outline />
-                    <span>{{ __('Users') }}</span>
-                </x-sidebar-link>
-            </li>
-            <li>
-                <x-sidebar-link href="{{ route('packages.index') }}" :active="request()->routeIs('packages.index')">
-                    <x-icon name="rectangle-group" outline />
-                    <span>{{ __('Packages') }}</span>
-                </x-sidebar-link>
-            </li>
-            <li>
-                <x-sidebar-link href="{{ route('addon.index') }}" :active="request()->routeIs('addon.index')">
-                    <x-icon name="squares-plus" outline />
-                    <span>{{ __('Addon') }}</span>
-                </x-sidebar-link>
-            </li>
-            <li>
-                <x-sidebar-link href="{{ route('templates.index') }}" :active="request()->routeIs('templates.index')">
-                    <x-icon name="clipboard-document-list" outline />
-                    <span>{{ __('Template') }}</span>
-                </x-sidebar-link>
-            </li>
-            <li>
-                <x-sidebar-link href="{{ route('coupon.index') }}" :active="request()->routeIs('coupon.index')">
-                    <x-icon name="tag" outline />
-                    <span>{{ __('Coupon') }}</span>
-                </x-sidebar-link>
-            </li>
-            <li>
-                <x-sidebar-link href="{{ route('banner.index') }}" :active="request()->routeIs('banner.index')">
-                    <x-icon name="flag" outline />
-                    <span>{{ __('Banner') }}</span>
-                </x-sidebar-link>
-            </li>
-            <li>
-                <x-sidebar-link href="{{ route('faqs.index') }}" :active="request()->routeIs('faqs.*')">
-                    <x-icon name="chat-bubble-left-ellipsis" outline />
-                    <span>{{ __('FAQ') }}</span>
-                </x-sidebar-link>
-            </li>
-            <li>
-                <x-sidebar-link href="{{ route('page-details.index') }}" :active="request()->routeIs('page-details.*')">
-                    <x-icon name="document-text" outline />
-                    <span>{{ __('Page Content') }}</span>
-                </x-sidebar-link>
-            </li>
-            <li>
-                <x-sidebar-link href="{{ route('seo-tags.index') }}" :active="request()->routeIs('seo-tags.*')">
-                    <x-icon name="sparkles" outline />
-                    <span>{{ __('SEO Tags') }}</span>
-                </x-sidebar-link>
-            </li>
+            @if (auth()->user()->hasPermission('View & Manage order'))
+                <li>
+                    <x-sidebar-link href="{{ route('orders.index') }}" :active="request()->routeIs('orders.*')">
+                        <x-icon name="archive-box-arrow-down" outline />
+                        <span>{{ __('Orders') }}</span>
+                    </x-sidebar-link>
+                </li>
+            @endif
+            @if (auth()->user()->hasPermission('View review'))
+                <li>
+                    <x-sidebar-link href="{{ route('reviews.index') }}" :active="request()->routeIs('reviews.*')">
+                        <x-icon name="ticket" outline />
+                        <span>{{ __('Review') }}</span>
+                    </x-sidebar-link>
+                </li>
+            @endif
+            @if (auth()->user()->hasPermission('View article'))
+                <li>
+                    <x-sidebar-link href="{{ route('articles.index') }}" :active="request()->routeIs('articles.*')">
+                        <x-icon name="newspaper" outline />
+                        <span>{{ __('Articles') }}</span>
+                    </x-sidebar-link>
+                </li>
+            @endif
+            @if (auth()->user()->hasPermission('View article category'))
+                <li>
+                    <x-sidebar-link href="{{ route('article-categories.index') }}" :active="request()->routeIs('article-categories.*')">
+                        <x-icon name="square-3-stack-3d" outline />
+                        <span>{{ __('Article Category') }}</span>
+                    </x-sidebar-link>
+                </li>
+            @endif
+            @if (auth()->user()->hasPermission('View article tag'))
+                <li>
+                    <x-sidebar-link href="{{ route('tags.index') }}" :active="request()->routeIs('tags.*')">
+                        <x-icon name="tag" outline />
+                        <span>{{ __('Article Tag') }}</span>
+                    </x-sidebar-link>
+                </li>
+            @endif
+            @if (auth()->user()->hasPermission('View redirect link'))
+                <li>
+                    <x-sidebar-link href="{{ route('redirect-links.index') }}" :active="request()->routeIs('redirect-links.*')">
+                        <x-icon name="link" outline />
+                        <span>{{ __('Redirect Link') }}</span>
+                    </x-sidebar-link>
+                </li>
+            @endif
+            @if (auth()->user()->hasPermission('View user'))
+                <li>
+                    <x-sidebar-link href="{{ route('users.index') }}" :active="request()->routeIs('users.*')">
+                        <x-icon name="users" outline />
+                        <span>{{ __('Users') }}</span>
+                    </x-sidebar-link>
+                </li>
+            @endif
+            @if (auth()->user()->hasPermission('View package'))
+                <li>
+                    <x-sidebar-link href="{{ route('packages.index') }}" :active="request()->routeIs('packages.index')">
+                        <x-icon name="rectangle-group" outline />
+                        <span>{{ __('Packages') }}</span>
+                    </x-sidebar-link>
+                </li>
+            @endif
+            @if (auth()->user()->hasPermission('View Addon'))
+                <li>
+                    <x-sidebar-link href="{{ route('addon.index') }}" :active="request()->routeIs('addon.index')">
+                        <x-icon name="squares-plus" outline />
+                        <span>{{ __('Addon') }}</span>
+                    </x-sidebar-link>
+                </li>
+            @endif
+            @if (auth()->user()->hasPermission('View template'))
+                <li>
+                    <x-sidebar-link href="{{ route('templates.index') }}" :active="request()->routeIs('templates.index')">
+                        <x-icon name="clipboard-document-list" outline />
+                        <span>{{ __('Template') }}</span>
+                    </x-sidebar-link>
+                </li>
+            @endif
+            @if (auth()->user()->hasPermission('View coupon'))
+                <li>
+                    <x-sidebar-link href="{{ route('coupon.index') }}" :active="request()->routeIs('coupon.index')">
+                        <x-icon name="tag" outline />
+                        <span>{{ __('Coupon') }}</span>
+                    </x-sidebar-link>
+                </li>
+            @endif
+            @if (auth()->user()->hasPermission('Edit header banner'))
+                <li>
+                    <x-sidebar-link href="{{ route('banner.index') }}" :active="request()->routeIs('banner.index')">
+                        <x-icon name="flag" outline />
+                        <span>{{ __('Banner') }}</span>
+                    </x-sidebar-link>
+                </li>
+            @endif
+            @if (auth()->user()->hasPermission('View FAQ'))
+                <li>
+                    <x-sidebar-link href="{{ route('faqs.index') }}" :active="request()->routeIs('faqs.*')">
+                        <x-icon name="chat-bubble-left-ellipsis" outline />
+                        <span>{{ __('FAQ') }}</span>
+                    </x-sidebar-link>
+                </li>
+            @endif
+            @if (auth()->user()->hasPermission('View page content'))
+                <li>
+                    <x-sidebar-link href="{{ route('page-details.index') }}" :active="request()->routeIs('page-details.*')">
+                        <x-icon name="document-text" outline />
+                        <span>{{ __('Page Content') }}</span>
+                    </x-sidebar-link>
+                </li>
+            @endif
+            @if (auth()->user()->hasPermission('View SEO Tag'))
+                <li>
+                    <x-sidebar-link href="{{ route('seo-tags.index') }}" :active="request()->routeIs('seo-tags.*')">
+                        <x-icon name="sparkles" outline />
+                        <span>{{ __('SEO Tags') }}</span>
+                    </x-sidebar-link>
+                </li>
+            @endif
         </ul>
     </div>
 
