@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
+use App\Mail\NewAddon;
 use App\Mail\Order_Email;
 use App\Models\Addon;
 use App\Models\Coupon;
@@ -551,14 +552,14 @@ class CartController extends Controller
             $payment->save();
 
             $toEmail = auth()->user()->username;
-            $maildata = ['name' => auth()->user()->full_name, 'order' => $order];
-            Mail::to($toEmail)->queue(new Order_Email($maildata));
+            $maildata = ['name' => auth()->user()->full_name, 'order' => $transaction, 'addon' => $addon->title];
+            Mail::to($toEmail)->queue(new NewAddon($maildata));
 
             Message::create([
                 'oid' => $transaction->id,
                 'fid' => 1,
                 'tid' => $transaction->uid,
-                'message' => 'addon added: ' . $addon->title, // Changed format to make it identifiable
+                'message' => 'addon added: ' . $addon->title,
                 'status' => 0,
                 'type' => 'admin',
                 'adate' => now(),
