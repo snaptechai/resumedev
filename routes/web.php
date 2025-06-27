@@ -91,6 +91,7 @@ Route::middleware('auth')->group(function () {
         Route::middleware('permission:Add user')->group(function () {
             Route::get('users/create', [UserController::class, 'create'])->name('users.create');
             Route::post('users', [UserController::class, 'store'])->name('users.store');
+            Route::get('users/{id}/writer-view', [UserController::class, 'writer_view'])->name('users.writerView');
         });
 
         Route::get('users/{id}', [UserController::class, 'show'])->name('users.show');

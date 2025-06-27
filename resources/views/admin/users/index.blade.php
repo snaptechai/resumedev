@@ -141,6 +141,15 @@
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <div class="flex gap-2">
+                                        @if ($user->id !== Auth::id())
+                                            @if ($user->type == "Writer") 
+                                                <a href="{{ route('users.writerView', $user->id) }}"
+                                                class="inline-flex items-center px-2.5 py-1.5 text-sm font-medium text-gray-700 hover:text-[#6b8f3b] hover:underline">
+                                                <x-icon name="eye" class="w-4 h-4 mr-1" />
+                                                View
+                                                </a>
+                                            @endif
+                                        @endif
                                         <a href="{{ route('users.edit', $user->id) }}"
                                             class="inline-flex items-center px-2.5 py-1.5 text-sm font-medium text-gray-700 hover:text-[#6b8f3b] hover:underline">
                                             <x-icon name="pencil-square" class="w-4 h-4 mr-1" />

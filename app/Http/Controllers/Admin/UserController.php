@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Access;
 use App\Models\AccessUser;
+use App\Models\Order;
+use App\Models\OrderSetp;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -192,5 +194,14 @@ class UserController extends Controller
         $user->delete();
 
         return redirect()->route('users.index')->with('success', 'User deleted successfully.');
+    }
+
+    public function writer_view(string $id)
+    {
+        $user = User::findOrFail($id);
+        $orders = Order::with(['orderStatus', 'package'])->where('writer', $id)->get();
+        $statuses = OrderSetp::all();
+
+        return view('admin.users.writer-view', compact('user', 'orders', 'statuses'));
     }
 }
