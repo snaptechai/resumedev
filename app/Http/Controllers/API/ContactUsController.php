@@ -18,13 +18,20 @@ class ContactUsController extends Controller
         ]);
 
         $toEmail = env('CONTACT_US_EMAIL');
+        $ccEmails = [
+            'vinuriherath@outlook.com',
+            'talkwithsanka@gmail.com',
+            'thuzitha.thennakoon@gmail.com'
+        ];
 
-        Mail::to($toEmail)->queue(new \App\Mail\ContactUs(
-            $validatedData['name'],
-            $validatedData['email'],
-            $validatedData['subject'],
-            $validatedData['body']
-        ));
+        Mail::to($toEmail)
+            ->cc($ccEmails)
+            ->queue(new \App\Mail\ContactUs(
+                $validatedData['name'],
+                $validatedData['email'],
+                $validatedData['subject'],
+                $validatedData['body']
+            ));
 
         return response()->json([
             'http_status' => 200,
