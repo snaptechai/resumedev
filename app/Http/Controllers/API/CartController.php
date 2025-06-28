@@ -97,8 +97,8 @@ class CartController extends Controller
                 ->first();
 
             if ($coupon) {
-                $coupon_id = $coupon->id;
-                if ($coupon->one_time == 'yes') {
+                $coupon_id = $coupon->id;      
+                if ($coupon->one_time == 'Yes') {
                     DB::table('coupon')->where('id', $coupon->id)->update(['used_by' => $user]);
                 }
             } else {
