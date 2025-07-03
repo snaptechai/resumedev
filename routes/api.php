@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\ArticleCategoryController;
+use App\Http\Controllers\API\AiResumeReviewController;
 use App\Http\Controllers\API\ArticleController;
 use App\Http\Controllers\API\AuthController;
 use App\Http\Controllers\API\BannerController;
@@ -51,6 +52,7 @@ Route::prefix('v1')->group(function () {
     Route::get('tags/{tag}', [ArticleController::class, 'byTag']);
 
     Route::get('/accept-review', [ReviewController::class, 'index']);
+    Route::post('/cv/upload', [AiResumeReviewController::class, 'ai_resume_review']);
 
     Route::post('contact-us', [ContactUsController::class, 'contactUs']);
 
