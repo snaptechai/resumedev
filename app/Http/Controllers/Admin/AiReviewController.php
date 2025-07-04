@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\AiReview;
 use Illuminate\Http\Request;
+use App\Mail\ReviewSentMail;
+use Illuminate\Support\Facades\Mail;
 
 class AiReviewController extends Controller
 {
@@ -63,7 +65,9 @@ class AiReviewController extends Controller
             $review->is_sent = $is_sent,
         ]);
         if ($is_sent == 1) {
-            # send e-mail
+            if ($is_sent == 1 && $request->filled('email')) {
+                Mail::to($request->email)->send(new ReviewSentMail($request->description));
+            }
         }
  
         return redirect()->back()->with('success', 'AI Review updated successfully!');
