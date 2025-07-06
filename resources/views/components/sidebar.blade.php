@@ -58,9 +58,9 @@
             @endif
             @if (auth()->user()->hasPermission('View review'))
                 <li>
-                    <x-sidebar-link href="{{ route('reviews.index') }}" :active="request()->routeIs('reviews.*')">
-                        <x-icon name="ticket" outline />
-                        <span>{{ __('Review') }}</span>
+                    <x-sidebar-link href="{{ route('ai_review.index') }}" :active="request()->routeIs('ai_review.*')">
+                        <x-icon name="cpu-chip" outline />
+                        <span>{{ __('AI Review') }}</span>
                     </x-sidebar-link>
                 </li>
             @endif
@@ -106,6 +106,12 @@
             @endif
             @if (auth()->user()->hasPermission('View package'))
                 <li>
+                <x-sidebar-link href="{{ route('reviews.index') }}" :active="request()->routeIs('reviews.*')">
+                    <x-icon name="ticket" outline />
+                    <span>{{ __('Review') }}</span>
+                </x-sidebar-link>
+            </li>
+            <li>
                     <x-sidebar-link href="{{ route('packages.index') }}" :active="request()->routeIs('packages.index')">
                         <x-icon name="rectangle-group" outline />
                         <span>{{ __('Packages') }}</span>

@@ -1,6 +1,7 @@
 <?php
 
-use App\Http\Controllers\Admin\AddonController;
+use App\Http\Controllers\Admin\AddonController; 
+use App\Http\Controllers\Admin\AiReviewController;
 use App\Http\Controllers\Admin\ArticleCategoryController;
 use App\Http\Controllers\Admin\ArticleController;
 use App\Http\Controllers\Admin\BannerController;
@@ -273,6 +274,8 @@ Route::middleware('auth')->group(function () {
         });
     });
 
+
+    Route::resource('ai_review', AiReviewController::class);
     Route::resource('notification', NotificationController::class);
 });
 

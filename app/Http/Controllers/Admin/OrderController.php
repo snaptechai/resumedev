@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Mail\AssignOrder;
 use App\Models\Message;
 use App\Models\Order;
 use App\Models\OrderAdminFile;
@@ -176,6 +177,12 @@ class OrderController extends Controller
             'last_modified_by' => Auth::id(),
             'last_modified_date' => Carbon::now()->format('Y-m-d'),
         ]);
+        if ($request->writer) {
+            $writer = User::findOrFail($request->writer);
+            $toEmail = $writer->username; 
+            $maildata = ['name' => $writer->full_name, 'order' => $order];
+            Mail::to($toEmail)->queue(new AssignOrder($maildata));
+        }
 
         if ($request->order_status == 2) {
             Message::create([

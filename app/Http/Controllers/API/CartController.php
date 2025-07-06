@@ -3,8 +3,11 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
+use App\Mail\AssignOrder;
+use App\Mail\NewOrder;
 use App\Mail\NewAddon;
 use App\Mail\Order_Email;
+use App\Mail\ReviewSentMail;
 use App\Models\Addon;
 use App\Models\Coupon;
 use App\Models\Message;
@@ -363,6 +366,10 @@ class CartController extends Controller
                 $payment->amount = $due;
                 $payment->transaction_id = $paymentIntent->id;
                 $payment->save();
+ 
+                $toEmail = auth()->user()->username; 
+                $maildata = ['name' => auth()->user()->full_name, 'order' => $transaction];
+                Mail::to($toEmail)->send(new Order_Email($maildata));
 
                 $writer = User::where('type', 'Writer')
                     ->leftJoin('order', function ($join) {
@@ -377,6 +384,15 @@ class CartController extends Controller
                 if ($writer) {
                     $transaction->writer = $writer->id;
                     $transaction->save();
+
+                    $sendTo = User::findOrFail($writer->id);
+                    $toEmail = $sendTo->username; 
+                    $maildata = ['name' => $sendTo->full_name, 'order' => $transaction];
+                    Mail::to($toEmail)->queue(new AssignOrder($maildata));
+
+                    $Emails_to = ['shashinineha06@gmail.com','Info@resumemansion.com','Thuzitha.thennakoon@gmail.com','vinuriherath@outlook.com','Talkwithsanka@gmail.com'];
+                    $NewOrdermaildata = ['order' => $transaction];
+                    Mail::to($Emails_to)->queue(new NewOrder($NewOrdermaildata));
                 }
             }
             $lines = [];
@@ -550,6 +566,7 @@ class CartController extends Controller
             $payment->amount = $due;
             $payment->transaction_id = $paymentIntent->id;
             $payment->save();
+
 
             $toEmail = auth()->user()->username;
             $maildata = ['name' => auth()->user()->full_name, 'order' => $transaction, 'addon' => $addon->title];
