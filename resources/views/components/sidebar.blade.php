@@ -4,8 +4,7 @@
 <!-- Dark overlay -->
 <div x-cloak x-show="showSidebar" x-on:click="showSidebar = false" x-transition.opacity
     class="fixed inset-0 z-10 bg-surface-dark/10 backdrop-blur-xs lg:hidden" aria-hidden="true"></div>
-
-<!-- Sidebar Navigation -->
+ 
 <nav x-cloak x-bind:class="showSidebar ? 'translate-x-0' : '-translate-x-60'"
     class="fixed left-0 z-20 flex h-svh w-60 shrink-0 flex-col border-r border-outline bg-green-100 p-4 transition-transform duration-300 lg:w-64 lg:translate-x-0 lg:relative dark:border-outline-dark dark:bg-surface-dark"
     aria-label="sidebar navigation">
@@ -15,21 +14,30 @@
         <x-icons.x-mark variant="outline" size="md" />
     </button>
 
-    <!-- Brand Logo -->
-    <a href="{{ route('dashboard') }}" class="mb-4 flex items-center space-x-2 lg:ml-0">
-        <x-app-logo class="size-8" />
-    </a>
+    <!-- Brand Logo --> 
+        @if (auth()->user()->type == 'System')
+            <a href="{{ route('dashboard') }}" class="mb-4 flex items-center space-x-2 lg:ml-0">
+                <x-app-logo class="size-8" />
+            </a>
+        @else
+            <a href="#" class="mb-4 flex items-center space-x-2 lg:ml-0">
+                <x-app-logo class="size-8" />
+            </a>
+        @endif
+    
 
     <!-- Navigation Links -->
     <div class="flex flex-col gap-2 overflow-y-auto pb-6 h-full">
         <!-- Main Navigation -->
         <ul class="flex flex-col gap-2">
-            <li>
-                <x-sidebar-link href="{{ route('dashboard') }}" :active="request()->routeIs('dashboard')">
-                    <x-icons.home variant="outline" />
-                    <span>{{ __('Dashboard') }}</span>
-                </x-sidebar-link>
-            </li>
+             @if (auth()->user()->type == 'System')
+                <li>
+                    <x-sidebar-link href="{{ route('dashboard') }}" :active="request()->routeIs('dashboard')">
+                        <x-icons.home variant="outline" />
+                        <span>{{ __('Dashboard') }}</span>
+                    </x-sidebar-link>
+                </li>
+            @endif
             {{-- 
             <li>
                 <x-sidebar-link href="" >
