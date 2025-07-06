@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\Controller;
 use App\Mail\AssignOrder;
 use App\Mail\NewOrder;
+use App\Mail\NewAddon;
 use App\Mail\Order_Email;
 use App\Mail\ReviewSentMail;
 use App\Models\Addon;
@@ -99,8 +100,8 @@ class CartController extends Controller
                 ->first();
 
             if ($coupon) {
-                $coupon_id = $coupon->id;
-                if ($coupon->one_time == 'yes') {
+                $coupon_id = $coupon->id;      
+                if ($coupon->one_time == 'Yes') {
                     DB::table('coupon')->where('id', $coupon->id)->update(['used_by' => $user]);
                 }
             } else {
@@ -566,11 +567,16 @@ class CartController extends Controller
             $payment->transaction_id = $paymentIntent->id;
             $payment->save();
 
+
+            $toEmail = auth()->user()->username;
+            $maildata = ['name' => auth()->user()->full_name, 'order' => $transaction, 'addon' => $addon->title];
+            Mail::to($toEmail)->queue(new NewAddon($maildata));
+
             Message::create([
                 'oid' => $transaction->id,
                 'fid' => 1,
                 'tid' => $transaction->uid,
-                'message' => 'addon added: ' . $addon->title, // Changed format to make it identifiable
+                'message' => 'addon added: ' . $addon->title,
                 'status' => 0,
                 'type' => 'admin',
                 'adate' => now(),

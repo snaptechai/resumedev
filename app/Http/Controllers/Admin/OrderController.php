@@ -221,6 +221,38 @@ class OrderController extends Controller
             $attachmentPaths = [];
 
             if ($request->hasFile('completion_files')) {
+                if ($oldOrderStatus == 1) {
+                    Message::create([
+                        'oid' => $order->id,
+                        'fid' => Auth::id(),
+                        'tid' => $order->uid,
+                        'message' => 'you submitted the requirements',
+                        'status' => 0,
+                        'type' => 'admin',
+                        'adate' => now()->subSeconds(10)
+                    ]);
+                    Message::create([
+                        'oid' => $order->id,
+                        'fid' => Auth::id(),
+                        'tid' => $order->uid,
+                        'message' => 'your order started',
+                        'status' => 0,
+                        'type' => 'admin',
+                        'adate' => now()->subSeconds(5)
+                    ]);
+                }
+                if ($oldOrderStatus == 2) {
+                    Message::create([
+                        'oid' => $order->id,
+                        'fid' => Auth::id(),
+                        'tid' => $order->uid,
+                        'message' => 'your order started',
+                        'status' => 0,
+                        'type' => 'admin',
+                        'adate' => now()->subSeconds(5)
+                    ]);
+                }
+
                 $attachmentPaths = [];
                 $fileAttachments = [];
 
@@ -264,7 +296,7 @@ class OrderController extends Controller
                 'message' => 'your order delivered',
                 'status' => 0,
                 'type' => 'admin',
-                'adate' => now(),
+                'adate' => now()->addSeconds(5)
             ]);
 
             $email = $order->user->username;

@@ -13,6 +13,7 @@ class ArticleController extends Controller
     public function index(Request $request)
     {
         $perPage = $request->input('per_page', 14);
+        $search = $request->input('search');
 
         $featuredArticle = Article::with(['articleCategory', 'articleSubCategory'])
             ->where('featured', 'yes')
@@ -22,6 +23,13 @@ class ArticleController extends Controller
         $articles = Article::with(['articleCategory', 'articleSubCategory'])
             ->when($featuredArticle, function ($query) use ($featuredArticle) {
                 return $query->where('id', '!=', $featuredArticle->id);
+            })
+            ->when($search, function ($query) use ($search) {
+                return $query->where(function ($q) use ($search) {
+                    $q->where('title', 'like', "%{$search}%")
+                        ->orWhere('article_title', 'like', "%{$search}%")
+                        ->orWhere('description', 'like', "%{$search}%");
+                });
             })
             ->orderBy('id', 'desc')
             ->paginate($perPage);

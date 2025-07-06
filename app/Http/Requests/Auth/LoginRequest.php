@@ -19,6 +19,10 @@ class LoginRequest extends FormRequest
     {
         $user = User::where('username', $this->input('username'))->first();
 
+        if (! $user) {
+            return false;
+        }
+
         if ($user->hasPermission('Login to admin panel') && in_array($user->type, ['System', 'Writer'])) {
             return true;
         }
@@ -87,6 +91,6 @@ class LoginRequest extends FormRequest
      */
     public function throttleKey(): string
     {
-        return Str::transliterate(Str::lower($this->string('username')).'|'.$this->ip());
+        return Str::transliterate(Str::lower($this->string('username')) . '|' . $this->ip());
     }
 }
