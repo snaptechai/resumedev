@@ -246,24 +246,24 @@ Route::middleware('auth')->group(function () {
         Route::post('/update-banner-status/{id}', [BannerController::class, 'updateBannerStatus']);
     });
 
-    Route::middleware('permission:View SEO Tag')->group(function () {
-        Route::get('seo-tags', [SeoTagsController::class, 'index'])->name('seo-tags.index');
-        Route::get('seo-tags/{id}', [SeoTagsController::class, 'show'])->name('seo-tags.show');
+    // Route::middleware('permission:View SEO Tag')->group(function () {
+    //     Route::get('seo-tags', [SeoTagsController::class, 'index'])->name('seo-tags.index');
+    //     Route::get('seo-tags/{id}', [SeoTagsController::class, 'show'])->name('seo-tags.show');
 
-        Route::middleware('permission:Add SEO Tag')->group(function () {
-            Route::get('seo-tags/create', [SeoTagsController::class, 'create'])->name('seo-tags.create');
-            Route::post('seo-tags', [SeoTagsController::class, 'store'])->name('seo-tags.store');
-        });
+    //     Route::middleware('permission:Add SEO Tag')->group(function () {
+    //         Route::get('seo-tags/create', [SeoTagsController::class, 'create'])->name('seo-tags.create');
+    //         Route::post('seo-tags', [SeoTagsController::class, 'store'])->name('seo-tags.store');
+    //     });
 
-        Route::middleware('permission:Edit SEO Tag')->group(function () {
-            Route::get('seo-tags/{id}/edit', [SeoTagsController::class, 'edit'])->name('seo-tags.edit');
-            Route::put('seo-tags/{id}', [SeoTagsController::class, 'update'])->name('seo-tags.update');
-        });
+    //     Route::middleware('permission:Edit SEO Tag')->group(function () {
+    //         Route::get('seo-tags/{id}/edit', [SeoTagsController::class, 'edit'])->name('seo-tags.edit');
+    //         Route::put('seo-tags/{id}', [SeoTagsController::class, 'update'])->name('seo-tags.update');
+    //     });
 
-        Route::middleware('permission:Delete SEO Tag')->group(function () {
-            Route::delete('seo-tags/{id}', [SeoTagsController::class, 'destroy'])->name('seo-tags.destroy');
-        });
-    });
+    //     Route::middleware('permission:Delete SEO Tag')->group(function () {
+    //         Route::delete('seo-tags/{id}', [SeoTagsController::class, 'destroy'])->name('seo-tags.destroy');
+    //     });
+    // });
 
     Route::middleware('permission:View Addon')->group(function () {
         Route::get('addon', [AddonController::class, 'index'])->name('addon.index');
@@ -274,7 +274,9 @@ Route::middleware('auth')->group(function () {
         });
     });
 
-
+Route::middleware('permission:View SEO Tag')->group(function () {
+    Route::resource('seo-tags', SeoTagsController::class);
+    });
     Route::resource('ai_review', AiReviewController::class);
     Route::resource('notification', NotificationController::class);
 });
