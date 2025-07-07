@@ -277,6 +277,7 @@ Route::middleware('auth')->group(function () {
 Route::middleware('permission:View SEO Tag')->group(function () {
     Route::resource('seo-tags', SeoTagsController::class);
     });
+    
     Route::resource('ai_review', AiReviewController::class);
     Route::resource('notification', NotificationController::class);
 });

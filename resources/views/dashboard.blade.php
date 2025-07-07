@@ -51,7 +51,7 @@
                                 </svg>
                             </div>
                             <h3 class="mb-2 text-sm font-medium text-gray-500 dark:text-gray-400">Total Revenue</h3>
-                            <div class="mb-1 text-3xl font-bold text-gray-900 dark:text-white">Rs. {{ number_format(\App\Models\Payment::sum('amount'), 2) }}</div>
+                            <div class="mb-1 text-3xl font-bold text-gray-900 dark:text-white">USD. {{ number_format(\App\Models\Payment::sum('amount'), 2) }}</div>
                             <div class="inline-flex items-center text-xs font-medium text-green-600 dark:text-green-400">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="mr-1 h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18" />
@@ -132,7 +132,7 @@
                                                 </span>
                                             </td>
                                             <td class="py-3 text-sm text-gray-500 dark:text-gray-400">
-                                                Rs. {{ number_format($order->amount ?? 0, 2) }}
+                                                USD. {{ number_format($order->amount ?? 0, 2) }}
                                             </td>
                                             <td class="py-3 text-sm text-gray-500 dark:text-gray-400">
                                                 {{ isset($order->created_at) ? $order->created_at->format('M d, Y') : 'N/A' }}
