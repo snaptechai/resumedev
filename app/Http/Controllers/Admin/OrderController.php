@@ -319,54 +319,6 @@ class OrderController extends Controller
         return redirect()->back()->with('error', 'Order Removed successfully.');
     }
 
-    // public function storeMessage(Request $request, $id)
-    // {
-    //     $request->validate([
-    //         'message' => 'nullable|string',
-    //         'attachment' => 'nullable|file|max:20480',
-    //     ]);
-
-    //     if (empty($request->message) && !$request->hasFile('attachment')) {
-    //         return redirect()->back()->with('error', 'Please provide either a message or an attachment.');
-    //     }
-    //     $order = Order::findOrFail($id);
-    //     $admin = Auth::user();
-
-    //     $message = new Message;
-    //     $message->oid = $order->id;
-    //     $message->fid = $admin->id;
-    //     $message->tid = $order->uid;
-    //     $message->message = $request->message ?? '';
-    //     $message->status = 0;
-    //     $message->type = 'admin';
-    //     $message->adate = now();
-
-    //     if ($request->hasFile('attachment')) {
-    //         $file = $request->file('attachment');
-    //         $originalFilename = $file->getClientOriginalName();
-    //         $timestamp = time();
-    //         $newFilename = $timestamp . '_' . $originalFilename;
-    //         $filePath = $file->storeAs(
-    //             'attachments/' . $order->id, 
-    //             $newFilename, 
-    //             'public'
-    //         );
-    //         $message->attachment = $filePath;
-    //     }
-
-    //     if ($message->save()) {
-    //         Message::where('oid', $order->id)
-    //             ->where('type', 'user')
-    //             ->update(['status' => 1]);
-    //     }
-
-    //     $email = $order->user->username;
-
-    //     Mail::to($email)->queue(new \App\Mail\NewMessage($message, $order));
-
-    //     return redirect()->back();
-    // }
-
     public function storeMessage(Request $request, $id)
     {
         $request->validate([

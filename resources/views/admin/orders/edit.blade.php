@@ -66,7 +66,19 @@
                     </select>
                 </div>
             </div>
-        @endif
+        @else 
+            <select name="writer" id="writer-{{ $order->id }}" hidden>
+                @php
+                $writers = \App\Models\user::where('type', 'Writer')->get();
+                @endphp
+                <option value=""> Select a Writer </option>
+                    @foreach ($writers as $writer)
+                        <option value="{{ $writer->id }}" {{ $order->writer == $writer->id ? 'selected' : '' }}>
+                            {{ $writer->full_name }}
+                        </option>
+                    @endforeach
+            </select>
+        @endif 
     </div>
 
     <div class="flex items-center justify-end p-6 gap-3">
