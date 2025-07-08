@@ -581,7 +581,7 @@
         <div class="bg-white rounded-xl overflow-hidden border border-gray-100 mt-6">
             <div class="bg-[#f0f9e8] px-6 py-4 border-b border-gray-100 flex justify-between items-center">
                 <h2 class="text-xl font-semibold text-gray-800 dark:text-white">Admin Notes</h2>
-
+            @if (auth()->user()->hasPermission('Edit Admin Notes'))
                 <div class="flex items-center space-x-2">
                     <form id="admin-note-upload-form" method="POST"
                         action="{{ route('order.admin-note.upload', $order->id) }}" enctype="multipart/form-data">
@@ -615,6 +615,7 @@
                         </div>
                     </x-modal>
                 </div>
+            @endif
             </div>
 
             <div class="p-6">
@@ -652,6 +653,7 @@
                                 <span class="ml-auto text-xs text-gray-900">
                                     {{ \Carbon\Carbon::parse($file->added_date)->format('Y-m-d') }}
                                 </span>
+                                @if (auth()->user()->hasPermission('Edit Admin Notes'))
                                 <form action="{{ route('order.admin-note.file.delete', [$order->id, $file->id]) }}"
                                     method="POST"
                                     onsubmit="return confirm('Are you sure you want to delete this file?');"
@@ -664,6 +666,7 @@
                                         <x-icon name="trash" class="w-4 h-4" />
                                     </button>
                                 </form>
+                                @endif
                             </li>
                         @endforeach
                     </ul>
