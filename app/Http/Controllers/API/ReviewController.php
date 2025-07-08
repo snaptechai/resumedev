@@ -10,15 +10,14 @@ class ReviewController extends Controller
     public function index()
     {
         $reviews = Review::where('status', 1)
+            ->where('recommend_star', 5)
             ->whereRaw('CHAR_LENGTH(review) < 160')
             ->orderByDesc('added_date')
-            ->limit(8)->get([
+            ->limit(8)
+            ->get([
                 'id',
                 'name',
-                'username',
                 'review',
-                'star',
-                'service_start',
                 'recommend_star',
                 'added_date'
             ]);

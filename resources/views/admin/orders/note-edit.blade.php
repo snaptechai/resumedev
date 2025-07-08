@@ -6,12 +6,10 @@
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div class="md:col-span-2 h-full">
                 <div class="h-full">
-                    <textarea 
-                        name="admin_note" 
-                        id="admin_note"
-                        class="w-full h-full min-h-[5rem] max-h-[15rem] border border-gray-300 rounded-lg p-3 resize-none overflow-auto text-left leading-relaxed focus:ring-2 focus:ring-[#BCEC88] focus:border-[#BCEC88]"
-                        oninput="autoResize(this)"
-                    >{{ old('admin_note', $order->admin_note) }}</textarea>
+                    <label for="admin_note" class="block text-sm font-medium text-gray-700 mb-2">
+                        Content <span class="text-red-500">*</span>
+                    </label>
+                    <textarea id="tinymce-editor" name="admin_note" class="tinymce-editor">{{ old('admin_note', $order->admin_note) }}</textarea>
                 </div>
             </div>
         </div>

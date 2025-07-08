@@ -620,8 +620,9 @@
             <div class="p-6">
                 @if ($order->admin_note)
                     <div class="w-full">
-                        <textarea class="w-full rounded-lg p-3 resize-none overflow-auto leading-relaxed bg-gray-50"
-                            style="max-height: calc(1.5em * 10);" readonly>{{ $order->admin_note }}</textarea>
+                        <div class="prose max-w-none">
+                            {!! Purifier::clean($order->admin_note) !!}
+                        </div>
                     </div>
                 @else
                     <div class="text-center">
