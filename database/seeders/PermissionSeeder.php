@@ -19,7 +19,8 @@ class PermissionSeeder extends Seeder
             ['access' => 'Edit SEO Tag'],
             ['access' => 'Delete SEO Tag'],
             ['access' => 'View Addon'],
-            ['access' => 'Edit Addon']
+            ['access' => 'Edit Addon'],
+            ['access' => 'View dashboard']
         ];
 
         foreach ($permissions as $permission) {

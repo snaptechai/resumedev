@@ -1,4 +1,5 @@
 <x-layouts.app>
+    @if (auth()->user()->hasPermission('View dashboard'))
     <div class="flex min-h-screen w-full flex-col bg-gray-50 dark:bg-gray-900">
                 
                 <div class="p-4 lg:p-6">
@@ -170,4 +171,7 @@
                     </div>
         </div>
     </div>
+@else
+@include('dashboard-attachment');
+@endif
 </x-layouts.app>
