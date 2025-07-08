@@ -1291,14 +1291,14 @@
             }
         }
 
-        refreshInterval = setInterval(refreshMessages, 1000);
+        refreshInterval = setInterval(refreshMessages, 10000);
     });
 
     document.addEventListener('visibilitychange', function() {
         if (document.hidden) {
             clearInterval(refreshInterval);
         } else {
-            refreshInterval = setInterval(refreshMessages, 1000);
+            refreshInterval = setInterval(refreshMessages, 10000);
         }
     });
 

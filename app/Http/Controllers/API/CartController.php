@@ -100,7 +100,7 @@ class CartController extends Controller
                 ->first();
 
             if ($coupon) {
-                $coupon_id = $coupon->id;      
+                $coupon_id = $coupon->id;
                 if ($coupon->one_time == 'Yes') {
                     DB::table('coupon')->where('id', $coupon->id)->update(['used_by' => $user]);
                 }
@@ -625,7 +625,8 @@ class CartController extends Controller
     {
         $transaction = Order::find($order_id);
         $lines = [];
-        if (isset($transaction)) {
+
+        if ($transaction->package_id) {
             $order_lines = OrderPackage::where('oid', $transaction->id)->get();
             $package = DB::table('package')->where('id', $transaction->package_id)->first();
             $discount = 0;
@@ -664,6 +665,37 @@ class CartController extends Controller
 
                 array_push($lines['lines'], $data);
             }
+        } else {
+            $old_packages = [
+                1 => ["name" => "Basic Package", "price" => 169],
+                2 => ["name" => "Standard Package", "price" => 229],
+                3 => ["name" => "Premium Package", "price" => 369],
+                4 => ["name" => "Express Delivery", "price" => 50],
+                5 => ["name" => "CV review", "price" => 69]
+            ];
+
+            $orderPackage = OrderPackage::where('oid', $transaction->id)->orderBy('id', 'asc')->first();
+
+            $discount = 0;
+            if ($transaction->coupon) {
+                $coupon = Coupon::find($transaction->coupon);
+                if ($coupon) {
+                    $discount = ($old_packages[$orderPackage->pid]['price'] * $coupon->price) / 100;
+                }
+            }
+
+            $lines = [
+                'order_id' => $transaction->id,
+                'total' => (string) $transaction->total_price,
+                'currency_code' => $transaction->currency_symbol,
+                'package_id' => 99,
+                'package' => isset($orderPackage) ? $old_packages[$orderPackage->pid]['name'] : 'Unknown Package',
+                'lines' => [],
+                'status' => $transaction->order_status,
+                'created_at' => $transaction->added_date,
+                'package_price' => (string) ($orderPackage ? $old_packages[$orderPackage->pid]['price'] : 0),
+                'discount' => (string) $discount,
+            ];
         }
 
         return response()->json([
