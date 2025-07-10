@@ -303,9 +303,9 @@
                                 <div class="max-w-[80%]">
                                     <div
                                         class="{{ $msg['side'] === 'left' ? 'bg-[#f5f6f4]' : 'bg-[#bcec88]' }} p-4 rounded-xl">
-                                        <div class="text-base break-words leading-relaxed text-black">
+                                        <div class="text-base break-words leading-relaxed text-black {{ str_contains($msg['message'], "\n") ? 'whitespace-pre-line' : '' }}">
                                             @if (!empty(trim($msg['message'])))
-                                                {!! Purifier::clean($msg['message']) !!}
+                                                {!! Purifier::clean(trim($msg['message'])) !!}
                                             @endif
                                         </div>
                                         @if ($msg['show_templates'])
@@ -1143,26 +1143,25 @@
             if (copyTemplateBtn) {
                 copyTemplateBtn.addEventListener('click', function() {
                     const templateText = `
-                    A. Your target job title
-                    (Place separate orders if you are targeting multiple industries)
+A. Your target job title
+(Place separate orders if you are targeting multiple industries)
 
-                    B. Work experience
-                    1. Company
-                    2. Position
-                    3. Period
+B. Work experience
+1. Company
+2. Position
+3. Period
 
-                    C. Personal details
-                    1. Address
-                    2. Phone
-                    3. Email
+C. Personal details
+1. Address
+2. Phone
+3. Email
 
-                    D. Education details
-                    1. College/school/university
-                    2. Course
-                    3. Year
+D. Education details
+1. College/school/university
+2. Course
+3. Year
 
-                    E. Your current CV/Resume (If you have one)
-                                        `.trim();
+E. Your current CV/Resume (If you have one)`.trim();
 
                     navigator.clipboard.writeText(templateText).then(() => {
                         copyText.textContent = "Copied!";
