@@ -248,7 +248,7 @@
 </x-layouts.app>
 <script>
     function startCountdown(el, endTimeStr) {
-        const end = new Date(endTimeStr).getTime();
+        const end = new Date(endTimeStr + 'Z').getTime();
 
         function update() {
             const now = new Date().getTime();

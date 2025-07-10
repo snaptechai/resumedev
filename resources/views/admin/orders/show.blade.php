@@ -1191,7 +1191,7 @@ E. Your current CV/Resume (If you have one)`.trim();
     });
 
     function startCountdown(el, endTimeStr) {
-        const end = new Date(endTimeStr).getTime();
+        const end = new Date(endTimeStr + 'Z').getTime();
 
         function update() {
             const now = new Date().getTime();

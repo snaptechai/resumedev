@@ -223,6 +223,11 @@ class CartController extends Controller
         $addon_price = $input['quantity'] * $addon->price;
 
         $transaction->total_price = $transaction->total_price + $addon_price;
+
+        if ($addon->title == "Express Delivery") {
+            $transaction->end_date = now()->addHours(24);
+        }
+
         $transaction->save();
 
         $package = OrderPackage::where('addon_id', $input['addon_id'])->where('oid', $order_id)->first();
@@ -366,8 +371,8 @@ class CartController extends Controller
                 $payment->amount = $due;
                 $payment->transaction_id = $paymentIntent->id;
                 $payment->save();
- 
-                $toEmail = auth()->user()->username; 
+
+                $toEmail = auth()->user()->username;
                 $maildata = ['name' => auth()->user()->full_name, 'order' => $transaction];
                 Mail::to($toEmail)->send(new Order_Email($maildata));
 
@@ -386,11 +391,11 @@ class CartController extends Controller
                     $transaction->save();
 
                     $sendTo = User::findOrFail($writer->id);
-                    $toEmail = $sendTo->username; 
+                    $toEmail = $sendTo->username;
                     $maildata = ['name' => $sendTo->full_name, 'order' => $transaction];
                     Mail::to($toEmail)->queue(new AssignOrder($maildata));
 
-                    $Emails_to = ['shashinineha06@gmail.com','Info@resumemansion.com','Thuzitha.thennakoon@gmail.com','vinuriherath@outlook.com','Talkwithsanka@gmail.com'];
+                    $Emails_to = ['shashinineha06@gmail.com', 'Info@resumemansion.com', 'Thuzitha.thennakoon@gmail.com', 'vinuriherath@outlook.com', 'Talkwithsanka@gmail.com'];
                     $NewOrdermaildata = ['order' => $transaction];
                     Mail::to($Emails_to)->queue(new NewOrder($NewOrdermaildata));
                 }
