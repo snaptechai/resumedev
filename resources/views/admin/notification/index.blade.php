@@ -83,13 +83,16 @@
             @else 
             <div class="bg-white rounded-xl shadow-md border border-gray-100 p-12 text-center">
                 <div class="max-w-md mx-auto">
-                    <div class="relative w-24 h-24 mx-auto mb-6 bg-green-100 rounded-full flex items-center justify-center">
-                        <svg class="h-12 w-12 text-green-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 4a2 2 0 114 0v1a1 1 0 001 1h3a1 1 0 011 1v3a1 1 0 01-1 1h-1a2 2 0 100 4h1a1 1 0 011 1v3a1 1 0 01-1 1h-3a1 1 0 01-1-1v-1a2 2 0 10-4 0v1a1 1 0 01-1 1H7a1 1 0 01-1-1v-3a1 1 0 00-1-1H4a2 2 0 110-4h1a1 1 0 001-1V7a1 1 0 011-1h3a1 1 0 001-1V4z" />
+                    <div class="relative w-24 h-24 mx-auto mb-6 bg-yellow-100 rounded-full flex items-center justify-center">
+                        <svg class="h-12 w-12 text-yellow-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M13 16h-1v-4h-1m1-4h.01M12 2a10 10 0 1010 10A10 10 0 0012 2z" />
                         </svg>
                     </div>
-                    <h3 class="mt-2 text-xl font-bold text-gray-900">No active Coupon</h3>
-                    <p class="mt-2 text-gray-500">Create your first article to grab your visitors' attention with timely promotions and special coupon offers. Encourage them to save more while exploring your site!</p> 
+                    <h3 class="mt-2 text-xl font-bold text-gray-900">No Notifications</h3>
+                    <p class="mt-2 text-gray-500">
+                        You're all caught up! There are no new notifications at the moment. Check back later for updates.
+                    </p>
                 </div>
             </div>
         @endif 
