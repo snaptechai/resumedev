@@ -265,9 +265,9 @@
             <div class="flex {{ $msg['side'] === 'left' ? '' : 'justify-end' }} mb-3">
                 <div class="max-w-[80%]">
                     <div class="{{ $msg['side'] === 'left' ? 'bg-[#f5f6f4]' : 'bg-[#bcec88]' }} p-4 rounded-xl">
-                        <div class="text-base break-words leading-relaxed text-black">
+                        <div class="text-base break-words leading-relaxed text-black {{ str_contains($msg['message'], "\n") ? 'whitespace-pre-line' : '' }}">
                             @if (!empty(trim($msg['message'])))
-                                {!! Purifier::clean($msg['message']) !!}
+                                {!! Purifier::clean(trim($msg['message'])) !!}
                             @endif
                         </div>
                         @if ($msg['show_templates'])
