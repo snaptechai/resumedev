@@ -73,6 +73,11 @@ class Order extends Model
         return $this->hasMany(Message::class, 'oid', 'id');
     }
 
+    public function notification()
+    {
+        return $this->hasMany(Notification::class, 'order_id', 'id');
+    }
+
     public function addons()
     {
         return $this->hasMany(Addon::class, 'id', 'package_id');

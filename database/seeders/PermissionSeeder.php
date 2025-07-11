@@ -21,7 +21,8 @@ class PermissionSeeder extends Seeder
             ['access' => 'View Addon'],
             ['access' => 'Edit Addon'],
             ['access' => 'View dashboard'],
-            ['access' => 'Edit Admin Notes']
+            ['access' => 'Edit Admin Notes'],
+            ['access' => 'View Admin Notifications']
         ];
 
         foreach ($permissions as $permission) {

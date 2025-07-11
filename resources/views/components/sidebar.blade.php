@@ -192,7 +192,12 @@
 
                 <div class="relative">
                     <x-icon name="bell-alert" outline />
-                    @php $unreadCount = Auth::user()->getMessageNotifications()->count(); @endphp
+                    @if (auth()->user()->hasPermission('View Admin Notifications'))
+                        @php $unreadCount = Auth::user()->getAdminNotifications()->count(); @endphp
+                    @else
+                        @php $unreadCount = Auth::user()->getMessageNotifications()->count(); @endphp
+                    @endif
+
                     @if ($unreadCount > 0)
                         <span
                             class="absolute -top-1 -right-1 inline-flex items-center justify-center rounded-full bg-red-600 px-1.5 py-0.5 text-[10px] font-semibold text-white dark:bg-red-500">
@@ -227,7 +232,12 @@
                     <x-dropdown-link href="{{ route('notification.index') }}">
                         <x-icon name="bell-alert" outline />
                         {{ __('Notifications') }}
-                        @php $unreadCount = Auth::user()->getMessageNotifications()->count(); @endphp
+                        
+                        @if (auth()->user()->hasPermission('View Admin Notifications'))
+                            @php $unreadCount = Auth::user()->getAdminNotifications()->count(); @endphp
+                        @else
+                            @php $unreadCount = Auth::user()->getMessageNotifications()->count(); @endphp
+                        @endif
                         @if ($unreadCount > 0)
                             <span
                                 class="ml-auto inline-flex items-center justify-center rounded-full bg-red-600 px-2 py-0.5 text-xs font-bold text-white dark:bg-red-500">

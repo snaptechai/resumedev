@@ -4,10 +4,13 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
 use App\Models\Message;
+use App\Models\Notification;
 use App\Models\Order;
 use App\Models\OrderAttachment;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\AdminMessage;
 
 class MessageController extends Controller
 {
@@ -93,6 +96,12 @@ class MessageController extends Controller
             ], 403);
         }
 
+        $notification_name = "New message from: ";
+        $data = [
+            'order' => $order->id,
+            'message' => $request->message ? $request->message : '',
+            ];
+
         $message = new Message;
         $message->oid = $request->order_id;
         $message->fid = $user->id;
@@ -114,9 +123,30 @@ class MessageController extends Controller
                 'type' => 'admin',
                 'adate' => now()->addSeconds(5),
             ]);
+
+            $notification_name = "Request Modification from: ";
+            $data = [
+                'order' => $order->id,
+                'message' => "( Request Modification )".$request->message ? $request->message : '',
+                ];
         }
 
-        $message->save();
+        $is_save = $message->save();
+
+        if ($is_save) {
+            Notification::create([
+                'notification'=> $notification_name.$order->id,
+                'url'=> $order->id,
+                'to_id'=> $order->writer,
+                'from_id'=> $user->id,
+                'added_date'=> now(),
+                'status'=> 0,
+                'order_id'=> $order->id,
+            ]);
+
+            $Emails_to = ['shashinineha06@gmail.com','Info@resumemansion.com','Thuzitha.thennakoon@gmail.com','vinuriherath@outlook.com','Talkwithsanka@gmail.com'];
+            Mail::to($Emails_to)->queue(new AdminMessage($data));
+        }
 
         if ($request->hasFile('attachments')) {
             foreach ($request->file('attachments') as $file) {

@@ -88,39 +88,51 @@ class User extends Authenticatable
         return $this->hasMany(Order::class, 'writer', 'id');
     }
 
+    public function notifications()
+    {
+        return $this->hasMany(Notification::class, 'from_id', 'id');
+    }
     public function getMessageNotifications()
     {
-        if ($this->id == 1) {
-            return Message::select('message.*')
-                ->where('status', '0')
-                ->where('type', 'user')
-                ->whereIn('id', function ($query) {
-                    $query->selectRaw('MAX(id)')
-                        ->from('message')
-                        ->where('status', '0')
-                        ->where('type', 'user')
-                        ->groupBy('oid');
-                })
-                ->get();
-        }
+        // if ($this->id == 1) {
+        //     return Message::select('message.*')
+        //         ->where('status', '0')
+        //         ->where('type', 'user')
+        //         ->whereIn('id', function ($query) {
+        //             $query->selectRaw('MAX(id)')
+        //                 ->from('message')
+        //                 ->where('status', '0')
+        //                 ->where('type', 'user')
+        //                 ->groupBy('oid');
+        //         })
+        //         ->get();
+        // }
 
-        $orderIds = Order::where('writer', $this->id)->pluck('id');
+        // $orderIds = Order::where('writer', $this->id)->pluck('id');
 
-        if ($orderIds->isNotEmpty()) {
-            return Message::select('message.*')
-                ->where('status', '0')
-                ->where('type', 'user')
-                ->whereIn('oid', $orderIds)
-                ->whereIn('id', function ($query) use ($orderIds) {
-                    $query->selectRaw('MAX(id)')
-                        ->from('message')
-                        ->where('status', '0')
-                        ->where('type', 'user')
-                        ->whereIn('oid', $orderIds)
-                        ->groupBy('oid');
-                })
-                ->get();
-        }
+        // if ($orderIds->isNotEmpty()) {
+        //     return Message::select('message.*')
+        //         ->where('status', '0')
+        //         ->where('type', 'user')
+        //         ->whereIn('oid', $orderIds)
+        //         ->whereIn('id', function ($query) use ($orderIds) {
+        //             $query->selectRaw('MAX(id)')
+        //                 ->from('message')
+        //                 ->where('status', '0')
+        //                 ->where('type', 'user')
+        //                 ->whereIn('oid', $orderIds)
+        //                 ->groupBy('oid');
+        //         })
+        //         ->get();
+        // }
+        return Notification::where('status', '0')->where('to_id', $this->id)->whereHas('order')->orderBy('added_date', 'desc')->get();
+
+        return collect();
+    }
+
+     public function getAdminNotifications()
+    {
+        return Notification::where('status', '0')->whereHas('order')->orderBy('added_date', 'desc')->get();
 
         return collect();
     }

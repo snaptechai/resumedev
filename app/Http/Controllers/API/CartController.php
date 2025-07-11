@@ -11,6 +11,7 @@ use App\Mail\ReviewSentMail;
 use App\Models\Addon;
 use App\Models\Coupon;
 use App\Models\Message;
+use App\Models\Notification;
 use App\Models\Order;
 use App\Models\OrderPackage;
 use App\Models\Package;
@@ -394,7 +395,19 @@ class CartController extends Controller
                     $NewOrdermaildata = ['order' => $transaction];
                     Mail::to($Emails_to)->queue(new NewOrder($NewOrdermaildata));
                 }
+                
+                $notification_name = "New order: ".$transaction->order_type.", Order Id: ".$transaction->id;
+                Notification::create([
+                    'notification'=> $notification_name,
+                    'url'=> $transaction->id,
+                    'to_id'=> $transaction->writer,
+                    'from_id'=> $user,
+                    'added_date'=> now(),
+                    'status'=> 0,
+                    'order_id'=> $transaction->id,
+                ]);
             }
+            
             $lines = [];
             if (isset($transaction)) {
                 $order_lines = OrderPackage::where('oid', $transaction->id)->get();

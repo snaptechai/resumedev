@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Mail\AssignOrder;
 use App\Models\Message;
+use App\Models\Notification;
 use App\Models\Order;
 use App\Models\OrderAdminFile;
 use App\Models\OrderAttachment;
@@ -152,6 +153,7 @@ class OrderController extends Controller
     public function update(Request $request, string $id)
     {
         $order = Order::findOrFail($id);
+        $user = Auth::user();
 
         $validator = validator($request->all(), [
             'writer' => 'nullable',
@@ -182,6 +184,17 @@ class OrderController extends Controller
             $toEmail = $writer->username; 
             $maildata = ['name' => $writer->full_name, 'order' => $order];
             Mail::to($toEmail)->queue(new AssignOrder($maildata));
+        
+            $notification_name = "Assigned a New Order: ";
+            Notification::create([
+                'notification'=> $notification_name.$order->id,
+                'url'=> $order->id,
+                'to_id'=> $writer->id,
+                'from_id'=> $user->id,
+                'added_date'=> now(),
+                'status'=> 0,
+                'order_id'=> $order->id,
+            ]);
         }
 
         if ($request->order_status == 2) {
