@@ -582,15 +582,15 @@
             <div class="bg-[#f0f9e8] px-6 py-4 border-b border-gray-100 flex justify-between items-center">
                 <h2 class="text-xl font-semibold text-gray-800 dark:text-white">Admin Notes</h2>
             @if (auth()->user()->hasPermission('Edit Admin Notes'))
-                <div class="flex items-center space-x-2">
+                <div class="flex items-center space-x-2"> 
                     <form id="admin-note-upload-form" method="POST"
                         action="{{ route('order.admin-note.upload', $order->id) }}" enctype="multipart/form-data">
                         @csrf
                         <label for="admin_note_attachment"
                             class="inline-flex items-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 cursor-pointer transition">
                             <x-icon name="paper-clip" class="h-4 w-4 mr-1.5 text-gray-500" />
-                            Attach File
-                            <input id="admin_note_attachment" name="admin_note_attachment" type="file"
+                            Attach Files
+                            <input id="admin_note_attachment" name="admin_note_attachment[]" type="file" multiple
                                 class="hidden" onchange="this.form.submit()">
                         </label>
                     </form>

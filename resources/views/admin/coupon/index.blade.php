@@ -78,7 +78,7 @@
                                 Used By</th>
                             <th
                                 class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-b border-gray-200">
-                                Used For</th>
+                                Recent Use For</th>
                             <th
                                 class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-b border-gray-200">
                                 Added Date</th>
@@ -140,6 +140,11 @@
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <div class="flex gap-2">
+                                        <a href="{{ route('coupon.show', $coupon->id) }}"
+                                        class="inline-flex items-center px-2.5 py-1.5 text-sm font-medium text-green-700 hover:text-[#71ef84] hover:underline">
+                                            <x-icon name="eye" class="w-4 h-4 mr-1" />
+                                            Usage
+                                        </a>
                                         <x-modal id="edit-coupon-{{ $coupon->id }}">
                                             <x-slot name="trigger">
                                                 <button x-on:click="modalIsOpen = true"

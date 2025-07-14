@@ -4,12 +4,22 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Coupon;
+use App\Models\Order;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class CouponController extends Controller
 {
+    public function show(string $id)
+    {
+        $usages = Order::where('coupon',$id)->get();
+        $coupon = Coupon::findOrFail($id);
+
+        return view('admin.coupon.usage',compact('usages','coupon'));
+
+    }
+
     public function index(Request $request)
     {
         $search = $request->get('search');

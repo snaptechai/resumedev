@@ -115,6 +115,9 @@ class OrderController extends Controller
             if (stripos($message->message, 'please tell us your preferred template from the options below') !== false) {
                 $showTemplates = true;
             }
+            $attachments = $message->attachments->map(function ($attachment) {
+                return $attachment->file_path;
+            })->toArray();
 
             $formattedMessages[] = [
                 'id' => $message->id,
@@ -122,7 +125,10 @@ class OrderController extends Controller
                 'side' => $side,
                 'user' => $senderName,
                 'created_at' => $message->adate,
-                'attachments' => $message->attachment ? [$message->attachment] : [],
+                
+                'adate' => Carbon::parse($message->adate)->format('M d, Y'),
+                'created_at' => Carbon::parse($message->adate)->diffForHumans(),
+                'attachments' =>   $attachments,
                 'type' => $message->type,
                 'show_templates' => $showTemplates,
             ];
@@ -440,30 +446,29 @@ class OrderController extends Controller
             'messageCount' => $formattedMessages->count(),
             'lastMessageId' => $formattedMessages->last()['id'] ?? null
         ]);
-    }
+    } 
 
     public function uploadAdminNoteFile(Request $request, $orderId)
     {
         $request->validate([
-            'admin_note_attachment' => 'required|file|mimes:pdf,jpg,jpeg,png,doc,docx,xlsx,xls,txt|max:5120'
+            'admin_note_attachment.*' => 'required|file|mimes:pdf,jpg,jpeg,png,doc,docx,xlsx,xls,txt|max:5120',
         ]);
 
-        $file = $request->file('admin_note_attachment');
+        if ($request->hasFile('admin_note_attachment')) {
+            foreach ($request->file('admin_note_attachment') as $file) { 
+                $originalName = $file->getClientOriginalName(); 
+                $path = $file->storeAs('admin_files', $originalName, 'public');
+ 
+                OrderAdminFile::create([
+                    'oid' => $orderId,
+                    'file_path' => $path,
+                    'added_by' => Auth::id(),
+                    'added_date' => now()
+                ]);
+            }
+        }
 
-        $extension = $file->getClientOriginalExtension();
-        $random = Str::random(4);
-        $filename = "rm_{$orderId}_{$random}." . $extension;
-
-        $path = $file->storeAs('admin_files', $filename, 'public');
-
-        OrderAdminFile::create([
-            'oid' => $orderId,
-            'file_path' => $path,
-            'added_by' => Auth::id(),
-            'added_date' => now()
-        ]);
-
-        return redirect()->back()->with('success', 'File uploaded successfully!');
+        return redirect()->back()->with('success', 'Files uploaded successfully!');
     }
 
     public function deleteAdminNoteFile($orderId, $fileId)
