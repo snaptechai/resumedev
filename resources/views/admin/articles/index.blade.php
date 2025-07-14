@@ -102,6 +102,11 @@
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <div class="flex gap-2">
+                                        <a href="https://www.resumemansion.com/article/{{ urlencode(str_replace(' ', '-', $article->title)) }}"
+                                        class="inline-flex items-center px-2.5 py-1.5 text-sm font-medium text-green-700 hover:text-[#71ef84] hover:underline" target="_blank">
+                                            <x-icon name="arrow-top-right-on-square" class="w-4 h-4 mr-1" />
+                                            Preview
+                                        </a>
                                         <a href="{{ route('articles.show', $article->id) }}"
                                             class="inline-flex items-center px-2.5 py-1.5 text-sm font-medium text-green-700 hover:text-[#71ef84] hover:underline">
                                             <x-icon name="eye" class="w-4 h-4 mr-1" />

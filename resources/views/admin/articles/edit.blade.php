@@ -229,11 +229,13 @@
                     </div>
                 </div>
 
-                <div class="flex items-center justify-end border-t border-gray-200 pt-5 mt-6">
+                <div class="flex items-center justify-end border-t border-gray-200 pt-5 mt-6 gap-2">
                     <button type="button" onclick="window.location='{{ route('articles.index') }}'"
                         class="px-4 py-2.5 bg-white text-gray-700 rounded-lg border border-gray-300 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-300 transition-colors font-medium">
                         Cancel
                     </button>
+                    <a href="https://www.resumemansion.com/article/{{ urlencode(str_replace(' ', '-', $article->title)) }}" class="px-4 py-2.5 bg-white text-gray-700 rounded-lg border border-gray-300 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-300 transition-colors font-medium" target="_blank"> Preview
+                    </a>
                     <button type="submit"
                         class="ml-3 px-5 py-2.5 bg-[#BCEC88] hover:bg-[#BCEC88]/90 focus:ring-4 focus:ring-[#BCEC88]/30 focus:outline-none text-[#5D7B2B] font-medium rounded-lg transition-colors">
                         Update Article
