@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Controllers\Admin\AddonController; 
+use App\Http\Controllers\Admin\AddonController;
 use App\Http\Controllers\Admin\AiReviewController;
 use App\Http\Controllers\Admin\ArticleCategoryController;
 use App\Http\Controllers\Admin\ArticleController;
@@ -274,12 +274,15 @@ Route::middleware('auth')->group(function () {
         });
     });
 
-Route::middleware('permission:View SEO Tag')->group(function () {
-    Route::resource('seo-tags', SeoTagsController::class);
+    Route::middleware('permission:View SEO Tag')->group(function () {
+        Route::resource('seo-tags', SeoTagsController::class);
     });
-    
-    Route::resource('ai_review', AiReviewController::class);
+
     Route::resource('notification', NotificationController::class);
+
+    Route::resource('ai-review', AiReviewController::class);
+    Route::get('/ai-review/{id}/regenerate', [AiReviewController::class, 'regenerate'])->name('ai-review.regenerate');
+    Route::get('/ai-review/{id}/send-email', [AiReviewController::class, 'sendEmail'])->name('ai-review.send-email');
 });
 
 require __DIR__ . '/auth.php';

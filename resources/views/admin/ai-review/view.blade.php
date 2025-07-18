@@ -23,7 +23,7 @@
     </div>
  
     <div class="flex items-center justify-end px-6 py-4 bg-gray-50 border-t">
-        <a href="{{ route('ai_review.index') }}"
+        <a href="{{ route('ai-review.index') }}"
             class="inline-flex items-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-100">
             ← Back
         </a>

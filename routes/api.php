@@ -52,7 +52,7 @@ Route::prefix('v1')->group(function () {
     Route::get('tags/{tag}', [ArticleController::class, 'byTag']);
 
     Route::get('/accept-review', [ReviewController::class, 'index']);
-    Route::post('/cv/upload', [AiResumeReviewController::class, 'ai_resume_review']);
+    Route::post('/cv/upload', [AiResumeReviewController::class, 'uploadResume']);
 
     Route::post('contact-us', [ContactUsController::class, 'contactUs']);
 

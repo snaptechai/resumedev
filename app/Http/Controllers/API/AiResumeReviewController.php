@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
+use App\Jobs\ProcessAiResumeReview;
 use App\Models\AiReview;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -13,11 +14,13 @@ class AiResumeReviewController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function ai_resume_review(Request $request)
+    public function uploadResume(Request $request)
     {
-         $validator = Validator::make($request->all(), [
+        $validator = Validator::make($request->all(), [
             'email' => 'required|email',
-            'doc' => 'required|file|mimes:pdf,doc,docx|max:4096',
+            'doc' => 'required|file|mimes:pdf,docx|max:4096',
+        ], [
+            'doc.mimes' => 'Only PDF and DOCX files are supported for resume review.',
         ]);
 
         if ($validator->fails()) {
@@ -32,15 +35,19 @@ class AiResumeReviewController extends Controller
             $filename = time() . '_' . $file->getClientOriginalName();
             $path = $file->storeAs('cv_uploads', $filename, 'public');
 
-            $model = new AiReview;
-            $model->email = $request->email;
-            $model->file_path = $path;
-            $model->save();
+            $aiReview = AiReview::create([
+                'email' => $request->email,
+                'file_path' => $path,
+                'description' => null,
+                'is_sent' => false
+            ]);
+
+            ProcessAiResumeReview::dispatch($aiReview);
 
             return response()->json([
-                'message' => 'CV uploaded successfully',
-                'path' => Storage::url($path),
-                'email' => $request->email,
+                'http_status' => 200,
+                'http_status_message' => 'Success',
+                'message' => 'CV uploaded successfully.',
             ]);
         }
 

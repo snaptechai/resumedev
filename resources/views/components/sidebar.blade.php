@@ -66,7 +66,7 @@
             @endif
             @if (auth()->user()->hasPermission('View review'))
                 <li>
-                    <x-sidebar-link href="{{ route('ai_review.index') }}" :active="request()->routeIs('ai_review.*')">
+                    <x-sidebar-link href="{{ route('ai-review.index') }}" :active="request()->routeIs('ai-review.*')">
                         <x-icon name="cpu-chip" outline />
                         <span>{{ __('AI Review') }}</span>
                     </x-sidebar-link>
