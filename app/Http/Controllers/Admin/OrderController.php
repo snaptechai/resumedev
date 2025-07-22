@@ -178,6 +178,7 @@ class OrderController extends Controller
         }
 
         $oldOrderStatus = $order->order_status;
+        $oldWriter = $order->writer;
 
         $order->update([
             'writer' => $request->writer,
@@ -185,22 +186,24 @@ class OrderController extends Controller
             'last_modified_by' => Auth::id(),
             'last_modified_date' => Carbon::now()->format('Y-m-d'),
         ]);
-        if ($request->writer) {
-            $writer = User::findOrFail($request->writer);
-            $toEmail = $writer->username; 
-            $maildata = ['name' => $writer->full_name, 'order' => $order];
-            Mail::to($toEmail)->queue(new AssignOrder($maildata));
-        
-            $notification_name = "Assigned a New Order: ";
-            Notification::create([
-                'notification'=> $notification_name.$order->id,
-                'url'=> $order->id,
-                'to_id'=> $writer->id,
-                'from_id'=> $user->id,
-                'added_date'=> now(),
-                'status'=> 0,
-                'order_id'=> $order->id,
-            ]);
+        if ($request->writer) { 
+            if ($request->writer != $oldWriter) {
+                $writer = User::findOrFail($request->writer);
+                $toEmail = $writer->username; 
+                $maildata = ['name' => $writer->full_name, 'order' => $order];
+                Mail::to($toEmail)->send(new AssignOrder($maildata));
+            
+                $notification_name = "Assigned a New Order: ";
+                Notification::create([
+                    'notification'=> $notification_name.$order->id,
+                    'url'=> $order->id,
+                    'to_id'=> $writer->id,
+                    'from_id'=> $user->id,
+                    'added_date'=> now(),
+                    'status'=> 0,
+                    'order_id'=> $order->id,
+                ]);
+            }
         }
 
         if ($request->order_status == 2) {
