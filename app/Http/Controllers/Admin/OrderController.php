@@ -119,15 +119,19 @@ class OrderController extends Controller
                 return $attachment->file_path;
             })->toArray();
 
+            $adate = Carbon::parse($message->adate);
+
+            $formattedDate = $adate->diffInMinutes(now()) <= 5 
+                ? $adate->diffForHumans() 
+                : $adate->format('M d, Y h:i A');
+
             $formattedMessages[] = [
                 'id' => $message->id,
                 'message' => $message->message,
                 'side' => $side,
                 'user' => $senderName,
-                'created_at' => $message->adate,
-                
-                'adate' => Carbon::parse($message->adate)->format('M d, Y'),
-                'created_at' => Carbon::parse($message->adate)->diffForHumans(),
+                'created_at' => $formattedDate,
+                'adate' => $formattedDate,
                 'attachments' =>   $attachments,
                 'type' => $message->type,
                 'show_templates' => $showTemplates,
@@ -422,13 +426,19 @@ class OrderController extends Controller
                 return $attachment->file_path;
             })->toArray();
 
+            $adate = Carbon::parse($message->adate);
+
+            $formattedDate = $adate->diffInMinutes(now()) <= 5 
+                ? $adate->diffForHumans() 
+                : $adate->format('M d, Y h:i A');
+
             $formattedMessages[] = [
                 'id' => $message->id,
                 'message' => $message->message,
                 'side' => $side,
                 'user' => $senderName,
-                'adate' => Carbon::parse($message->adate)->format('M d, Y'),
-                'created_at' => Carbon::parse($message->adate)->diffForHumans(),
+                'adate' => $formattedDate,
+                'created_at' => $formattedDate,
                 'attachments' =>   $attachments,
                 'type' => $message->type,
                 'show_templates' => $showTemplates,
