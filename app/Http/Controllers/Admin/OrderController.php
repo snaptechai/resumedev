@@ -191,7 +191,7 @@ class OrderController extends Controller
                 $writer = User::findOrFail($request->writer);
                 $toEmail = $writer->username; 
                 $maildata = ['name' => $writer->full_name, 'order' => $order];
-                Mail::to($toEmail)->send(new AssignOrder($maildata));
+                Mail::to($toEmail)->queue(new AssignOrder($maildata));
             
                 $notification_name = "Assigned a New Order: ";
                 Notification::create([
