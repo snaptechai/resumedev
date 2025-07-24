@@ -725,12 +725,23 @@ class CartController extends Controller
 
     public function getFeatures(Request $request)
     {
-        $labels = Addon::where('package_id', $request->id)->pluck('title');
+        $labelHtml = Package::where('id', $request->id)->pluck('full_description')->first();
 
-        $features = $labels->map(function ($title) {
-            return ['label' => $title];
-        });
+        $features = [];
 
-        return response()->json($features->values());
+        if ($labelHtml) {
+            $dom = new \DOMDocument();
+            libxml_use_internal_errors(true);
+            $dom->loadHTML($labelHtml);
+            libxml_clear_errors();
+
+            $lis = $dom->getElementsByTagName('li');
+
+            foreach ($lis as $li) {
+                $features[] = ['label' => trim($li->textContent)];
+            }
+        }
+
+        return response()->json($features);
     }
 }
