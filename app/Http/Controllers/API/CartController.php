@@ -722,4 +722,15 @@ class CartController extends Controller
             'data' => $lines,
         ], 200);
     }
+
+    public function getFeatures(Request $request)
+    {
+        $labels = Addon::where('package_id', $request->id)->pluck('title');
+
+        $features = $labels->map(function ($title) {
+            return ['label' => $title];
+        });
+
+        return response()->json($features->values());
+    }
 }

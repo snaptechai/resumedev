@@ -55,6 +55,7 @@ Route::prefix('v1')->group(function () {
     Route::post('/cv/upload', [AiResumeReviewController::class, 'uploadResume']);
 
     Route::post('contact-us', [ContactUsController::class, 'contactUs']);
+    Route::get('/getFeatures/{id}', [CartController::class, 'getFeatures']);
 
     Route::middleware(['auth:sanctum'])->group(function () {
         Route::controller(CartController::class)->group(function () {
