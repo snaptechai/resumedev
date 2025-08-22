@@ -33,7 +33,8 @@
                         </thead>
                         <tbody class="bg-white divide-y divide-gray-200">
                             @foreach ($notifications as $index => $notification)
-                                <tr class="transition-colors duration-150 {{ $notification->status == 0 ? 'bg-yellow-100 hover:bg-yellow-200' : 'hover:bg-gray-50' }}">
+                                <tr class="transition-colors duration-150 {{ ($notification->status == 0 && !$notification->is_read ) ? 'bg-yellow-100 hover:bg-yellow-200' : 'hover:bg-gray-50' }}">
+
                                     <td class="px-6 py-5 whitespace-nowrap text-sm text-gray-500">{{ $index + 1 }}</td>
                                     <td class="px-6 py-5 whitespace-nowrap">
                                         <div class="flex items-center"> 

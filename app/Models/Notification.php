@@ -24,4 +24,9 @@ class Notification extends Model
     {
         return $this->belongsTo(Order::class, 'order_id', 'id');
     }
+
+    public function readers()
+    {
+        return $this->hasMany(NotificationReader::class);
+    }
 }

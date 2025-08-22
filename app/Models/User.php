@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use Illuminate\Support\Facades\Auth;
 
 class User extends Authenticatable
 {
@@ -132,7 +133,20 @@ class User extends Authenticatable
 
      public function getAdminNotifications()
     {
-        return Notification::where('status', '0')->whereHas('order')->orderBy('added_date', 'desc')->get();
+        // return Notification::where('status', '0')->whereHas('order')->orderBy('added_date', 'desc')->get();
+
+        $user = Auth::user();
+
+        $notifications = Notification::where('status', '0')
+            ->whereHas('order')
+            ->whereDoesntHave('readers', function ($query) use ($user) {
+                $query->where('user_id', $user->id)
+                    ->where('read', true);
+            })
+            ->orderBy('added_date', 'desc')
+            ->get();
+
+        return $notifications;
 
         return collect();
     }
