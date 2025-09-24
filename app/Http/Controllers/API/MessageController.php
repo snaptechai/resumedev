@@ -11,6 +11,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\AdminMessage;
+use App\Mail\WriterMessage;
 
 class MessageController extends Controller
 {
@@ -144,7 +145,13 @@ class MessageController extends Controller
                 'order_id'=> $order->id,
             ]);
 
+            if ($order->writer) {
+                $Emails_to =[$order->assignedWriter->username];
+                Mail::to($Emails_to)->queue(new WriterMessage($data));
+            }
+            
             $Emails_to = ['shashinineha06@gmail.com','Info@resumemansion.com','Thuzitha.thennakoon@gmail.com','vinuriherath@outlook.com','Talkwithsanka@gmail.com'];
+            // $Emails_to =['hasitharamesh40@gmail.com'];
             Mail::to($Emails_to)->queue(new AdminMessage($data));
         }
 
