@@ -121,8 +121,8 @@ class OrderController extends Controller
 
             $adate = Carbon::parse($message->adate);
 
-            $formattedDate = $adate->diffInMinutes(now()) <= 5 
-                ? $adate->diffForHumans() 
+            $formattedDate = $adate->diffInMinutes(now()) <= 5
+                ? $adate->diffForHumans()
                 : $adate->format('M d, Y h:i A');
 
             $formattedMessages[] = [
@@ -190,22 +190,22 @@ class OrderController extends Controller
             'last_modified_by' => Auth::id(),
             'last_modified_date' => Carbon::now()->format('Y-m-d'),
         ]);
-        if ($request->writer) { 
+        if ($request->writer) {
             if ($request->writer != $oldWriter) {
                 $writer = User::findOrFail($request->writer);
-                $toEmail = $writer->username; 
+                $toEmail = $writer->username;
                 $maildata = ['name' => $writer->full_name, 'order' => $order];
                 Mail::to($toEmail)->queue(new AssignOrder($maildata));
-            
+
                 $notification_name = "Assigned a New Order: ";
                 Notification::create([
-                    'notification'=> $notification_name.$order->id,
-                    'url'=> $order->id,
-                    'to_id'=> $writer->id,
-                    'from_id'=> $user->id,
-                    'added_date'=> now(),
-                    'status'=> 0,
-                    'order_id'=> $order->id,
+                    'notification' => $notification_name . $order->id,
+                    'url' => $order->id,
+                    'to_id' => $writer->id,
+                    'from_id' => $user->id,
+                    'added_date' => now(),
+                    'status' => 0,
+                    'order_id' => $order->id,
                 ]);
             }
         }
@@ -400,15 +400,25 @@ class OrderController extends Controller
     }
 
 
-    public function getMessages(string $id)
+    public function getMessages(string $id, Request $request)
     {
         $order = Order::findOrFail($id);
+        $lastMessageId = $request->get('last_message_id', 0);
+
         $messages = Message::where('oid', $id)
+            ->where('id', '>', $lastMessageId)
             ->with('attachments')
             ->orderBy('adate', 'asc')
             ->get();
 
-        $customer = User::find($order->uid);
+        if ($messages->isEmpty()) {
+            return response()->json([
+                'success' => true,
+                'hasNewMessages' => false,
+                'messages' => []
+            ]);
+        }
+
         $templates = Template::where('is_active', 1)->get();
         $templateCount = $templates->count();
 
@@ -428,8 +438,8 @@ class OrderController extends Controller
 
             $adate = Carbon::parse($message->adate);
 
-            $formattedDate = $adate->diffInMinutes(now()) <= 5 
-                ? $adate->diffForHumans() 
+            $formattedDate = $adate->diffInMinutes(now()) <= 5
+                ? $adate->diffForHumans()
                 : $adate->format('M d, Y h:i A');
 
             $formattedMessages[] = [
@@ -439,7 +449,7 @@ class OrderController extends Controller
                 'user' => $senderName,
                 'adate' => $formattedDate,
                 'created_at' => $formattedDate,
-                'attachments' =>   $attachments,
+                'attachments' => $attachments,
                 'type' => $message->type,
                 'show_templates' => $showTemplates,
             ];
@@ -447,19 +457,21 @@ class OrderController extends Controller
 
         $formattedMessages = collect($formattedMessages);
 
-        $html = view('admin.orders.partials.messages', compact(
+        $html = view('admin.orders.partials.message-item', compact(
             'formattedMessages',
             'templates',
-            'templateCount'
+            'templateCount',
+            'order'
         ))->render();
 
         return response()->json([
             'success' => true,
+            'hasNewMessages' => true,
             'html' => $html,
-            'messageCount' => $formattedMessages->count(),
-            'lastMessageId' => $formattedMessages->last()['id'] ?? null
+            'messages' => $formattedMessages,
+            'lastMessageId' => $formattedMessages->last()['id'] ?? $lastMessageId
         ]);
-    } 
+    }
 
     public function uploadAdminNoteFile(Request $request, $orderId)
     {
@@ -468,10 +480,10 @@ class OrderController extends Controller
         ]);
 
         if ($request->hasFile('admin_note_attachment')) {
-            foreach ($request->file('admin_note_attachment') as $file) { 
-                $originalName = $file->getClientOriginalName(); 
+            foreach ($request->file('admin_note_attachment') as $file) {
+                $originalName = $file->getClientOriginalName();
                 $path = $file->storeAs('admin_files', $originalName, 'public');
- 
+
                 OrderAdminFile::create([
                     'oid' => $orderId,
                     'file_path' => $path,

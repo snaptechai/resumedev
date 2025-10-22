@@ -1,118 +1,3 @@
-<div class="bg-gray-50 rounded-xl p-5 border border-gray-200 mb-6 max-w-[700px] ml-auto">
-    <p class="font-medium text-gray-800 mb-4">
-        Please submit the requirements below to get the job started
-    </p>
-    <div class="mb-3">
-        <p class="font-medium text-gray-700">
-            <b>A.</b> Your target job title
-        </p>
-        <p class="text-sm text-gray-600 ml-5">
-            (Place separate orders if you are targeting multiple industries)
-        </p>
-    </div>
-    <div class="mb-3">
-        <p class="font-medium text-gray-700">
-            <b>B.</b> Work experience
-        </p>
-        <p class="text-sm text-gray-600 ml-5">
-            1. Company
-        </p>
-        <p class="text-sm text-gray-600 ml-5">
-            2. Position
-        </p>
-        <p class="text-sm text-gray-600 ml-5">
-            3. Period
-        </p>
-    </div>
-    <div class="mb-3">
-        <p class="font-medium text-gray-700">
-            <b>C.</b> Personal details
-        </p>
-        <p class="text-sm text-gray-600 ml-5">
-            1. Address
-        </p>
-        <p class="text-sm text-gray-600 ml-5">
-            2. Phone
-        </p>
-        <p class="text-sm text-gray-600 ml-5">
-            3. Email
-        </p>
-    </div>
-    <div class="mb-3">
-        <p class="font-medium text-gray-700">
-            <b>D.</b> Education details
-        </p>
-        <p class="text-sm text-gray-600 ml-5">
-            1. College/school/university
-        </p>
-        <p class="text-sm text-gray-600 ml-5">
-            2. Course
-        </p>
-        <p class="text-sm text-gray-600 ml-5">
-            3. Year
-        </p>
-    </div>
-    <div class="mb-4">
-        <p class="font-medium text-gray-700">
-            <b>E.</b> Your current CV/Resume (If you have one)
-        </p>
-    </div>
-    <p id="copy-template-btn"
-        class="inline-flex items-center text-sm font-medium text-[#0D5438] hover:text-[#0D5438]/80 cursor-pointer">
-        <span id="copy-text">Copy this template to your clipboard</span>
-        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none"
-            class="ml-1.5">
-            <g clip-path="url(#clip0_40000010_7890)">
-                <path
-                    d="M5.83301 8.056C5.83301 7.46655 6.06716 6.90125 6.48396 6.48445C6.90076 6.06765 7.46606 5.8335 8.05551 5.8335H15.2772C15.569 5.8335 15.858 5.89098 16.1277 6.00267C16.3973 6.11437 16.6423 6.27807 16.8487 6.48445C17.0551 6.69083 17.2188 6.93584 17.3305 7.20548C17.4422 7.47513 17.4997 7.76413 17.4997 8.056V15.2777C17.4997 15.5695 17.4422 15.8585 17.3305 16.1282C17.2188 16.3978 17.0551 16.6428 16.8487 16.8492C16.6423 17.0556 16.3973 17.2193 16.1277 17.331C15.858 17.4427 15.569 17.5002 15.2772 17.5002H8.05551C7.76365 17.5002 7.47464 17.4427 7.20499 17.331C6.93535 17.2193 6.69034 17.0556 6.48396 16.8492C6.27758 16.6428 6.11388 16.3978 6.00219 16.1282C5.89049 15.8585 5.83301 15.5695 5.83301 15.2777V8.056Z"
-                    stroke="#0D5438" stroke-width="1.66667" stroke-linecap="round" stroke-linejoin="round" />
-                <path
-                    d="M3.34333 13.9475C3.08779 13.8018 2.87523 13.5912 2.72715 13.3371C2.57906 13.0829 2.50071 12.7942 2.5 12.5V4.16667C2.5 3.25 3.25 2.5 4.16667 2.5H12.5C13.125 2.5 13.465 2.82083 13.75 3.33333"
-                    stroke="#0D5438" stroke-width="1.66667" stroke-linecap="round" stroke-linejoin="round" />
-            </g>
-            <defs>
-                <clipPath id="clip0_40000010_7890">
-                    <rect width="20" height="20" fill="white" />
-                </clipPath>
-            </defs>
-        </svg>
-    </p>
-</div>
-
-<div class="pr-2">
-    <div class="flex justify-end mb-3">
-        <div class="max-w-[80%]">
-            <div class="bg-[#bcec88] p-4 rounded-xl">
-                <div class="text-base break-words leading-relaxed text-black">
-                    Thank you for choosing Resume Mansion! We've received your
-                    order. Please provide the requested information above, or
-                    simply submit your current resume and target job title. If you
-                    have any questions or need further assistance, please don't
-                    hesitate to reach out. We're here to help you every step of
-                    the way! Looking forward to working with you!
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="flex justify-end">
-        <div class="flex items-center mb-6">
-            <div class="flex flex-col">
-                <span class="font-medium text-sm text-green-800">
-                    System
-                </span>
-                <span class="text-xs text-gray-500 text-right">
-                    {{ date('M d, Y h:i A', strtotime($order->added_date ?? now())) }}
-                </span>
-            </div>
-            <div
-                class="w-8 h-8 rounded-full bg-[#BCEC88] text-black flex items-center justify-center text-sm font-semibold ml-2">
-                S
-            </div>
-        </div>
-    </div>
-</div>
-
 @foreach ($formattedMessages as $msg)
     @if ($msg['message'] == 'you submitted the requirements')
         <div class="flex items-start mb-3 justify-center">
@@ -177,8 +62,8 @@
         </div>
     @elseif ($msg['message'] == 'your order delivered')
         <div class="flex items-start mb-3 justify-center">
-            <svg width="44" height="44" viewBox="0 0 44 44" fill="none"
-                xmlns="http://www.w3.org/2000/svg" class="flex-shrink-0">
+            <svg width="44" height="44" viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg"
+                class="flex-shrink-0">
                 <g clip-path="url(#clip0_208_18583)">
                     <circle cx="22" cy="22" r="22" fill="#D7F6C3" />
                     <g clip-path="url(#clip1_208_18583)">
@@ -188,8 +73,8 @@
                         <path
                             d="M25 27C25 27.5304 25.2107 28.0391 25.5858 28.4142C25.9609 28.7893 26.4696 29 27 29C27.5304 29 28.0391 28.7893 28.4142 28.4142C28.7893 28.0391 29 27.5304 29 27C29 26.4696 28.7893 25.9609 28.4142 25.5858C28.0391 25.2107 27.5304 25 27 25C26.4696 25 25.9609 25.2107 25.5858 25.5858C25.2107 25.9609 25 26.4696 25 27Z"
                             stroke="#063B26" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-                        <path d="M15 27H13V23M12 15H23V27M19 27H25M29 27H31V21M31 21H23M31 21L28 16H23"
-                            stroke="#063B26" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                        <path d="M15 27H13V23M12 15H23V27M19 27H25M29 27H31V21M31 21H23M31 21L28 16H23" stroke="#063B26"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
                         <path d="M13 19H17" stroke="#063B26" stroke-width="2" stroke-linecap="round"
                             stroke-linejoin="round" />
                     </g>
@@ -265,7 +150,8 @@
             <div class="flex {{ $msg['side'] === 'left' ? '' : 'justify-end' }} mb-3">
                 <div class="max-w-[80%]">
                     <div class="{{ $msg['side'] === 'left' ? 'bg-[#f5f6f4]' : 'bg-[#bcec88]' }} p-4 rounded-xl">
-                        <div class="text-base break-words leading-relaxed text-black {{ str_contains($msg['message'], "\n") ? 'whitespace-pre-line' : '' }}">
+                        <div
+                            class="text-base break-words leading-relaxed text-black {{ str_contains($msg['message'], "\n") ? 'whitespace-pre-line' : '' }}">
                             @if (!empty(trim($msg['message'])))
                                 {!! Purifier::clean(trim($msg['message'])) !!}
                             @endif
@@ -436,7 +322,7 @@
                         </span>
                         <span
                             class="text-xs text-gray-500 {{ $msg['side'] === 'left' ? 'text-left' : 'text-right' }}">
-                            {{ \Carbon\Carbon::parse($msg['created_at'])->diffInHours(now()) > 24 ? $msg['adate'] : $msg['created_at'] }}
+                            {{ $msg['created_at'] }}
                         </span>
                     </div>
                     @if ($msg['side'] === 'right')
