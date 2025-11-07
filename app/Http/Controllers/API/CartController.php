@@ -396,7 +396,8 @@ class CartController extends Controller
                     $maildata = ['name' => $sendTo->full_name, 'order' => $transaction];
                     Mail::to($toEmail)->queue(new AssignOrder($maildata));
 
-                    $Emails_to = ['shashinineha06@gmail.com', 'Info@resumemansion.com', 'Thuzitha.thennakoon@gmail.com', 'vinuriherath@outlook.com', 'Talkwithsanka@gmail.com'];
+                    $Emails_to = ['shashinineha06@gmail.com', 'Info@resumemansion.com', 'Thuzitha.thennakoon@gmail.com', 'vinuriherath@outlook.com', 'Talkwithsanka@gmail.com','kalpagec@gmail.com'];
+                    // $Emails_to = ['hasitharamesh40@gmail.com'];
                     $NewOrdermaildata = ['order' => $transaction];
                     Mail::to($Emails_to)->queue(new NewOrder($NewOrdermaildata));
                 }

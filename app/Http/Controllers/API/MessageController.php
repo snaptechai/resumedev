@@ -150,8 +150,8 @@ class MessageController extends Controller
                 Mail::to($Emails_to)->queue(new WriterMessage($data));
             }
             
-            $Emails_to = ['shashinineha06@gmail.com','Info@resumemansion.com','Thuzitha.thennakoon@gmail.com','vinuriherath@outlook.com','Talkwithsanka@gmail.com'];
-            // $Emails_to =['hasitharamesh40@gmail.com'];
+            // $Emails_to = ['shashinineha06@gmail.com','Info@resumemansion.com','Thuzitha.thennakoon@gmail.com','vinuriherath@outlook.com','Talkwithsanka@gmail.com'];
+            $Emails_to =['hasitharamesh40@gmail.com'];
             Mail::to($Emails_to)->queue(new AdminMessage($data));
         }
 
