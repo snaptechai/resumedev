@@ -15,6 +15,14 @@
                 @else
                     <span class="ml-4 text-xl text-gray-400">No End Date</span>
                 @endif
+                <form action="{{ route('orders.reviewRequest', $order->id) }}" method="GET" class="ml-auto">
+                    @csrf
+                    <button type="submit"
+                        class="inline-flex items-center px-5 py-2.5 text-sm font-medium text-[#000000] bg-[#ece588] border border-transparent rounded-lg shadow-sm transition duration-200 hover:bg-[#ece588]/60 focus:outline-none hover:cursor-pointer">
+                        <span>Send Review Request</span>
+                        <x-icon name="star" class="h-5 w-5 ml-2" />
+                    </button>
+                </form>
             </div>
 
             @include('admin.massage-bar')

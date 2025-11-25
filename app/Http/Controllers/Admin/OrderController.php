@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Mail\AssignOrder;
+use App\Mail\ReviewRequestMail;
 use App\Models\Message;
 use App\Models\Notification;
 use App\Models\Order;
@@ -69,6 +70,16 @@ class OrderController extends Controller
     public function create()
     {
         //
+    }
+
+    public function sendReviewRequest($orderId)
+    {
+        $order = Order::findOrFail($orderId);
+
+        $customerEmail = $order->user->username;            
+        Mail::to($customerEmail)->send(new ReviewRequestMail($order));
+
+        return back()->with('success', 'Review request email sent successfully!');
     }
 
     /**
