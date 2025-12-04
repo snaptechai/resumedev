@@ -51,6 +51,7 @@ Route::middleware('auth')->group(function () {
             Route::post('orders/{id}/message', [OrderController::class, 'storeMessage'])->name('orders.message');
             Route::get('/admin/orders/{id}/getmessages', [OrderController::class, 'getMessages'])->name('admin.orders.getmessages');
         });
+        Route::get('/orders/{id}/reviewRequest', [OrderController::class, 'sendReviewRequest'])->name('orders.reviewRequest');
     });
 
 
